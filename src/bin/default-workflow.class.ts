@@ -1,17 +1,21 @@
 import { getPackageVersion, setPackageVersion } from "../lib/version-file";
 import { ReleaseType } from "../models/version";
-import { createVersionCommit, createVersionTag } from "../lib/git";
+import { createVersionCommit, createVersionTag, getReleaseTypeForHistory } from "../lib/git";
 import chalk from "chalk";
 
 export class DefaultWorkflowClass {
     async run() {
         const version = await getPackageVersion();
 
-        await version.increase(ReleaseType.patch);
+        const releaseType: ReleaseType = await getReleaseTypeForHistory(version);
+
+        await version.increase(releaseType);
 
         console.log("release new version " + chalk.cyan(version.toString()));
 
         await setPackageVersion(version);
+
+        //await generateChangelog(); // TODO
 
         await createVersionCommit(version);
 
