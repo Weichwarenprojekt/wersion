@@ -1,6 +1,7 @@
 import simpleGit, { DefaultLogFields } from "simple-git";
 import { ReleaseType, Version } from "../models/version";
 import * as _ from "lodash";
+import { conventionalCommitRegex } from "./util";
 
 const git = simpleGit();
 
@@ -48,8 +49,6 @@ export async function getReleaseTypeForHistory(oldVersion: Version): Promise<Rel
         minor: ["feat"],
         patch: ["fix", "chore", "refactor"],
     };
-    // Regex to fetch commit types
-    const commitTypeRegex = /([a-z]*)(\([a-z\-]*\))?:/;
 
     // Determine all used commit types and release major if "breaking change" found
     const usedCommitTypes: string[] = [];
@@ -57,7 +56,7 @@ export async function getReleaseTypeForHistory(oldVersion: Version): Promise<Rel
         if (commit.body.toLowerCase().includes("breaking change")) {
             return ReleaseType.major;
         }
-        const result = commit.message.match(commitTypeRegex);
+        const result = commit.message.match(conventionalCommitRegex);
         if (!_.isNull(result)) usedCommitTypes.push(result[1]); // First capturing group
     }
 
