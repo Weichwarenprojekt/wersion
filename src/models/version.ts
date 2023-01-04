@@ -2,11 +2,8 @@ import * as semver from "semver";
 
 export enum ReleaseType {
     major = "major",
-    premajor = "premajor",
     minor = "minor",
-    preminor = "preminor",
     patch = "patch",
-    prepatch = "prepatch",
     prerelease = "prerelease",
 }
 
