@@ -3,6 +3,7 @@ import { ReleaseType, Version } from "../models/version";
 import * as _ from "lodash";
 import { conventionalCommitRegex } from "./util";
 import { Config } from "./config.class";
+import { getChangelogFilePath } from "./changelog";
 
 const git = simpleGit();
 
@@ -21,6 +22,9 @@ export async function createVersionTag(version: Version) {
  * @param version
  */
 export async function createVersionCommit(version: Version) {
+    // Add the changelog file as it would be not added when newly created
+    await git.add(getChangelogFilePath());
+
     // TODO: Config with string interpolation
     return git.commit("chore: release " + version.toString());
 }

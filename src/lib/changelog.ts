@@ -8,17 +8,6 @@ import { conventionalCommitRegex } from "./util";
 import * as fs from "node:fs";
 import { Config } from "./config.class";
 
-// Get changelog config from wersionrc
-const changelogFilename = Config.getInstance().config.changelogFile.name ?? "CHANGELOG.md";
-const changelogPath = Config.getInstance().config.changelogFile.path ?? "";
-const changelogAbsolute = Config.getInstance().config.changelogFile.absolute ?? false;
-
-// Build Changelog filepath
-let changelogFilePath = path.join(changelogPath, changelogFilename);
-if (!changelogAbsolute) {
-    changelogFilePath = path.join(process.cwd(), changelogFilePath);
-}
-
 /**
  * Helper interface to pass changelog content info
  */
@@ -33,7 +22,21 @@ interface ChangelogContent {
  * Create changelog file if not exists
  */
 async function createChangelogFileIfNotExists() {
-    await fse.ensureFile(changelogFilePath);
+    await fse.ensureFile(getChangelogFilePath());
+}
+
+export function getChangelogFilePath() {
+    // Get changelog config from wersionrc
+    const changelogFilename = Config.getInstance().config.changelogFile.name ?? "CHANGELOG.md";
+    const changelogPath = Config.getInstance().config.changelogFile.path ?? "";
+    const changelogAbsolute = Config.getInstance().config.changelogFile.absolute ?? false;
+
+    // Build Changelog filepath
+    let changelogFilePath = path.join(changelogPath, changelogFilename);
+    if (!changelogAbsolute) {
+        changelogFilePath = path.join(process.cwd(), changelogFilePath);
+    }
+    return changelogFilePath;
 }
 
 /**
@@ -63,10 +66,8 @@ export async function generateChangelog(version: Version, oldVersionTag: string)
  * @param markdownToAppend
  */
 async function updateChangelogFile(markdownToAppend: string) {
-    console.log("changelogFilePath", changelogFilePath);
-
-    const currentContent = fs.readFileSync(changelogFilePath);
-    const fileHandle = fs.openSync(changelogFilePath, "w+"); // Truncate file
+    const currentContent = fs.readFileSync(getChangelogFilePath());
+    const fileHandle = fs.openSync(getChangelogFilePath(), "w+"); // Truncate file
     const appendBuffer = Buffer.from(markdownToAppend);
 
     // Write new content
