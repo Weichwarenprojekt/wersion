@@ -2,6 +2,7 @@ import simpleGit, { DefaultLogFields } from "simple-git";
 import { ReleaseType, Version } from "../models/version";
 import * as _ from "lodash";
 import { conventionalCommitRegex } from "./util";
+import { Config } from "./config.class";
 
 const git = simpleGit();
 
@@ -44,16 +45,19 @@ export async function getReleaseTypeForHistory(oldVersion: Version): Promise<Rel
     const commits = await getCommitsSinceTag(oldVersion.toString());
     if (commits.length === 0) throw new Error("no changes since last version detected");
 
-    const releaseTypeConfig: Record<string, string[]> = {
+    const releaseTypeConfig: Record<string, string[]> = Config.getInstance().config.commitTypes ?? {
         major: [],
         minor: ["feat"],
-        patch: ["fix", "chore", "refactor"],
+        patch: ["fix"],
     };
+
+    // Signal which defines a breaking change
+    const breakingChangeTrigger = Config.getInstance().config.breakingChangeTrigger ?? "breaking change";
 
     // Determine all used commit types and release major if "breaking change" found
     const usedCommitTypes: string[] = [];
     for (const commit of commits) {
-        if (commit.body.toLowerCase().includes("breaking change")) {
+        if (commit.body.toLowerCase().includes(breakingChangeTrigger)) {
             return ReleaseType.major;
         }
         const result = commit.message.match(conventionalCommitRegex);

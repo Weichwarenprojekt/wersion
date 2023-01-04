@@ -5,13 +5,11 @@
 
 import * as fse from "fs-extra";
 import { Version } from "../models/version";
+import { Config } from "./config.class";
 
-// TODO: Make independent from package.json format and use a matcher to extract and override version
-//  fields in different types of files like flutter version
-
-// TODO: Load from config
-const versionFile = "./package.json";
-const regex = /"version": "([0-9.]+)"/m;
+const versionFile = Config.getInstance().config.versionFile.name ?? "package.json";
+const regexFromConfig = Config.getInstance().config.versionFile.matcher ?? '"version": "([0-9.]+)"';
+const regex = new RegExp(regexFromConfig);
 
 /**
  * Check whether the version file exists
@@ -48,9 +46,12 @@ export async function getPackageVersion(): Promise<Version> {
 export async function setPackageVersion(version: Version) {
     checkVersionFileExists();
 
-    const versionFileContent = await fse.readFile(versionFile, "utf-8");
+    let versionFileContent = await fse.readFile(versionFile, "utf-8");
 
-    versionFileContent.replace(regex, version.toString());
+    const versionRegexResponse = regex.exec(versionFileContent);
+    const newVersionText = versionRegexResponse[0].replace(versionRegexResponse[1], version.toString());
+
+    versionFileContent = versionFileContent.replace(regex, newVersionText);
 
     await fse.writeFile(versionFile, versionFileContent);
 }

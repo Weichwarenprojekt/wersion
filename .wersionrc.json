@@ -1,0 +1,18 @@
+{
+  "versionFile": {
+    "name": "package.json",
+    "matcher": "\"version\": \"([0-9.]+)\""
+  },
+  "format": "{{major}}.{{minor}}.{{patch}}[[-{{pre-release}}]][[+{{build}}]]",
+  "commitTypes": {
+    "major": [],
+    "minor": ["feat"],
+    "patch": ["fix"]
+  },
+  "breakingChangeTrigger": "breaking change",
+  "changelogFile": {
+    "name": "CHANGELOG.md",
+    "absolute": false,
+    "path": ""
+  }
+}

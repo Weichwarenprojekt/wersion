@@ -1,8 +1,8 @@
-import { getPackageVersion, setPackageVersion } from "../lib/version-file";
+import { getPackageVersion, setPackageVersion } from "../lib";
 import { ReleaseType } from "../models/version";
-import { createVersionCommit, createVersionTag, getReleaseTypeForHistory } from "../lib/git";
+import { createVersionCommit, createVersionTag, getReleaseTypeForHistory } from "../lib";
 import chalk from "chalk";
-import { generateChangelog } from "../lib/changelog";
+import { generateChangelog } from "../lib";
 
 export class DefaultWorkflowClass {
     async run() {

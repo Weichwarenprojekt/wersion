@@ -6,9 +6,18 @@ import { DefaultLogFields } from "simple-git";
 import * as _ from "lodash";
 import { conventionalCommitRegex } from "./util";
 import * as fs from "node:fs";
+import { Config } from "./config.class";
 
-// TODO: Config
-const changelogFilePath = path.join(process.cwd(), "CHANGELOG.md");
+// Get changelog config from wersionrc
+const changelogFilename = Config.getInstance().config.changelogFile.name ?? "CHANGELOG.md";
+const changelogPath = Config.getInstance().config.changelogFile.path ?? "";
+const changelogAbsolute = Config.getInstance().config.changelogFile.absolute ?? false;
+
+// Build Changelog filepath
+let changelogFilePath = path.join(changelogPath, changelogFilename);
+if (!changelogAbsolute) {
+    changelogFilePath = path.join(process.cwd(), changelogFilePath);
+}
 
 /**
  * Helper interface to pass changelog content info
@@ -116,8 +125,6 @@ async function generateChangelogMarkdown(changelogContent: ChangelogContent) {
 function conventionalCommitToChangelogString(logFields: DefaultLogFields): string {
     const matchedConventionalCommit = logFields.message.match(conventionalCommitRegex);
     if (_.isNull(matchedConventionalCommit)) return;
-
-    console.log(matchedConventionalCommit);
 
     let [, , , scope, message] = matchedConventionalCommit;
     scope = scope ? `__${scope}:__ ` : "";
