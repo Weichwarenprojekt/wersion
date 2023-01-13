@@ -1,12 +1,15 @@
 {
   "name": "wersion",
-  "version": "0.1.0",
+  "version": "0.0.1",
+  "description": "A cli tool and lib to automatically versioning your projects.",
+  "keywords": ["version", "semver", "semantic", "release", "tagging", "cli", "CI", "CD"],
   "main": "dist/lib.js",
   "bin": {
     "cli": "dist/cli.js"
   },
   "repository": "https://github.com/Weichwarenprojekt/wersion.git",
-  "author": "Stefan Rink <stefan.rink@weichwarenprojekt.de>",
+  "author": "Weichwarenprojekt <info@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
+  "contributors": ["Stefan Rink <stefan.rink@weichwarenprojekt.de> (https://weichwarenprojekt.de/)"],
   "license": "MIT",
   "scripts": {
     "build": "webpack",
