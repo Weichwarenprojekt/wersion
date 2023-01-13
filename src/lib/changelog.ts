@@ -1,7 +1,6 @@
 import { getCommitsSinceTag } from "./git";
 import { Version } from "../models/version";
 import * as fse from "fs-extra";
-import * as path from "node:path";
 import { DefaultLogFields } from "simple-git";
 import * as _ from "lodash";
 import { conventionalCommitRegex } from "./util";
@@ -18,25 +17,13 @@ interface ChangelogContent {
     breakingChanges: DefaultLogFields[];
 }
 
+export const changelogFilePath = Config.getInstance().config.changelogFilePath ?? "./CHANGELOG.md";
+
 /**
  * Create changelog file if not exists
  */
 async function createChangelogFileIfNotExists() {
-    await fse.ensureFile(getChangelogFilePath());
-}
-
-export function getChangelogFilePath() {
-    // Get changelog config from wersionrc
-    const changelogFilename = Config.getInstance().config.changelogFile.name ?? "CHANGELOG.md";
-    const changelogPath = Config.getInstance().config.changelogFile.path ?? "";
-    const changelogAbsolute = Config.getInstance().config.changelogFile.absolute ?? false;
-
-    // Build Changelog filepath
-    let changelogFilePath = path.join(changelogPath, changelogFilename);
-    if (!changelogAbsolute) {
-        changelogFilePath = path.join(process.cwd(), changelogFilePath);
-    }
-    return changelogFilePath;
+    await fse.ensureFile(changelogFilePath);
 }
 
 /**
@@ -56,7 +43,7 @@ export async function generateChangelog(version: Version, oldVersionTag: string)
         commit.message.toLowerCase().includes("breaking change"),
     );
 
-    const markdown = await generateChangelogMarkdown(changelogContent);
+    const markdown = generateChangelogMarkdown(changelogContent);
 
     await updateChangelogFile(markdown);
 }
@@ -65,9 +52,9 @@ export async function generateChangelog(version: Version, oldVersionTag: string)
  * Append new changelog to the beginning of the changelog file
  * @param markdownToAppend
  */
-async function updateChangelogFile(markdownToAppend: string) {
-    const currentContent = fs.readFileSync(getChangelogFilePath());
-    const fileHandle = fs.openSync(getChangelogFilePath(), "w+"); // Truncate file
+function updateChangelogFile(markdownToAppend: string) {
+    const currentContent = fs.readFileSync(changelogFilePath);
+    const fileHandle = fs.openSync(changelogFilePath, "w+"); // Truncate file
     const appendBuffer = Buffer.from(markdownToAppend);
 
     // Write new content
@@ -76,7 +63,7 @@ async function updateChangelogFile(markdownToAppend: string) {
     fs.writeSync(fileHandle, currentContent, 0, currentContent.length, appendBuffer.length);
 }
 
-async function generateChangelogMarkdown(changelogContent: ChangelogContent) {
+function generateChangelogMarkdown(changelogContent: ChangelogContent) {
     const today = new Date();
     const date = `${today.getFullYear()}-${today.getMonth().toString().padStart(2, "0")}-${today
         .getDate()

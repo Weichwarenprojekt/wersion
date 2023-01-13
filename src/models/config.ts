@@ -1,6 +1,6 @@
 export interface ConfigModel {
     versionFile: {
-        name: string;
+        path: string;
         matcher: string;
     };
     format: string;
@@ -10,9 +10,5 @@ export interface ConfigModel {
         patch: string[];
     };
     breakingChangeTrigger: string;
-    changelogFile: {
-        name: string;
-        absolute: boolean;
-        path: string;
-    };
+    changelogFilePath: string;
 }

@@ -1,6 +1,6 @@
 {
   "versionFile": {
-    "name": "package.json",
+    "path": "./package.json",
     "matcher": "\"version\": \"([0-9.]+)\""
   },
   "commitTypes": {
@@ -9,9 +9,5 @@
     "patch": ["fix"]
   },
   "breakingChangeTrigger": "breaking change",
-  "changelogFile": {
-    "name": "CHANGELOG.md",
-    "absolute": false,
-    "path": ""
-  }
+  "changelogFilePath": "./CHANGELOG.md"
 }

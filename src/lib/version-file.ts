@@ -7,7 +7,7 @@ import * as fse from "fs-extra";
 import { Version } from "../models/version";
 import { Config } from "./config.class";
 
-const versionFile = Config.getInstance().config.versionFile.name ?? "package.json";
+const versionFile = Config.getInstance().config.versionFile.path ?? "./package.json";
 const regexFromConfig = Config.getInstance().config.versionFile.matcher ?? '"version": "([0-9.]+)"';
 const regex = new RegExp(regexFromConfig);
 
