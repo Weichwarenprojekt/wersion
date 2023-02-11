@@ -1,11 +1,12 @@
-import simpleGit, { DefaultLogFields } from "simple-git";
+import * as simpleGit from "simple-git";
 import { ReleaseType, Version } from "../models/version";
 import * as _ from "lodash";
 import { conventionalCommitRegex } from "./util";
 import { Config } from "./config.class";
-import { changelogFilePath } from "./changelog";
+import { getChangelogPath } from "./changelog";
 
-const git = simpleGit();
+// Import with * as simpleGit to be able to mock it away
+export const git = simpleGit.simpleGit();
 
 /**
  * Creates a version tag on the current HEAD
@@ -23,7 +24,7 @@ export async function createVersionTag(version: Version) {
  */
 export async function createVersionCommit(version: Version) {
     // Add the changelog file as it would be not added when newly created
-    await git.add(changelogFilePath);
+    await git.add(getChangelogPath());
 
     return git.commit("chore: release " + version.toString());
 }
@@ -33,10 +34,11 @@ export async function createVersionCommit(version: Version) {
  *
  * @param tag
  */
-export async function getCommitsSinceTag(tag: string): Promise<DefaultLogFields[]> {
+export async function getCommitsSinceTag(tag?: string): Promise<simpleGit.DefaultLogFields[]> {
     const from = tag ?? (await git.raw("rev-list", "--max-parents=0 HEAD"));
     const gitLog = await git.log({ from, to: "HEAD" });
-    if (!_.isEmpty(gitLog.all)) return _.clone(gitLog.all) as DefaultLogFields[];
+    if (!_.isEmpty(gitLog.all)) return _.clone(gitLog.all) as simpleGit.DefaultLogFields[];
+    return [];
 }
 
 /**

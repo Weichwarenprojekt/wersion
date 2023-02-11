@@ -3,19 +3,31 @@
  * can be extracted from and where the new version need to be set
  */
 
-import * as fse from "fs-extra";
 import { Version } from "../models/version";
 import { Config } from "./config.class";
+import fse from "fs-extra";
 
-const versionFile = Config.getInstance().config.versionFile.path ?? "./package.json";
-const regexFromConfig = Config.getInstance().config.versionFile.matcher ?? '"version": "([0-9.]+)"';
-const regex = new RegExp(regexFromConfig);
+/**
+ * Returns path to version file from config
+ */
+function getVersionFile() {
+    return Config.getInstance().config.versionFile?.path ?? "./package.json";
+}
+
+/**
+ * Returns the version regex from the config
+ * This regular expression is used to extract the version from the version file or to override it with the incremented one
+ */
+function getVersionRegex() {
+    const regexFromConfig = Config.getInstance().config.versionFile?.matcher ?? '"version": ?"([0-9.]+)"';
+    return new RegExp(regexFromConfig);
+}
 
 /**
  * Check whether the version file exists
  */
 function checkVersionFileExists() {
-    if (!fse.statSync(versionFile).isFile()) {
+    if (!fse.statSync(getVersionFile(), { throwIfNoEntry: false })?.isFile()) {
         throw new Error("No version file exists in the current directory");
     }
 }
@@ -24,13 +36,13 @@ function checkVersionFileExists() {
  * Extract the current package version from the version file
  */
 export async function getPackageVersion(): Promise<Version> {
-    checkVersionFileExists();
+    await checkVersionFileExists();
 
-    const versionFileContent = await fse.readFile(versionFile, "utf-8");
+    const versionFileContent = await fse.readFile(getVersionFile(), "utf-8");
 
     // TODO: Use line number to select version in file (edge case: version at end
     //  of package.json file and dependency with name version is installed)
-    const regexResponse = regex.exec(versionFileContent);
+    const regexResponse = getVersionRegex().exec(versionFileContent);
     if (!Array.isArray(regexResponse)) {
         throw new Error("Cannot find version in version file");
     }
@@ -44,14 +56,14 @@ export async function getPackageVersion(): Promise<Version> {
  * @param version
  */
 export async function setPackageVersion(version: Version) {
-    checkVersionFileExists();
+    await checkVersionFileExists();
 
-    let versionFileContent = await fse.readFile(versionFile, "utf-8");
+    let versionFileContent = await fse.readFile(getVersionFile(), "utf-8");
 
-    const versionRegexResponse = regex.exec(versionFileContent);
+    const versionRegexResponse = getVersionRegex().exec(versionFileContent);
     const newVersionText = versionRegexResponse[0].replace(versionRegexResponse[1], version.toString());
 
-    versionFileContent = versionFileContent.replace(regex, newVersionText);
+    versionFileContent = versionFileContent.replace(getVersionRegex(), newVersionText);
 
-    await fse.writeFile(versionFile, versionFileContent);
+    await fse.writeFile(getVersionFile(), versionFileContent);
 }

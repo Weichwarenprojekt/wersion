@@ -4,7 +4,7 @@ import * as fse from "fs-extra";
 import { DefaultLogFields } from "simple-git";
 import * as _ from "lodash";
 import { conventionalCommitRegex } from "./util";
-import * as fs from "node:fs";
+import fs from "node:fs";
 import { Config } from "./config.class";
 
 /**
@@ -17,13 +17,15 @@ interface ChangelogContent {
     breakingChanges: DefaultLogFields[];
 }
 
-export const changelogFilePath = Config.getInstance().config.changelogFilePath ?? "./CHANGELOG.md";
+export function getChangelogPath() {
+    return Config.getInstance().config.changelogFilePath ?? "./CHANGELOG.md";
+}
 
 /**
  * Create changelog file if not exists
  */
 async function createChangelogFileIfNotExists() {
-    await fse.ensureFile(changelogFilePath);
+    await fse.ensureFile(getChangelogPath());
 }
 
 /**
@@ -40,7 +42,7 @@ export async function generateChangelog(version: Version, oldVersionTag: string)
     changelogContent.features = commits.filter((commit) => commit.message.startsWith("feat"));
     changelogContent.bugfixes = commits.filter((commit) => commit.message.startsWith("fix"));
     changelogContent.breakingChanges = commits.filter((commit) =>
-        commit.message.toLowerCase().includes("breaking change"),
+        commit.body.toLowerCase().includes(Config.getInstance().config.breakingChangeTrigger),
     );
 
     const markdown = generateChangelogMarkdown(changelogContent);
@@ -53,8 +55,8 @@ export async function generateChangelog(version: Version, oldVersionTag: string)
  * @param markdownToAppend
  */
 function updateChangelogFile(markdownToAppend: string) {
-    const currentContent = fs.readFileSync(changelogFilePath);
-    const fileHandle = fs.openSync(changelogFilePath, "w+"); // Truncate file
+    const currentContent = fs.readFileSync(getChangelogPath());
+    const fileHandle = fs.openSync(getChangelogPath(), "w+"); // Truncate file
     const appendBuffer = Buffer.from(markdownToAppend);
 
     // Write new content

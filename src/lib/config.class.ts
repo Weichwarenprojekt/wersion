@@ -1,6 +1,6 @@
-import * as path from "node:path";
-import * as fse from "fs-extra";
+import path from "node:path";
 import { ConfigModel } from "../models/config";
+import fs from "fs";
 
 export const configFileName = ".wersionrc.json";
 
@@ -17,9 +17,9 @@ export class Config {
         this.loadConfigFile();
     }
 
-    private loadConfigFile() {
+    public loadConfigFile() {
         const configFilePath = path.resolve(process.cwd(), configFileName);
-        this.configStore = fse.readJsonSync(configFilePath);
+        this.configStore = JSON.parse(fs.readFileSync(configFilePath).toString());
     }
 
     get config(): Partial<ConfigModel> {
