@@ -1657,8 +1657,9 @@ __metadata:
     unionfs: ^4.4.0
     webpack: ^5.75.0
     webpack-cli: ^5.0.1
+    webpack-shebang-plugin: ^1.1.8
   bin:
-    cli: dist/cli.js
+    wersion: dist/wersion.js
   languageName: unknown
   linkType: soft
 
@@ -5930,6 +5931,13 @@ eslint@latest:
     clone-deep: ^4.0.1
     wildcard: ^2.0.0
   checksum: 88786ab91013f1bd2a683834ff381be81c245a4b0f63304a5103e90f6653f44dab496a0768287f8531761f8ad957d1f9f3ccb2cb55df0de1bd9ee343e079da26
+  languageName: node
+  linkType: hard
+
+"webpack-shebang-plugin@npm:^1.1.8":
+  version: 1.1.8
+  resolution: "webpack-shebang-plugin@npm:1.1.8"
+  checksum: cba48e294f1e0aaaf2ac3662b3595bc3bd129fa1b01eaa049847e91a5dc0a92d2f813ffe890834bb7b5ad7f26f8dcaaa12bc51fc52bf6e07b67277818c835e2a
   languageName: node
   linkType: hard
 

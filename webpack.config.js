@@ -1,10 +1,12 @@
 const path = require("node:path");
+const ShebangPlugin = require("webpack-shebang-plugin");
 
 module.exports = {
     target: "node",
     entry: {
-        cli: "./src/bin/cli.ts",
+        wersion: "./src/bin/cli.ts",
     },
+    plugins: [new ShebangPlugin()],
     module: {
         rules: [
             {
