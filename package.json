@@ -12,7 +12,6 @@
     "CI",
     "CD"
   ],
-  "main": "dist/lib.js",
   "bin": {
     "cli": "dist/cli.js"
   },

@@ -3,7 +3,6 @@ const path = require("node:path");
 module.exports = {
     target: "node",
     entry: {
-        lib: "./src/lib/index.ts",
         cli: "./src/bin/cli.ts",
     },
     module: {
