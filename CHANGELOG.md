@@ -1,3 +1,6 @@
+# 0.1.1 (2023-01-12)
+## Bug Fixes 
+- global execution and shebang (c75b7ba)
 # 0.1.0 (2023-01-12)
 ## Features 
 - add stashing to exclude staged changes from version commit (b809abf)
