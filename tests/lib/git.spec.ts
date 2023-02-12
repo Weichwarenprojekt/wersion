@@ -56,7 +56,7 @@ describe("git test", function () {
         it("should commit changes", async () => {
             await createVersionCommit(new Version("3.2.1"));
 
-            expect(gitMocked.add.mock.calls.length).toEqual(1);
+            expect(gitMocked.add.mock.calls.length).toEqual(2);
             expect(gitMocked.commit.mock.calls[0][0]).toEqual("chore: release 3.2.1");
         });
     });

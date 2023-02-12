@@ -4,6 +4,7 @@ import * as _ from "lodash";
 import { conventionalCommitRegex } from "./util";
 import { Config } from "./config.class";
 import { getChangelogPath } from "./changelog";
+import { getVersionFile } from "./version-file";
 
 // Import with * as simpleGit to be able to mock it away
 export const git = simpleGit.simpleGit();
@@ -25,6 +26,7 @@ export async function createVersionTag(version: Version) {
 export async function createVersionCommit(version: Version) {
     // Add the changelog file as it would be not added when newly created
     await git.add(getChangelogPath());
+    await git.add(getVersionFile());
 
     return git.commit("chore: release " + version.toString());
 }

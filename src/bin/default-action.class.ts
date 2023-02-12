@@ -32,6 +32,8 @@ export class DefaultAction {
             await createVersionTag(version);
 
             console.log("created git tag");
+        } catch (e) {
+            console.log(e);
         } finally {
             await git.reset(ResetMode.HARD);
             if (!stashRes.startsWith("No local changes to save")) await git.stash(["pop"]);

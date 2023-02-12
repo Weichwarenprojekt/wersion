@@ -10,7 +10,7 @@ import fse from "fs-extra";
 /**
  * Returns path to version file from config
  */
-function getVersionFile() {
+export function getVersionFile() {
     return Config.getInstance().config.versionFile?.path ?? "./package.json";
 }
 
