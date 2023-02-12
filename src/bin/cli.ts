@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { DefaultWorkflowClass } from "./default-workflow.class";
+import { DefaultAction } from "./default-action.class";
 
 const main = async () => {
     const packageJson = require("../../package.json");
@@ -12,7 +12,7 @@ const main = async () => {
 
     program.parse();
 
-    const workflow = new DefaultWorkflowClass();
+    const workflow = new DefaultAction();
     await workflow.run();
 };
 
