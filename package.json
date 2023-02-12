@@ -1,5 +1,5 @@
 {
-  "name": "wersion",
+  "name": "@weichwarenprojekt/wersion",
   "version": "0.0.1",
   "description": "A cli tool and lib to automatically versioning your projects.",
   "keywords": [

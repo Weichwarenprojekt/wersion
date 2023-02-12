@@ -1628,6 +1628,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@weichwarenprojekt/wersion@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@weichwarenprojekt/wersion@workspace:."
+  dependencies:
+    "@commitlint/cli": ^17.0.0
+    "@commitlint/config-conventional": ^17.0.0
+    "@types/fs-extra": ^9.0.13
+    "@types/jest": ^29.2.4
+    "@types/lodash": ^4.14.191
+    "@types/node": ^18.13.0
+    "@typescript-eslint/eslint-plugin": latest
+    "@typescript-eslint/parser": latest
+    chalk: ^5.2.0
+    commander: ^9.4.1
+    eslint: latest
+    fs-extra: ^11.1.0
+    husky: ^8.0.0
+    jest: ^29.3.1
+    lodash: ^4.17.21
+    memfs: ^3.4.13
+    prettier: ^2.8.1
+    semver: ^7.3.8
+    simple-git: ^3.15.1
+    ts-jest: ^29.0.3
+    ts-loader: ^9.4.2
+    typescript: ^4.9.4
+    unionfs: ^4.4.0
+    webpack: ^5.75.0
+    webpack-cli: ^5.0.1
+  bin:
+    cli: dist/cli.js
+  languageName: unknown
+  linkType: soft
+
 "@xtuc/ieee754@npm:^1.2.0":
   version: 1.2.0
   resolution: "@xtuc/ieee754@npm:1.2.0"
@@ -5942,40 +5976,6 @@ eslint@latest:
   checksum: 2bcc5f3c195f375944e8af2f00bf2feea39cb9fda5f763b0d1b00077f1c51783db25c94d3fae96a07dead9fa085e6ae7474417e5ab31719c9776ea5969ceb83a
   languageName: node
   linkType: hard
-
-"wersion@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "wersion@workspace:."
-  dependencies:
-    "@commitlint/cli": ^17.0.0
-    "@commitlint/config-conventional": ^17.0.0
-    "@types/fs-extra": ^9.0.13
-    "@types/jest": ^29.2.4
-    "@types/lodash": ^4.14.191
-    "@types/node": ^18.13.0
-    "@typescript-eslint/eslint-plugin": latest
-    "@typescript-eslint/parser": latest
-    chalk: ^5.2.0
-    commander: ^9.4.1
-    eslint: latest
-    fs-extra: ^11.1.0
-    husky: ^8.0.0
-    jest: ^29.3.1
-    lodash: ^4.17.21
-    memfs: ^3.4.13
-    prettier: ^2.8.1
-    semver: ^7.3.8
-    simple-git: ^3.15.1
-    ts-jest: ^29.0.3
-    ts-loader: ^9.4.2
-    typescript: ^4.9.4
-    unionfs: ^4.4.0
-    webpack: ^5.75.0
-    webpack-cli: ^5.0.1
-  bin:
-    cli: dist/cli.js
-  languageName: unknown
-  linkType: soft
 
 "which@npm:^2.0.1, which@npm:^2.0.2":
   version: 2.0.2
