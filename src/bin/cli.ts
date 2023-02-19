@@ -14,8 +14,12 @@ const main = async () => {
 
     program.parse();
 
-    const workflow = new DefaultAction();
-    await workflow.run();
+    try {
+        const workflow = new DefaultAction();
+        await workflow.run();
+    } catch (e) {
+        console.error(e.message);
+    }
 };
 
 main().then(() => process.exit());

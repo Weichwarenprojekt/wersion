@@ -45,15 +45,9 @@ export class DefaultAction {
             const tagName = await createVersionTag(version);
 
             console.log(`created git tag ${chalk.cyan(tagName)}`);
-        } catch (e) {
-            console.error(e);
-        }
-
-        try {
+        } finally {
             await git.reset(ResetMode.HARD);
             if (stashRes && !stashRes.startsWith("No local changes to save")) await git.stash(["pop"]);
-        } catch (e) {
-            console.error(e);
         }
     }
 }
