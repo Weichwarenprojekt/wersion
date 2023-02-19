@@ -1,5 +1,6 @@
 const path = require("node:path");
 const ShebangPlugin = require("webpack-shebang-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
     target: "node",
@@ -15,6 +16,9 @@ module.exports = {
                 exclude: /node_modules/,
             },
         ],
+    },
+    optimization: {
+        minimizer: [new TerserPlugin({ extractComments: false })],
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
