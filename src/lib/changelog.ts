@@ -47,7 +47,7 @@ export async function generateChangelog(version: Version, oldVersionTag: string)
 
     const markdown = generateChangelogMarkdown(changelogContent);
 
-    await updateChangelogFile(markdown);
+    updateChangelogFile(markdown);
 }
 
 /**
