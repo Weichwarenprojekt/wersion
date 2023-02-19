@@ -1,3 +1,7 @@
+# 0.1.2 (2023-01-19)
+## Bug Fixes 
+- changelog getting truncated sometimes (9828ac1)
+- cli overhaul (9b3d43f)
 # 0.1.1 (2023-01-12)
 ## Bug Fixes 
 - global execution and shebang (c75b7ba)
