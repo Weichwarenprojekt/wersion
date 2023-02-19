@@ -5,6 +5,7 @@ import { createVersionCommit, createVersionTag, getReleaseTypeForHistory, git } 
 import { getPackageVersion, setPackageVersion } from "../lib/version-file";
 import { generateChangelog } from "../lib/changelog";
 import { ResetMode } from "simple-git";
+import inquirer from "inquirer";
 
 export class DefaultAction {
     async run(cliOptions: CliOptions = {}) {
@@ -12,31 +13,47 @@ export class DefaultAction {
 
         const oldVersionTag = version.toString();
 
-        const stashRes = await git.stash();
+        let stashRes: string = undefined;
+
+        if ((await git.status()).isClean()) {
+            const res = await inquirer.prompt({
+                name: "unstashed_changes",
+                type: "confirm",
+                message:
+                    "Your project has uncommitted/unstashed changes. Wersion will temporarily stash your changes. Continue?",
+            });
+
+            if (!res.unstashed_changes) process.exit();
+            stashRes = await git.stash();
+        }
 
         try {
             const releaseType: ReleaseType = await getReleaseTypeForHistory(version);
 
             await version.increase(cliOptions.releaseAs ?? releaseType);
 
-            console.log("release new version " + chalk.cyan(version.toString()));
+            console.log(`release new version ${chalk.cyan(version.toString())}`);
 
             await setPackageVersion(version);
 
             await generateChangelog(version, oldVersionTag);
 
-            await createVersionCommit(version);
+            const createCommitResponse = await createVersionCommit(version);
 
-            console.log("created release commit");
+            console.log(`created release commit ${chalk.cyan(createCommitResponse.commit)}`);
 
-            await createVersionTag(version);
+            const tagName = await createVersionTag(version);
 
-            console.log("created git tag");
+            console.log(`created git tag ${chalk.cyan(tagName)}`);
         } catch (e) {
-            console.log(e);
-        } finally {
+            console.error(e);
+        }
+
+        try {
             await git.reset(ResetMode.HARD);
-            if (!stashRes.startsWith("No local changes to save")) await git.stash(["pop"]);
+            if (stashRes && !stashRes.startsWith("No local changes to save")) await git.stash(["pop"]);
+        } catch (e) {
+            console.error(e);
         }
     }
 }

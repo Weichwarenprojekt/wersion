@@ -19,6 +19,7 @@ export class Config {
 
     public loadConfigFile() {
         const configFilePath = path.resolve(process.cwd(), configFileName);
+        // FIXME: Default Config?
         this.configStore = JSON.parse(fs.readFileSync(configFilePath).toString());
     }
 

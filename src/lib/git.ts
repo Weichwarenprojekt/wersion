@@ -14,8 +14,8 @@ export const git = simpleGit.simpleGit();
  *
  * @param version
  */
-export async function createVersionTag(version: Version) {
-    return git.addAnnotatedTag(version.toString(), "");
+export async function createVersionTag(version: Version): Promise<string> {
+    return (await git.addAnnotatedTag(version.toString(), "")).name;
 }
 
 /**

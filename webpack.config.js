@@ -7,6 +7,7 @@ module.exports = {
     entry: {
         wersion: "./src/bin/cli.ts",
     },
+    devtool: "inline-source-map",
     plugins: [new ShebangPlugin()],
     module: {
         rules: [
