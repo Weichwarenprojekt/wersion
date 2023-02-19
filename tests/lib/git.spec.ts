@@ -48,7 +48,7 @@ describe("git test", function () {
         it("should add an annotated tag", async () => {
             const res = await createVersionTag(new Version("1.2.3"));
 
-            expect(res).toEqual({ name: "1.2.3" });
+            expect(res).toEqual("1.2.3");
         });
     });
 
