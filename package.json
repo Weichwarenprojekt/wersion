@@ -23,6 +23,7 @@
     "build": "webpack",
     "prepare": "husky install",
     "test": "jest",
+    "testCoverage": "jest --coverage",
     "watch": "webpack --mode development && webpack watch --mode development"
   },
   "devDependencies": {

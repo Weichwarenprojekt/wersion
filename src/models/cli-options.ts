@@ -5,4 +5,5 @@ import { ReleaseType } from "./version";
  */
 export interface CliOptions {
     releaseAs?: ReleaseType;
+    dryRun?: boolean;
 }

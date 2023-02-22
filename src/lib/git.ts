@@ -15,6 +15,9 @@ export const git = simpleGit.simpleGit();
  * @param version
  */
 export async function createVersionTag(version: Version): Promise<string> {
+    // DryRun
+    if (Config.getInstance().config.dryRun) return version.toString();
+
     return (await git.addAnnotatedTag(version.toString(), "")).name;
 }
 
@@ -25,10 +28,17 @@ export async function createVersionTag(version: Version): Promise<string> {
  */
 export async function createVersionCommit(version: Version) {
     // Add the changelog file as it would be not added when newly created
-    await git.add(getChangelogPath());
-    await git.add(getVersionFile());
+    if (!Config.getInstance().config.dryRun) {
+        await git.add(getChangelogPath());
+        await git.add(getVersionFile());
+    }
 
-    return git.commit("chore: release " + version.toString());
+    const commitMessage = `chore: release ${version.toString()}`;
+
+    // DryRun
+    if (!Config.getInstance().config.dryRun) await git.commit(commitMessage);
+
+    return commitMessage;
 }
 
 /**

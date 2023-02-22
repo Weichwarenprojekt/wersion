@@ -10,13 +10,20 @@ const main = async () => {
 
     program.name(packageJson.name).version(packageJson.version).description(packageJson.description);
 
-    program.option("--releaseAs <releaseType>");
+    program.option(
+        "--releaseAs <releaseType>",
+        "Set the release type manually. Creates a new tag and release commit of given type.",
+    );
+    program.option(
+        "--dry-run",
+        "Flag for testing the outcome of wersion. This will cause in not affecting any file or your git history.",
+    );
 
     program.parse();
 
     try {
         const workflow = new DefaultAction();
-        await workflow.run();
+        await workflow.run(program.opts());
     } catch (e) {
         console.error(e.message);
     }

@@ -25,6 +25,7 @@ const filesJson = {
 describe("version-file test", function () {
     beforeEach(() => {
         vol.fromJSON(filesJson);
+        Config.getInstance().loadConfigFile();
     });
 
     afterEach(() => {
@@ -34,8 +35,6 @@ describe("version-file test", function () {
 
     describe("getPackageVersion", function () {
         it("should return the package version from the version file", async () => {
-            Config.getInstance().loadConfigFile();
-
             const version = await getPackageVersion();
             expect(version.toString()).toEqual("0.1.0");
         });
@@ -75,11 +74,18 @@ describe("version-file test", function () {
 
     describe("setPackageVersion", function () {
         it("should set the new version", async () => {
-            Config.getInstance().loadConfigFile();
             await setPackageVersion(new Version("0.1.10"));
 
             const versionFileContent = JSON.parse(fs.readFileSync("package.json").toString());
             expect(versionFileContent.version).toEqual("0.1.10");
+        });
+
+        it("should do no changes with dry-run", async () => {
+            Config.getInstance().set({ dryRun: true });
+            await setPackageVersion(new Version("0.1.10"));
+
+            const versionFileContent = JSON.parse(fs.readFileSync("package.json").toString());
+            expect(versionFileContent.version).toEqual("0.1.0");
         });
 
         it("should throw whether the version file does not exist", async () => {

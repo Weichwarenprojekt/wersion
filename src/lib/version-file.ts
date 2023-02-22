@@ -3,9 +3,9 @@
  * can be extracted from and where the new version need to be set
  */
 
+import fse from "fs-extra";
 import { Version } from "../models/version";
 import { Config } from "./config.class";
-import fse from "fs-extra";
 
 /**
  * Returns path to version file from config
@@ -65,5 +65,5 @@ export async function setPackageVersion(version: Version) {
 
     versionFileContent = versionFileContent.replace(getVersionRegex(), newVersionText);
 
-    await fse.writeFile(getVersionFile(), versionFileContent);
+    if (!Config.getInstance().config.dryRun) await fse.writeFile(getVersionFile(), versionFileContent);
 }

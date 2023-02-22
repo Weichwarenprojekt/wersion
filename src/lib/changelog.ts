@@ -25,7 +25,7 @@ export function getChangelogPath() {
  * Create changelog file if not exists
  */
 async function createChangelogFileIfNotExists() {
-    await fse.ensureFile(getChangelogPath());
+    if (!Config.getInstance().config.dryRun) await fse.ensureFile(getChangelogPath());
 }
 
 /**
@@ -55,6 +55,9 @@ export async function generateChangelog(version: Version, oldVersionTag: string)
  * @param markdownToAppend
  */
 function updateChangelogFile(markdownToAppend: string) {
+    // DryRun
+    if (Config.getInstance().config.dryRun) return;
+
     const currentContent = fs.readFileSync(getChangelogPath());
     const fileHandle = fs.openSync(getChangelogPath(), "w+"); // Truncate file
     const appendBuffer = Buffer.from(markdownToAppend);

@@ -2,6 +2,7 @@ import { fs, vol } from "memfs";
 import { generateChangelog } from "../../src/lib/changelog";
 import { Version } from "../../src/models/version";
 import * as git from "../../src/lib/git";
+import { Config } from "../../src/lib/config.class";
 
 jest.mock("node:fs", () => ({ ...fs }));
 jest.mock("../../src/lib/git");
@@ -78,6 +79,37 @@ describe("changelog test", () => {
                     "## BREAKING CHANGES \n" +
                     "- ",
             );
+        });
+
+        it("should not create any file with dry-run", async () => {
+            vol.fromJSON(files);
+
+            Config.getInstance().set({ dryRun: true });
+
+            gitMocked.getCommitsSinceTag.mockResolvedValue([
+                {
+                    hash: "dsfjkhsdkjfhkjl",
+                    date: "1.1.1990",
+                    message: "feat(): my commit",
+                    refs: "sghlgflkd",
+                    body: "breaking change",
+                    author_name: "John Doe",
+                    author_email: "dsjksdfj@sdkfjdsk.com",
+                },
+                {
+                    hash: "dsfjkhsdkjfhkjl",
+                    date: "1.1.1990",
+                    message: "fix(): remove bug",
+                    refs: "sghlgflkd",
+                    body: "gg",
+                    author_name: "John Doe",
+                    author_email: "dsjksdfj@sdkfjdsk.com",
+                },
+            ]);
+
+            await generateChangelog(new Version("1.0.0"), "0.3.2");
+
+            expect(fs.readFileSync("./CHANGELOG.md").toString()).toEqual("");
         });
     });
 });

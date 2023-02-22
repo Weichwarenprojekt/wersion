@@ -8,6 +8,7 @@ import {
 } from "../../src/lib/git";
 import * as fse from "fs-extra";
 import { ConfigModel } from "../../src/models/config";
+import { Config } from "../../src/lib/config.class";
 
 jest.mock("simple-git", () => ({
     simpleGit: jest.fn().mockImplementation(() => ({
@@ -40,6 +41,10 @@ const fseMocked = jest.mocked(fse);
 const gitMocked = jest.mocked(git);
 
 describe("git test", function () {
+    beforeEach(() => {
+        Config.getInstance().loadConfigFile();
+    });
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -50,6 +55,14 @@ describe("git test", function () {
 
             expect(res).toEqual("1.2.3");
         });
+
+        it("should create no tag with dry-run", async () => {
+            Config.getInstance().set({ dryRun: true });
+            const res = await createVersionTag(new Version("1.2.3"));
+
+            expect(gitMocked.addAnnotatedTag.mock.calls.length).toEqual(0);
+            expect(res).toEqual("1.2.3");
+        });
     });
 
     describe("createVersionCommit", function () {
@@ -58,6 +71,14 @@ describe("git test", function () {
 
             expect(gitMocked.add.mock.calls.length).toEqual(2);
             expect(gitMocked.commit.mock.calls[0][0]).toEqual("chore: release 3.2.1");
+        });
+
+        it("should create no commit with dry-run", async () => {
+            Config.getInstance().set({ dryRun: true });
+            await createVersionCommit(new Version("3.2.1"));
+
+            expect(gitMocked.add.mock.calls.length).toEqual(0);
+            expect(gitMocked.commit.mock.calls.length).toEqual(0);
         });
     });
 
