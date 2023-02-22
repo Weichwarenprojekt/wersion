@@ -1,3 +1,8 @@
+# 0.2.0 (2023-01-22)
+## Features 
+- add dry-run cli option (4c1043f)
+## Bug Fixes 
+- don't throw whether no config file is found (e4810cb)
 # 0.1.2 (2023-01-19)
 ## Bug Fixes 
 - changelog getting truncated sometimes (9828ac1)
