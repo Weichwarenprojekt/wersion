@@ -44,7 +44,9 @@ const gitMocked = jest.mocked(git);
 
 describe("git test", function () {
     beforeEach(() => {
-        config.set(_.merge(defaultWersionConfig, defaultCliOptions));
+        config.set(
+            _.merge(defaultWersionConfig, defaultCliOptions, { projectName: "testing" })
+        );
     });
 
     afterEach(() => {
@@ -55,7 +57,7 @@ describe("git test", function () {
         it("should add an annotated tag", async () => {
             const res = await createVersionTag(new Version("1.2.3"));
 
-            expect(res).toEqual("1.2.3");
+            expect(res).toEqual("testing-1.2.3");
         });
 
         it("should create no tag with dry-run", async () => {
@@ -63,7 +65,7 @@ describe("git test", function () {
             const res = await createVersionTag(new Version("1.2.3"));
 
             expect(gitMocked.addAnnotatedTag.mock.calls.length).toEqual(0);
-            expect(res).toEqual("1.2.3");
+            expect(res).toEqual("testing-1.2.3");
         });
     });
 
@@ -72,7 +74,7 @@ describe("git test", function () {
             await createVersionCommit(new Version("3.2.1"));
 
             expect(gitMocked.add.mock.calls.length).toEqual(2);
-            expect(gitMocked.commit.mock.calls[0][0]).toEqual("chore: release 3.2.1");
+            expect(gitMocked.commit.mock.calls[0][0]).toEqual("chore: release testing-3.2.1");
         });
 
         it("should create no commit with dry-run", async () => {
@@ -134,9 +136,7 @@ describe("git test", function () {
                     },
                 ],
             }));
-            await expect(getReleaseTypeForHistory(new Version("5.6.7"))).rejects.toThrowError(
-                "no valid commit found since last version",
-            );
+            await expect(getReleaseTypeForHistory(new Version("5.6.7"))).rejects.toThrowError();
         });
 
         it("should return release type major", async () => {

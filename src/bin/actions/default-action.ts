@@ -1,24 +1,22 @@
-import { ReleaseType } from "../lib/version";
+import { ReleaseType } from "../../lib/version";
 import chalk from "chalk";
-import { createVersionCommit, createVersionTag, getReleaseTypeForHistory, git } from "../lib/git";
-import { getPackageVersion, setPackageVersion } from "../lib/version-file";
-import { generateChangelog } from "../lib/changelog";
+import { createVersionCommit, createVersionTag, getReleaseTypeForHistory, getTagPrefix, git } from "../../lib/git";
+import { getPackageVersion, setPackageVersion } from "../../lib/version-file";
+import { generateChangelog } from "../../lib/changelog";
 import { ResetMode } from "simple-git";
 import inquirer from "inquirer";
-import { config } from "../lib/config";
+import { config } from "../../lib/config";
+import { ActionInterface } from "./action.interface";
 
-/**
- * The default action that is executed within wersion
- */
-export class DefaultAction {
+export class DefaultAction implements ActionInterface {
     async run() {
         const version = await getPackageVersion();
 
-        const oldVersionTag = version.toString();
+        const oldVersionTag = getTagPrefix() + version.toString();
 
         let stashRes = "";
 
-        if ((await git.status()).isClean() && !config.config.dryRun) {
+        if (!(await git.status()).isClean() && !config.config.dryRun) {
             const res = await inquirer.prompt({
                 name: "unstashed_changes",
                 type: "confirm",
