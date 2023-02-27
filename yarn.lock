@@ -1576,6 +1576,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@weichwarenprojekt/configuration@npm:^0.1.4":
+  version: 0.1.4
+  resolution: "@weichwarenprojekt/configuration@npm:0.1.4"
+  peerDependencies:
+    tslib: 2.4.1
+  checksum: c233982b08ca8096c57bf4a6e5ea579fc024385e64f5a36eb319fd65bf2f54d7ed8f4437d8334b0e6fd4378ed063c9e7830c7e8ff99ad6c3a8b3fcbd44b6cbfd
+  languageName: node
+  linkType: hard
+
 "@weichwarenprojekt/wersion@workspace:.":
   version: 0.0.0-use.local
   resolution: "@weichwarenprojekt/wersion@workspace:."
@@ -1589,6 +1598,7 @@ __metadata:
     "@types/node": ^18.13.0
     "@typescript-eslint/eslint-plugin": latest
     "@typescript-eslint/parser": latest
+    "@weichwarenprojekt/configuration": ^0.1.4
     chalk: ^5.2.0
     commander: ^9.4.1
     esbuild: ^0.17.10

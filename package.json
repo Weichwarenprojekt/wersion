@@ -39,6 +39,7 @@
         "@types/node": "^18.13.0",
         "@typescript-eslint/eslint-plugin": "latest",
         "@typescript-eslint/parser": "latest",
+        "@weichwarenprojekt/configuration": "^0.1.4",
         "esbuild": "^0.17.10",
         "eslint": "latest",
         "husky": "^8.0.0",
