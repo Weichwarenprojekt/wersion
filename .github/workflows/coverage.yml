@@ -1,0 +1,20 @@
+name: Coverage
+on:
+    pull_request:
+        branches:
+            - main
+jobs:
+    coverage:
+        runs-on: ubuntu-latest
+        with:
+            package-manager: yarn
+        steps:
+            # Install dependencies and bundle the software
+            - name: Initialize
+              run: |
+                  yarn
+                  yarn build
+
+            # Run the coverage reporter
+            - uses: actions/checkout@v3
+            - uses: ArtiomTr/jest-coverage-report-action@v2

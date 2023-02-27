@@ -21,12 +21,12 @@
     "license": "MIT",
     "type": "module",
     "scripts": {
-        "build": "webpack",
+        "build": "node esbuild.js",
         "postinstall": "husky install",
         "prepack": "pinst --disable",
         "postpack": "pinst --enable",
-        "test": "jest",
-        "testCoverage": "jest --coverage",
+        "test": "yarn build && jest",
+        "coverage": "yarn build && jest --coverage",
         "watch": "webpack --mode development && webpack watch --mode development"
     },
     "devDependencies": {
