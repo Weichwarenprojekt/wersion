@@ -21,7 +21,9 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack",
-    "prepare": "husky install",
+    "postinstall": "husky install",
+    "prepack": "pinst --disable",
+    "postpack": "pinst --enable",
     "test": "jest",
     "testCoverage": "jest --coverage",
     "watch": "webpack --mode development && webpack watch --mode development"
