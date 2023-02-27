@@ -1,6 +1,6 @@
 <div align="center">
     <br>
-    <img src="logo.png" width="250" alt=""/>
+    <img src="assets/logo.png" width="250" alt=""/>
 </div>
 
 # Quickstart
