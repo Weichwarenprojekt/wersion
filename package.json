@@ -22,12 +22,12 @@
     "type": "module",
     "scripts": {
         "build": "node esbuild.js",
+        "cli": "yarn build && node dist/wersion.js",
         "postinstall": "husky install",
         "prepack": "pinst --disable",
         "postpack": "pinst --enable",
         "test": "yarn build && jest",
-        "coverage": "yarn build && jest --coverage",
-        "watch": "webpack --mode development && webpack watch --mode development"
+        "coverage": "yarn build && jest --coverage"
     },
     "devDependencies": {
         "@commitlint/cli": "^17.0.0",
