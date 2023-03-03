@@ -1,4 +1,4 @@
-import { ReleaseType, Version } from "../../src/models/version";
+import { ReleaseType, Version } from "../../src/lib/version";
 import {
     createVersionCommit,
     createVersionTag,
@@ -7,8 +7,10 @@ import {
     git,
 } from "../../src/lib/git";
 import * as fse from "fs-extra";
-import { ConfigModel } from "../../src/models/config";
-import { Config } from "../../src/lib/config.class";
+import { defaultWersionConfig, WersionConfigModel } from "../../src/models/wersion-config.model";
+import { config } from "../../src/lib/config";
+import _ from "lodash";
+import { defaultCliOptions } from "../../src/models/cli-options.model";
 
 jest.mock("simple-git", () => ({
     simpleGit: jest.fn().mockImplementation(() => ({
@@ -42,7 +44,7 @@ const gitMocked = jest.mocked(git);
 
 describe("git test", function () {
     beforeEach(() => {
-        Config.getInstance().loadConfigFile();
+        config.set(_.merge(defaultWersionConfig, defaultCliOptions));
     });
 
     afterEach(() => {
@@ -57,7 +59,7 @@ describe("git test", function () {
         });
 
         it("should create no tag with dry-run", async () => {
-            Config.getInstance().set({ dryRun: true });
+            config.set({ dryRun: true });
             const res = await createVersionTag(new Version("1.2.3"));
 
             expect(gitMocked.addAnnotatedTag.mock.calls.length).toEqual(0);
@@ -74,7 +76,7 @@ describe("git test", function () {
         });
 
         it("should create no commit with dry-run", async () => {
-            Config.getInstance().set({ dryRun: true });
+            config.set({ dryRun: true });
             await createVersionCommit(new Version("3.2.1"));
 
             expect(gitMocked.add.mock.calls.length).toEqual(0);
@@ -107,7 +109,7 @@ describe("git test", function () {
             fseMocked.readJsonSync.mockReturnValue({
                 versionFile: "version.json",
                 changelogFilePath: "CHANGELOG.txt",
-            } as unknown as ConfigModel);
+            } as unknown as WersionConfigModel);
         });
 
         it("should throw as no commit was done since last version tag", async () => {

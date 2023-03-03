@@ -1,11 +1,11 @@
 import { getCommitsSinceTag } from "./git";
-import { Version } from "../models/version";
+import { Version } from "./version";
 import * as fse from "fs-extra";
 import { DefaultLogFields } from "simple-git";
-import * as _ from "lodash";
+import _ from "lodash";
 import { conventionalCommitRegex } from "./util";
 import fs from "node:fs";
-import { Config } from "./config.class";
+import { config } from "./config";
 
 /**
  * Helper interface to pass changelog content info
@@ -18,14 +18,14 @@ interface ChangelogContent {
 }
 
 export function getChangelogPath() {
-    return Config.getInstance().config.changelogFilePath ?? "./CHANGELOG.md";
+    return config.config.changelogFilePath;
 }
 
 /**
  * Create changelog file if not exists
  */
 async function createChangelogFileIfNotExists() {
-    if (!Config.getInstance().config.dryRun) await fse.ensureFile(getChangelogPath());
+    if (!config.config.dryRun) await fse.ensureFile(getChangelogPath());
 }
 
 /**
@@ -42,7 +42,7 @@ export async function generateChangelog(version: Version, oldVersionTag: string)
     changelogContent.features = commits.filter((commit) => commit.message.startsWith("feat"));
     changelogContent.bugfixes = commits.filter((commit) => commit.message.startsWith("fix"));
     changelogContent.breakingChanges = commits.filter((commit) =>
-        commit.body.toLowerCase().includes(Config.getInstance().config.breakingChangeTrigger),
+        commit.body.toLowerCase().includes(config.config.breakingChangeTrigger),
     );
 
     const markdown = generateChangelogMarkdown(changelogContent);
@@ -56,7 +56,7 @@ export async function generateChangelog(version: Version, oldVersionTag: string)
  */
 function updateChangelogFile(markdownToAppend: string) {
     // DryRun
-    if (Config.getInstance().config.dryRun) return;
+    if (config.config.dryRun) return;
 
     const currentContent = fs.readFileSync(getChangelogPath());
     const fileHandle = fs.openSync(getChangelogPath(), "w+"); // Truncate file
@@ -117,7 +117,7 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
  */
 function conventionalCommitToChangelogString(logFields: DefaultLogFields): string {
     const matchedConventionalCommit = logFields.message.match(conventionalCommitRegex);
-    if (_.isNull(matchedConventionalCommit)) return;
+    if (_.isNull(matchedConventionalCommit)) return "";
 
     let [, , , scope, message] = matchedConventionalCommit;
     scope = scope ? `__${scope}:__ ` : "";

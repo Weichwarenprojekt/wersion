@@ -1,24 +1,24 @@
-import { ReleaseType } from "../models/version";
+import { ReleaseType } from "../lib/version";
 import chalk from "chalk";
-import { CliOptions } from "../models/cli-options";
 import { createVersionCommit, createVersionTag, getReleaseTypeForHistory, git } from "../lib/git";
 import { getPackageVersion, setPackageVersion } from "../lib/version-file";
 import { generateChangelog } from "../lib/changelog";
 import { ResetMode } from "simple-git";
 import inquirer from "inquirer";
-import { Config } from "../lib/config.class";
+import { config } from "../lib/config";
 
+/**
+ * The default action that is executed within wersion
+ */
 export class DefaultAction {
-    async run(cliOptions: CliOptions = {}) {
-        Config.getInstance().set(cliOptions);
-
+    async run() {
         const version = await getPackageVersion();
 
         const oldVersionTag = version.toString();
 
-        let stashRes: string = undefined;
+        let stashRes = "";
 
-        if ((await git.status()).isClean() && !Config.getInstance().config.dryRun) {
+        if ((await git.status()).isClean() && !config.config.dryRun) {
             const res = await inquirer.prompt({
                 name: "unstashed_changes",
                 type: "confirm",
@@ -33,7 +33,7 @@ export class DefaultAction {
         try {
             const releaseType: ReleaseType = await getReleaseTypeForHistory(version);
 
-            await version.increase(cliOptions.releaseAs ?? releaseType);
+            await version.increase(config.config.releaseAs ?? releaseType);
 
             console.log(`release new version ${chalk.cyan(version.toString())}`);
 
@@ -49,7 +49,7 @@ export class DefaultAction {
 
             console.log(`created git tag ${chalk.cyan(tagName)}`);
         } finally {
-            if (!Config.getInstance().config.dryRun) {
+            if (!config.config.dryRun) {
                 await git.reset(ResetMode.HARD);
                 if (stashRes && !stashRes.startsWith("No local changes to save")) await git.stash(["pop"]);
             }

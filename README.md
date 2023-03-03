@@ -41,20 +41,22 @@ For an example checkout the CHANGELOG.md of wersion itself.
 Configure your project with a .wersionrc.json file on top level. \
 Default configuration:
 
-```json
-{
-    "versionFile": {
-        "path": "./package.json",
-        "matcher": "\"version\": \"([0-9.]+)\""
+```ts
+import { WersionConfigModel } from "@weichwarenprojekt/wersion";
+
+export const configuration: Partial<WersionConfigModel> = {
+    versionFile: {
+        path: "./package.json",
+        matcher: '"version": ?"([0-9.]+)"',
     },
-    "commitTypes": {
-        "major": [],
-        "minor": ["feat"],
-        "patch": ["fix"]
+    commitTypes: {
+        major: [],
+        minor: ["feat"],
+        patch: ["fix"],
     },
-    "breakingChangeTrigger": "breaking change",
-    "changelogFilePath": "./CHANGELOG.md"
-}
+    breakingChangeTrigger: "breaking change",
+    changelogFilePath: "./CHANGELOG.md",
+};
 ```
 
 | Config                |         | Description                                                                                                |

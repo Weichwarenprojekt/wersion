@@ -1585,6 +1585,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@weichwarenprojekt/ts-importer@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "@weichwarenprojekt/ts-importer@npm:0.1.5"
+  dependencies:
+    typescript: ^4.9.5
+  checksum: ccc5889b2d39ecb5d353966016a419301ff06a18a3066bfd47b2f7ada32c30e1d9f73927e7e8f79746aadd4d9aa8ca8005dcfecffdfc771206f1a6748fcdfb3f
+  languageName: node
+  linkType: hard
+
 "@weichwarenprojekt/wersion@workspace:.":
   version: 0.0.0-use.local
   resolution: "@weichwarenprojekt/wersion@workspace:."
@@ -1599,6 +1608,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": latest
     "@typescript-eslint/parser": latest
     "@weichwarenprojekt/configuration": ^0.1.4
+    "@weichwarenprojekt/ts-importer": ^0.1.5
     chalk: ^5.2.0
     commander: ^9.4.1
     esbuild: ^0.17.10
@@ -5910,7 +5920,7 @@ eslint@latest:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.4, typescript@npm:^4.9.4":
+"typescript@npm:^4.6.4, typescript@npm:^4.9.4, typescript@npm:^4.9.5":
   version: 4.9.5
   resolution: "typescript@npm:4.9.5"
   bin:
@@ -5920,7 +5930,7 @@ eslint@latest:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.9.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.9.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.9.5#~builtin<compat/typescript>":
   version: 4.9.5
   resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=d73830"
   bin:
