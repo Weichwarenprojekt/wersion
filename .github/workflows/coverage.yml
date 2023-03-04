@@ -6,15 +6,20 @@ on:
 jobs:
     coverage:
         runs-on: ubuntu-latest
-        with:
-            package-manager: yarn
         steps:
+            # Install NodeJS
+            - name: Install NodeJS
+              uses: actions/setup-node@v1
+              with:
+                  node-version: "18.13.0"
+
+            # Run the coverage reporter
+            - uses: actions/checkout@v3
+
             # Install dependencies and bundle the software
             - name: Initialize
               run: |
                   yarn
                   yarn build
 
-            # Run the coverage reporter
-            - uses: actions/checkout@v3
             - uses: ArtiomTr/jest-coverage-report-action@v2
