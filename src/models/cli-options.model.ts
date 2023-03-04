@@ -9,7 +9,7 @@ export interface CliOptionsModel {
     /** If true, wersion will not make any git changes. Like that you can test the outcome of wersion. */
     dryRun?: boolean;
     /** Set the release type manually. Creates a new tag and release commit of given type. */
-    releaseAs?: ReleaseType;
+    releaseAs?: ReleaseType | null;
 }
 
 /**
