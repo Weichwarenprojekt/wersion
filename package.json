@@ -25,8 +25,8 @@
         "build": "node esbuild.js && tsc --emitDeclarationOnly",
         "cli": "yarn build && node dist/wersion.js",
         "postinstall": "husky install",
-        "prepack": "pinst --disable",
-        "postpack": "pinst --enable",
+        "prepack": "npx pinst --disable",
+        "postpack": "npx pinst --enable",
         "test": "yarn build && jest",
         "coverage": "yarn build && jest --coverage"
     },
