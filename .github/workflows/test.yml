@@ -1,0 +1,23 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - name: Checkout Repository
+              uses: actions/checkout@v3
+
+            # Install NodeJS
+            - name: Install NodeJS
+              uses: actions/setup-node@v1
+              with:
+                  node-version: "18.13.0"
+
+            # Run the server tests
+            - name: Run Tests
+              run: |
+                  yarn
+                  yarn test

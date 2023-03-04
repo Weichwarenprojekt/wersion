@@ -1,8 +1,8 @@
 import { fs, vol } from "memfs";
 import { generateChangelog } from "../../src/lib/changelog";
-import { Version } from "../../src/models/version";
+import { Version } from "../../src/lib/version";
 import * as git from "../../src/lib/git";
-import { Config } from "../../src/lib/config.class";
+import { config } from "../../src/lib/config";
 
 jest.mock("node:fs", () => ({ ...fs }));
 jest.mock("../../src/lib/git");
@@ -14,7 +14,7 @@ const gitMocked = jest.mocked(git);
 
 const files = {
     "CHANGELOG.md": "",
-    ".wersionrc.json": JSON.stringify({
+    ".wersionrc.ts": `export const configuration = {
         versionFile: {
             path: "./package.json",
             matcher: '"version": ?"([0-9.]+)"',
@@ -26,7 +26,7 @@ const files = {
         },
         breakingChangeTrigger: "breaking change",
         changelogFilePath: "./CHANGELOG.md",
-    }),
+    }`,
 };
 
 describe("changelog test", () => {
@@ -84,7 +84,7 @@ describe("changelog test", () => {
         it("should not create any file with dry-run", async () => {
             vol.fromJSON(files);
 
-            Config.getInstance().set({ dryRun: true });
+            config.set({ dryRun: true });
 
             gitMocked.getCommitsSinceTag.mockResolvedValue([
                 {

@@ -4,14 +4,14 @@
  */
 
 import fse from "fs-extra";
-import { Version } from "../models/version";
-import { Config } from "./config.class";
+import { Version } from "./version";
+import { config } from "./config";
 
 /**
  * Returns path to version file from config
  */
 export function getVersionFile() {
-    return Config.getInstance().config.versionFile?.path ?? "./package.json";
+    return config.config.versionFile.path;
 }
 
 /**
@@ -19,7 +19,7 @@ export function getVersionFile() {
  * This regular expression is used to extract the version from the version file or to override it with the incremented one
  */
 function getVersionRegex() {
-    const regexFromConfig = Config.getInstance().config.versionFile?.matcher ?? '"version": ?"([0-9.]+)"';
+    const regexFromConfig = config.config.versionFile.matcher;
     return new RegExp(regexFromConfig);
 }
 
@@ -52,8 +52,6 @@ export async function getPackageVersion(): Promise<Version> {
 
 /**
  * Overrides the old version in the version file with the new one
- *
- * @param version
  */
 export async function setPackageVersion(version: Version) {
     await checkVersionFileExists();
@@ -61,9 +59,12 @@ export async function setPackageVersion(version: Version) {
     let versionFileContent = await fse.readFile(getVersionFile(), "utf-8");
 
     const versionRegexResponse = getVersionRegex().exec(versionFileContent);
+    if (!versionRegexResponse || !versionRegexResponse[0] || !versionRegexResponse[1]) {
+        throw new Error("The regex could not match a version in your specified version file!");
+    }
     const newVersionText = versionRegexResponse[0].replace(versionRegexResponse[1], version.toString());
 
     versionFileContent = versionFileContent.replace(getVersionRegex(), newVersionText);
 
-    if (!Config.getInstance().config.dryRun) await fse.writeFile(getVersionFile(), versionFileContent);
+    if (!config.config.dryRun) await fse.writeFile(getVersionFile(), versionFileContent);
 }

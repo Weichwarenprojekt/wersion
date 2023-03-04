@@ -1,11 +1,16 @@
 {
-  "compilerOptions": {
-    "outDir": "./dist/",
-    "noImplicitAny": true,
-    "module": "es6",
-    "target": "es6",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "sourceMap": true
-  }
+    "compilerOptions": {
+        "resolveJsonModule": true,
+        "outDir": "dist",
+        "strict": true,
+        "noImplicitAny": true,
+        "module": "es6",
+        "target": "es6",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true
+    },
+    "include": ["src"]
 }
