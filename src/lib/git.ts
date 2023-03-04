@@ -9,6 +9,16 @@ import { config } from "./config";
 // Import with * as simpleGit to be able to mock it away
 export const git = simpleGit.simpleGit();
 
+function getErrorPrefix() {
+    const projectName = config.config.projectName;
+    return projectName ? projectName + ": " : "";
+}
+
+export function getTagPrefix() {
+    const tagPrefix = config.config.projectName;
+    return tagPrefix === "" ? "" : tagPrefix + "-";
+}
+
 /**
  * Creates a version tag on the current HEAD
  *
@@ -16,9 +26,9 @@ export const git = simpleGit.simpleGit();
  */
 export async function createVersionTag(version: Version): Promise<string> {
     // DryRun
-    if (config.config.dryRun) return version.toString();
+    if (config.config.dryRun) return getTagPrefix() + version.toString();
 
-    return (await git.addAnnotatedTag(version.toString(), "")).name;
+    return (await git.addAnnotatedTag(getTagPrefix() + version.toString(), "")).name;
 }
 
 /**
@@ -33,7 +43,7 @@ export async function createVersionCommit(version: Version) {
         await git.add(getVersionFile());
     }
 
-    const commitMessage = `chore: release ${version.toString()}`;
+    const commitMessage = `chore: release ${getTagPrefix() + version.toString()}`;
 
     // DryRun
     if (!config.config.dryRun) await git.commit(commitMessage);
@@ -47,10 +57,14 @@ export async function createVersionCommit(version: Version) {
  * @param tag
  */
 export async function getCommitsSinceTag(tag?: string): Promise<simpleGit.DefaultLogFields[]> {
-    const from = tag ?? (await git.raw("rev-list", "--max-parents=0 HEAD"));
-    const gitLog = await git.log({ from, to: "HEAD" });
-    if (!_.isEmpty(gitLog.all)) return _.clone(gitLog.all) as simpleGit.DefaultLogFields[];
-    return [];
+    try {
+        const from = tag ?? (await git.raw("rev-list", "--max-parents=0 HEAD"));
+        const gitLog = await git.log({ from, to: "HEAD" });
+        if (!_.isEmpty(gitLog.all)) return _.clone(gitLog.all) as simpleGit.DefaultLogFields[];
+        return [];
+    } catch (e) {
+        throw new Error(getErrorPrefix() + "Could not ");
+    }
 }
 
 /**
@@ -59,8 +73,8 @@ export async function getCommitsSinceTag(tag?: string): Promise<simpleGit.Defaul
  * @param oldVersion
  */
 export async function getReleaseTypeForHistory(oldVersion: Version): Promise<ReleaseType> {
-    const commits = await getCommitsSinceTag(oldVersion.toString());
-    if (commits.length === 0) throw new Error("no changes since last version detected");
+    const commits = await getCommitsSinceTag(getTagPrefix() + oldVersion.toString());
+    if (commits.length === 0) throw new Error(getErrorPrefix() + "no changes since last version detected");
 
     const releaseTypeConfig: Record<string, string[]> = config.config.commitTypes;
 
@@ -87,5 +101,5 @@ export async function getReleaseTypeForHistory(oldVersion: Version): Promise<Rel
         if (releaseTypeConfig.patch.includes(type)) return ReleaseType.patch;
     }
 
-    throw new Error("no valid commit found since last version");
+    throw new Error(getErrorPrefix() + "no changes since last version detected");
 }

@@ -43,7 +43,9 @@ class Config {
      * Setter for the config
      */
     public set(config: Partial<ConfigStoreModel>) {
-        this.configStore = _.merge(this.configStore, config);
+        this.configStore = _.mergeWith(this.configStore, config, (objValue, srcValue) => {
+            if (objValue === undefined) return srcValue;
+        });
     }
 }
 

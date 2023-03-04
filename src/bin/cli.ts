@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { DefaultAction } from "./default-action";
+import { DefaultAction } from "./actions/default-action";
 import { defaultCliOptions } from "../models/cli-options.model";
 import { config } from "../lib/config";
+import packageJson from "../../package.json";
 
 const main = async () => {
-    const packageJson = require("../../package.json");
-
     const program = new Command();
 
     program.name(packageJson.name).version(packageJson.version).description(packageJson.description);
@@ -22,6 +21,7 @@ const main = async () => {
         "--releaseAs <releaseType>",
         "Set the release type manually. Creates a new tag and release commit of given type.",
     );
+
     program.parse();
 
     const options = program.opts();
@@ -29,8 +29,8 @@ const main = async () => {
     config.set(options);
 
     try {
-        const workflow = new DefaultAction();
-        await workflow.run();
+        const action = new DefaultAction();
+        await action.run();
     } catch (e) {
         console.error(e);
     }

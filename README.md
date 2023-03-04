@@ -23,7 +23,7 @@ wersion
 ```
 wersion --releaseAs=[patch|minor|major]
 ```
-
+See ([Options](#options)) for further information
 # Automatic Versioning
 
 Wersion will increase the version once the script is called depending on your git history since the last version tag.
@@ -35,6 +35,25 @@ Alternatively your always free to increase the version customized by running `we
 
 The generated text will be added to your changelog file (path and name customizable). Wersion uses your git history and groups commits in feature and bugfix blocks. Those blocks than are added to the changelog file with the new version as the header.
 For an example checkout the CHANGELOG.md of wersion itself.
+
+
+# Options
+``` 
+wersion --releaseAs=[patch|minor|major]
+```
+The "releaseAs" option allows you to manually increase the version of your project. 
+
+``` 
+wersion --dry-run
+```
+"dry-run" prevents wersion from generation any commits or file-changes. Useful for testing the command and see which versions will be increased.
+
+
+``` 
+wersion --recursive
+```
+"recursive" allows you to create versions of multiple projects organized in a monorepo at once. It runs the command for every scope/project which has a .wersionrc.json file placed in its root.
+
 
 # Configuration
 
@@ -70,3 +89,4 @@ export const configuration: Partial<WersionConfigModel> = {
 |                       | patch   | same for patch version                                                                                     |
 | breakingChangeTrigger |         | String that triggers an breaking change ergo an increase of the major version if written in a commits body |
 | changelogFilePath     |         | Configuration of the automatically generated changelog file (e.g. ./CHANGELOG.md)                          |
+| projectName           |         | Optional project name which is prepended to each git tag                                                   |

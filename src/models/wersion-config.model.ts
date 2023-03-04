@@ -22,6 +22,8 @@ export interface WersionConfigModel {
     breakingChangeTrigger: string;
     /** The path to the changelog file */
     changelogFilePath: string;
+    /** The name of the project which is used as a prefix for all created versions */
+    projectName: string;
 }
 
 /**
@@ -39,4 +41,5 @@ export const defaultWersionConfig: WersionConfigModel = {
     },
     breakingChangeTrigger: "breaking change",
     changelogFilePath: "./CHANGELOG.md",
+    projectName: ""
 };
