@@ -4,7 +4,7 @@
         "outDir": "dist",
         "strict": true,
         "noImplicitAny": true,
-        "module": "es6",
+        "module": "esnext",
         "target": "es6",
         "moduleResolution": "node",
         "esModuleInterop": true,
@@ -12,5 +12,9 @@
         "declaration": true,
         "declarationMap": true
     },
-    "include": ["src"]
+    "include": ["src"],
+    "ts-node": {
+        "esm": true,
+        "experimentalSpecifierResolution": "node"
+    }
 }

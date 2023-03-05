@@ -4,7 +4,7 @@ import { Command } from "commander";
 import { DefaultAction } from "./actions/default-action";
 import { defaultCliOptions } from "../models/cli-options.model";
 import { config } from "../lib/config";
-import packageJson from "../../package.json";
+import packageJson from "../../package.json" assert { type: "json" };
 
 const main = async () => {
     const program = new Command();
