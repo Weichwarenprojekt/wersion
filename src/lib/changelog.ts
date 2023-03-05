@@ -58,19 +58,17 @@ function updateChangelogFile(markdownToAppend: string) {
     // DryRun
     if (config.config.dryRun) return;
 
-    const currentContent = fs.readFileSync(getChangelogPath());
+    const currentContentBuffer = fs.readFileSync(getChangelogPath());
     const fileHandle = fs.openSync(getChangelogPath(), "w+"); // Truncate file
-    const appendBuffer = Buffer.from(markdownToAppend);
+    const writeBuffer = Buffer.concat([Buffer.from(markdownToAppend), currentContentBuffer]);
 
     // Write new content
-    fs.writeSync(fileHandle, appendBuffer, 0, appendBuffer.length, 0);
-    // Append old content
-    fs.writeSync(fileHandle, currentContent, 0, currentContent.length, appendBuffer.length);
+    fs.writeSync(fileHandle, writeBuffer);
 }
 
 function generateChangelogMarkdown(changelogContent: ChangelogContent) {
     const today = new Date();
-    const date = `${today.getFullYear()}-${today.getMonth().toString().padStart(2, "0")}-${today
+    const date = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today
         .getDate()
         .toString()
         .padStart(2, "0")}`;
@@ -82,7 +80,7 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
 
     // Add feature list to changelog
     if (!_.isEmpty(changelogContent.features)) {
-        markdownToAppend += `## Features \n`;
+        markdownToAppend += `## Features\n`;
 
         changelogContent.features.forEach(
             (feat) => (markdownToAppend += "- " + conventionalCommitToChangelogString(feat) + "\n"),
@@ -91,7 +89,7 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
 
     // Add bug fix list to changelog
     if (!_.isEmpty(changelogContent.bugfixes)) {
-        markdownToAppend += `## Bug Fixes \n`;
+        markdownToAppend += `## Bug Fixes\n`;
 
         changelogContent.bugfixes.forEach(
             (fix) => (markdownToAppend += "- " + conventionalCommitToChangelogString(fix) + "\n"),
@@ -100,7 +98,7 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
 
     // Add breaking changes list to changelog
     if (!_.isEmpty(changelogContent.breakingChanges)) {
-        markdownToAppend += "## BREAKING CHANGES \n";
+        markdownToAppend += "## BREAKING CHANGES\n";
 
         changelogContent.breakingChanges.forEach(
             (breakingChange) =>

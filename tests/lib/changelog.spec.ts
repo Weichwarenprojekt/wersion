@@ -63,7 +63,7 @@ describe("changelog test", () => {
             await generateChangelog(new Version("1.0.0"), "0.3.2");
 
             const today = new Date();
-            const date = `${today.getFullYear()}-${today.getMonth().toString().padStart(2, "0")}-${today
+            const date = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today
                 .getDate()
                 .toString()
                 .padStart(2, "0")}`;
@@ -72,11 +72,11 @@ describe("changelog test", () => {
                 "# 1.0.0 (" +
                     date +
                     ")\n" +
-                    "## Features \n" +
+                    "## Features\n" +
                     "- my commit (dsfjkhs)\n" +
-                    "## Bug Fixes \n" +
+                    "## Bug Fixes\n" +
                     "- remove bug (dsfjkhs)\n" +
-                    "## BREAKING CHANGES \n" +
+                    "## BREAKING CHANGES\n" +
                     "- ",
             );
         });
