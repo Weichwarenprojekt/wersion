@@ -6,9 +6,22 @@ import { generateChangelog } from "../../lib/changelog";
 import { ResetMode } from "simple-git";
 import inquirer from "inquirer";
 import { config } from "../../lib/config";
-import { ActionInterface } from "./action.interface";
+import { Action } from "./action";
 
-export class DefaultAction implements ActionInterface {
+/**
+ * The default action of wersion. It will release a new version depending on the
+ * changes that were made since the last release.
+ */
+export class DefaultAction implements Action {
+    /** The name of the action */
+    name = "default";
+    /** The description of the action */
+    description =
+        "The action that is executed by default (if wersion is called without a specific action). It will release a new version depending on the changes that were made since the last release.";
+
+    /**
+     * Run the action
+     */
     async run() {
         const version = await getPackageVersion();
 

@@ -41,5 +41,5 @@ export const defaultWersionConfig: WersionConfigModel = {
     },
     breakingChangeTrigger: "breaking change",
     changelogFilePath: "./CHANGELOG.md",
-    projectName: ""
+    projectName: "",
 };

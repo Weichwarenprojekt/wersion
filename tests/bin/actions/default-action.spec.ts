@@ -1,6 +1,6 @@
 import { fs, vol } from "memfs";
 import { config } from "../../../src/lib/config";
-import { DefaultAction } from "../../../src/bin/actions/default-action";
+import { DefaultAction } from "../../../src/bin/actions/default.action";
 import { git } from "../../../src/lib/git";
 import { ReleaseType } from "../../../src/lib/version";
 
