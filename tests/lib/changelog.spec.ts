@@ -4,7 +4,7 @@ import { Version } from "../../src/lib/version";
 import * as git from "../../src/lib/git";
 import { config } from "../../src/lib/config";
 
-jest.mock("node:fs", () => ({ ...fs }));
+jest.mock("fs", () => ({ ...fs }));
 jest.mock("../../src/lib/git");
 jest.mock("simple-git", () => ({
     simpleGit: jest.fn(),

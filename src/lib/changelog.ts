@@ -4,7 +4,7 @@ import * as fse from "fs-extra";
 import { DefaultLogFields } from "simple-git";
 import _ from "lodash";
 import { conventionalCommitRegex } from "./util";
-import fs from "node:fs";
+import fs from "fs";
 import { config } from "./config";
 
 /**
@@ -75,7 +75,7 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
         .toString()
         .padStart(2, "0")}`;
 
-    let markdownToAppend: string = "";
+    let markdownToAppend = "";
     markdownToAppend += `# ${changelogContent.version.toString()} (${date})\n`;
 
     // TODO: Customizable Release Highlights or breaking changes docs
@@ -119,15 +119,15 @@ function conventionalCommitToChangelogString(logFields: DefaultLogFields): strin
     const matchedConventionalCommit = logFields.message.match(conventionalCommitRegex);
     if (_.isNull(matchedConventionalCommit)) return "";
 
-    let [, , , scope, message] = matchedConventionalCommit;
-    scope = scope ? `__${scope}:__ ` : "";
+    const [, , , scope, message] = matchedConventionalCommit;
+    const mdScope = scope ? `__${scope}:__ ` : "";
 
     // TODO: Link commit with configured repo url
     const commitHashRef = logFields.hash.substring(0, 7);
 
     // TODO: Extract issue number from commit and add link to it if configured
 
-    return `${scope}${message} (${commitHashRef})`;
+    return `${mdScope}${message} (${commitHashRef})`;
 }
 
 /**

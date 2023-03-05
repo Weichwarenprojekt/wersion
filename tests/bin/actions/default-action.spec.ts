@@ -20,7 +20,8 @@ const filesJson = {
         },
         breakingChangeTrigger: "breaking change",
         changelogFilePath: "./CHANGELOG.md",
-    }`
+    }`,
+    "CHANGELOG.md": "",
 };
 
 enum ResetMode {
@@ -28,7 +29,7 @@ enum ResetMode {
     SOFT = "soft",
     HARD = "hard",
     MERGE = "merge",
-    KEEP = "keep"
+    KEEP = "keep",
 }
 
 jest.mock("simple-git", () => ({
@@ -37,8 +38,8 @@ jest.mock("simple-git", () => ({
     simpleGit: jest.fn().mockImplementation(() => ({
         addAnnotatedTag: jest.fn((tagName) =>
             Promise.resolve({
-                name: tagName
-            })
+                name: tagName,
+            }),
         ),
         add: jest.fn(),
         commit: jest.fn(),
@@ -52,21 +53,24 @@ jest.mock("simple-git", () => ({
                     refs: "sghlgflkd",
                     body: "breaking change",
                     author_name: "John Doe",
-                    author_email: "dsjksdfj@sdkfjdsk.com"
-                }
-            ]
+                    author_email: "dsjksdfj@sdkfjdsk.com",
+                },
+            ],
         })),
         status: jest.fn().mockResolvedValue({ isClean: () => true }),
         reset: jest.fn(),
-        stash: jest.fn().mockResolvedValue("dfdf")
-    }))
+        stash: jest.fn().mockResolvedValue("dfdf"),
+    })),
 }));
 
 jest.mock("inquirer", () => ({
-    prompt: jest.fn().mockResolvedValue({ unstashed_changes: true })
+    prompt: jest.fn().mockResolvedValue({ unstashed_changes: true }),
 }));
 
 const gitMocked = jest.mocked(git);
+
+// mock console to prevent logs in the test execution
+console.log = jest.fn();
 
 describe("default action integration test", () => {
     beforeEach(() => {
@@ -79,7 +83,6 @@ describe("default action integration test", () => {
         jest.clearAllMocks();
         vol.reset();
     });
-
 
     it("should run default action with default parameters", async () => {
         const action = new DefaultAction();
@@ -98,7 +101,7 @@ describe("default action integration test", () => {
 
         const gitDryRunWhitelist = ["status", "log"];
 
-        for (const method of Object.keys(gitMocked).filter(el => !gitDryRunWhitelist.includes(el))) {
+        for (const method of Object.keys(gitMocked).filter((el) => !gitDryRunWhitelist.includes(el))) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             expect(gitMocked[method].mock.calls.length).toEqual(0);
@@ -160,7 +163,7 @@ describe("default action integration test", () => {
 
             const gitDryRunWhitelist = ["status", "log"];
 
-            for (const method of Object.keys(gitMocked).filter(el => !gitDryRunWhitelist.includes(el))) {
+            for (const method of Object.keys(gitMocked).filter((el) => !gitDryRunWhitelist.includes(el))) {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 expect(gitMocked[method].mock.calls.length).toEqual(0);
