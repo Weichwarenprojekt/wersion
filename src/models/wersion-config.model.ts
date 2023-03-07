@@ -1,4 +1,10 @@
 /**
+ * The semantic version matcher
+ */
+export const semverMatcher =
+    "((0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)";
+
+/**
  * The model that defines the configuration options for wersion
  */
 export interface WersionConfigModel {
@@ -32,7 +38,7 @@ export interface WersionConfigModel {
 export const defaultWersionConfig: WersionConfigModel = {
     versionFile: {
         path: "./package.json",
-        matcher: '"version": ?"([0-9.]+)"',
+        matcher: `"version": ?"${semverMatcher}"`,
     },
     commitTypes: {
         major: [],

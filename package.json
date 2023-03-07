@@ -13,7 +13,16 @@
         "CD"
     ],
     "bin": "dist/wersion.js",
+    "main": "./dist/wersion-lib.cjs",
+    "module": "./dist/wersion-lib.mjs",
     "types": "./dist/models/wersion-config.model.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/wersion-lib.cjs",
+            "import": "./dist/wersion-lib.mjs",
+            "types": "./dist/models/wersion-config.model.d.ts"
+        }
+    },
     "repository": "https://github.com/Weichwarenprojekt/wersion.git",
     "author": "Weichwarenprojekt <info@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
     "contributors": [
@@ -58,7 +67,7 @@
     },
     "packageManager": "yarn@3.3.0",
     "dependencies": {
-        "@weichwarenprojekt/ts-importer": "^0.1.5",
+        "@weichwarenprojekt/ts-importer": "^0.1.7",
         "chalk": "^4.1.2",
         "commander": "^9.4.1",
         "fs-extra": "^11.1.0",

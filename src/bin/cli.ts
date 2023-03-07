@@ -4,10 +4,10 @@ import { Command } from "commander";
 import { DefaultAction } from "./actions/default.action";
 import { defaultCliOptions } from "../models/cli-options.model";
 import { config } from "../lib/config";
+import packageJson from "../../package.json" assert { type: "json" };
 import { BuildNumberAction } from "./actions/build-number.action";
 
 const main = async () => {
-    const packageJson = await import("../../package.json");
     const program = new Command();
     const actions = [new DefaultAction(), new BuildNumberAction()];
 
