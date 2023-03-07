@@ -8,4 +8,5 @@ export const configuration: Partial<WersionConfigModel> = {
     },
     breakingChangeTrigger: "breaking change",
     changelogFilePath: "./CHANGELOG.md",
+    projectName: "wersion",
 };
