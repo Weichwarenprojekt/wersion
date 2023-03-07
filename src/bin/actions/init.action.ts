@@ -7,19 +7,29 @@ import { getPackageVersion } from "../../lib/version-file";
 import inquirer from "inquirer";
 import path from "node:path";
 import chalk from "chalk";
-import fse from "fs-extra";
 
 const wersionConfigPath = path.join(process.cwd(), ".wersionrc.ts");
 
 const ui = new inquirer.ui.BottomBar();
 
+/**
+ * The action to configure the project for wersion
+ */
 export class InitAction implements Action {
-    description = "Initializes the project with wersion";
+    /** The name of the action */
     name = "init";
 
+    /** The description of the action */
+    description = "Adds a 0.0.0 tag on the first commit and initializes the configuration.";
+
+    /**
+     * Run the action
+     */
     async run() {
-        if (!this.configFileExists()) {
+        if (!fs.existsSync(wersionConfigPath)) {
             await this.createConfigDialog();
+        } else {
+            ui.log.write("Found a .wersionrc.ts. Skipping configuration step!");
         }
 
         config.loadConfigFile(wersionConfigPath);
@@ -47,18 +57,13 @@ export class InitAction implements Action {
                 default: defaultWersionConfig.versionFile.path,
             },
             {
-                name: "version_file_matcher",
-                message: "Regex with should be used to extract the version from the version file",
-                default: defaultWersionConfig.versionFile.matcher,
-            },
-            {
                 name: "changelog_path",
                 message: "Relative path of the changelog file",
                 default: defaultWersionConfig.changelogFilePath,
             },
         ]);
 
-        const wersionrcTsContent = this.compileWersionrcTsTemplate(answers);
+        const wersionrcTsContent = this.compileWersionRCTsTemplate(answers);
         fs.writeFileSync(wersionConfigPath, wersionrcTsContent);
         ui.log.write("created .wersionrc.ts file");
     }
@@ -76,28 +81,20 @@ export class InitAction implements Action {
     }
 
     /**
-     * Checks whether a config file already exists
-     */
-    configFileExists(): boolean {
-        return !!fse.statSync(wersionConfigPath, { throwIfNoEntry: false })?.isFile();
-    }
-
-    /**
      * Compiles the file with the given answers from inquirer
-     * @param vars
+     * @param vars The variables that were queried from inquirer
      */
-    compileWersionrcTsTemplate(vars: {
+    compileWersionRCTsTemplate(vars: {
         changelog_path: string;
-        version_file_matcher: string;
         version_file_path: string;
         project_name: string;
     }): string {
-        return `import { WersionConfigModel } from "./src/models/wersion-config.model";
+        return `import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";
 
   export const configuration: Partial<WersionConfigModel> = {
     versionFile: {
         path: "${vars.version_file_path}",
-        matcher: '${vars.version_file_matcher}',
+        matcher: \`"version": ?"\$\{semverMatcher\}"\`,
     },
     commitTypes: {
         major: [],
