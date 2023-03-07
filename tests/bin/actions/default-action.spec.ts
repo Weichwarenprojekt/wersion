@@ -65,12 +65,14 @@ jest.mock("simple-git", () => ({
 
 jest.mock("inquirer", () => ({
     prompt: jest.fn().mockResolvedValue({ unstashed_changes: true }),
+    ui: {
+        BottomBar: jest.fn().mockImplementation(() => ({
+            log: { write: jest.fn().mockReturnValue("") },
+        })),
+    },
 }));
 
 const gitMocked = jest.mocked(git);
-
-// mock console to prevent logs in the test execution
-console.log = jest.fn();
 
 describe("default action integration test", () => {
     beforeEach(() => {
@@ -142,7 +144,6 @@ describe("default action integration test", () => {
 
     describe("stashing", () => {
         it("should stash uncommitted changes", async () => {
-            console.log(config.config);
             gitMocked.status = jest.fn().mockResolvedValue({ isClean: () => false });
             const action = new DefaultAction();
             await action.run();

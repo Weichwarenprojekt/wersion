@@ -6,10 +6,11 @@ import { defaultCliOptions } from "../models/cli-options.model";
 import { config } from "../lib/config";
 import packageJson from "../../package.json" assert { type: "json" };
 import { BuildNumberAction } from "./actions/build-number.action";
+import { InitAction } from "./actions/init.action";
 
 const main = async () => {
     const program = new Command();
-    const actions = [new DefaultAction(), new BuildNumberAction()];
+    const actions = [new DefaultAction(), new BuildNumberAction(), new InitAction()];
 
     program.name(packageJson.name).version(packageJson.version).description(packageJson.description);
 
@@ -30,14 +31,18 @@ const main = async () => {
     program.parse();
 
     const options = program.opts();
-    config.loadConfigFile(options.config);
-    config.set(options);
 
     try {
         let actionToBeExecuted = actions[0];
         for (const action of actions) {
             if (options[action.name]) actionToBeExecuted = action;
         }
+
+        if (actionToBeExecuted.name !== "init") {
+            config.loadConfigFile(options.config);
+            config.set(options);
+        }
+
         await actionToBeExecuted.run();
     } catch (e) {
         console.error(e);

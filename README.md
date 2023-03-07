@@ -14,6 +14,11 @@ To determine how the version must be increased wersion uses the commit type from
 npm i -g @weichwarenprojekt/wersion
 ```
 
+**Initialization**
+```
+wersion --init
+```
+
 **Execution**
 
 ```

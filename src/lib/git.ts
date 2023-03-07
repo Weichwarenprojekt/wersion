@@ -32,6 +32,16 @@ export async function createVersionTag(version: Version): Promise<string> {
 }
 
 /**
+ * Checks whether a tag with the given version exists
+ * @param version
+ */
+export async function versionTagExists(version: Version) {
+    const tagName = getTagPrefix() + version.toString();
+    const showrefRes = await git.raw(`show-ref`, `--tags`, `${tagName}`);
+    return showrefRes !== "";
+}
+
+/**
  * Creates a new commit for releasing the new version
  *
  * @param version
@@ -63,7 +73,7 @@ export async function getCommitsSinceTag(tag?: string): Promise<simpleGit.Defaul
         if (!_.isEmpty(gitLog.all)) return _.clone(gitLog.all) as simpleGit.DefaultLogFields[];
         return [];
     } catch (e) {
-        throw new Error(getErrorPrefix() + "Could not ");
+        throw new Error(getErrorPrefix() + "Could not get commits since last version!");
     }
 }
 

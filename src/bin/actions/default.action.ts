@@ -8,6 +8,8 @@ import inquirer from "inquirer";
 import { config } from "../../lib/config";
 import { Action } from "./action";
 
+const ui = new inquirer.ui.BottomBar();
+
 /**
  * The default action of wersion. It will release a new version depending on the
  * changes that were made since the last release.
@@ -46,7 +48,7 @@ export class DefaultAction implements Action {
 
             await version.increase(config.config.releaseAs ?? releaseType);
 
-            console.log(`release new version ${chalk.cyan(version.toString())}`);
+            ui.log.write(`release new version ${chalk.cyan(version.toString())}`);
 
             await setPackageVersion(version);
 
@@ -54,11 +56,11 @@ export class DefaultAction implements Action {
 
             const createCommitResponse = await createVersionCommit(version);
 
-            console.log(`created release commit ${chalk.cyan(createCommitResponse)}`);
+            ui.log.write(`created release commit ${chalk.cyan(createCommitResponse)}`);
 
             const tagName = await createVersionTag(version);
 
-            console.log(`created git tag ${chalk.cyan(tagName)}`);
+            ui.log.write(`created git tag ${chalk.cyan(tagName)}`);
         } finally {
             if (!config.config.dryRun) {
                 await git.reset(ResetMode.HARD);

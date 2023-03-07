@@ -105,5 +105,16 @@ describe("version-file test", function () {
                 "No version file exists in the current directory",
             );
         });
+
+        it("should throw whether the regex doesnt match any version", async () => {
+            await fs.writeFileSync(
+                "./package.json",
+                JSON.stringify({ name: "wersion-unit-test", version: "einspunkt3", versionFile: {} }),
+            );
+
+            await expect(setPackageVersion(new Version("0.1.12"))).rejects.toThrowError(
+                "The regex could not match a version in your specified version file!",
+            );
+        });
     });
 });

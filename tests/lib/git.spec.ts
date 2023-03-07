@@ -5,6 +5,7 @@ import {
     getCommitsSinceTag,
     getReleaseTypeForHistory,
     git,
+    versionTagExists,
 } from "../../src/lib/git";
 import * as fse from "fs-extra";
 import { defaultWersionConfig, WersionConfigModel } from "../../src/models/wersion-config.model";
@@ -44,9 +45,7 @@ const gitMocked = jest.mocked(git);
 
 describe("git test", function () {
     beforeEach(() => {
-        config.set(
-            _.merge(defaultWersionConfig, defaultCliOptions, { projectName: "testing" })
-        );
+        config.set(_.merge(defaultWersionConfig, defaultCliOptions, { projectName: "testing" }));
     });
 
     afterEach(() => {
@@ -66,6 +65,24 @@ describe("git test", function () {
 
             expect(gitMocked.addAnnotatedTag.mock.calls.length).toEqual(0);
             expect(res).toEqual("testing-1.2.3");
+        });
+    });
+
+    describe("version tag exists", () => {
+        it("should return true if tag exists", async () => {
+            gitMocked.raw.mockResolvedValue("fdfd");
+
+            const res = await versionTagExists(new Version("1.1.1"));
+
+            expect(res).toEqual(true);
+        });
+
+        it("should return false if tag does not exists", async () => {
+            gitMocked.raw.mockResolvedValue("");
+
+            const res = await versionTagExists(new Version("1.1.1"));
+
+            expect(res).toEqual(false);
         });
     });
 
@@ -103,6 +120,12 @@ describe("git test", function () {
 
             expect(res.length).toEqual(1);
             expect(res[0].author_name).toEqual("John Doe");
+        });
+
+        it("should throw on error", async () => {
+            gitMocked.raw.mockRejectedValue("");
+
+            await expect(getCommitsSinceTag()).rejects.toThrowError();
         });
     });
 
