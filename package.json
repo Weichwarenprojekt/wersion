@@ -17,7 +17,8 @@
     "repository": "https://github.com/Weichwarenprojekt/wersion.git",
     "author": "Weichwarenprojekt <info@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
     "contributors": [
-        "Stefan Rink <stefan.rink@weichwarenprojekt.de> (https://weichwarenprojekt.de/)"
+        "Stefan Rink <stefan.rink@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
+        "Tim Niederer <tim.niederer@weichwarenprojekt.de> (https://weichwarenprojekt.de/)"
     ],
     "license": "MIT",
     "type": "module",
