@@ -20,6 +20,13 @@ export function getTagPrefix() {
 }
 
 /**
+ * Get the name of the current branch
+ */
+export async function repoHasLocalCommits(): Promise<any> {
+    return (await git.log(["origin..HEAD"])).total > 0;
+}
+
+/**
  * Creates a version tag on the current HEAD
  *
  * @param version

@@ -1,5 +1,6 @@
 import { Action } from "./action";
-import { getPackageVersion, setPackageVersion } from "../../lib/version-file";
+import { git, repoHasLocalCommits } from "../../lib/git";
+import { getPackageVersion, getVersionFile, setPackageVersion } from "../../lib/version-file";
 import { ReleaseType } from "../../lib/version";
 
 /**
@@ -19,5 +20,9 @@ export class BuildNumberAction implements Action {
         const version = await getPackageVersion();
         version.increase(ReleaseType.build);
         await setPackageVersion(version);
+        if (await repoHasLocalCommits()) {
+            await git.add(getVersionFile());
+            await git.commit([], {'--amend': null, '--no-edit': null});
+        }
     }
 }
