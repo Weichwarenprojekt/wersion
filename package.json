@@ -32,7 +32,7 @@
     "license": "MIT",
     "type": "module",
     "scripts": {
-        "build": "node esbuild.js && tsc --emitDeclarationOnly",
+        "build": "node --experimental-json-modules esbuild.js && tsc --emitDeclarationOnly",
         "cli": "ts-node src/bin/cli.ts",
         "bundledCli": "node dist/wersion.js",
         "postinstall": "husky install",
