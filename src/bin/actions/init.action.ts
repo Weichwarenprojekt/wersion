@@ -7,10 +7,9 @@ import { getPackageVersion } from "../../lib/version-file";
 import inquirer from "inquirer";
 import path from "node:path";
 import chalk from "chalk";
+import { logger } from "../../lib/util";
 
 const wersionConfigPath = path.join(process.cwd(), ".wersionrc.ts");
-
-const ui = new inquirer.ui.BottomBar();
 
 /**
  * The action to configure the project for wersion
@@ -29,14 +28,14 @@ export class InitAction implements Action {
         if (!fs.existsSync(wersionConfigPath)) {
             await this.createConfigDialog();
         } else {
-            ui.log.write("Found a .wersionrc.ts. Skipping configuration step!");
+            logger.info("Found a .wersionrc.ts. Skipping configuration step!");
         }
 
         config.loadConfigFile(wersionConfigPath);
 
         await this.createInitialVersionTag();
 
-        ui.log.write(chalk.green("Finished, Have Fun!"));
+        logger.info(chalk.green("Finished, Have Fun!"));
     }
 
     /**
@@ -65,7 +64,7 @@ export class InitAction implements Action {
 
         const wersionrcTsContent = this.compileWersionRCTsTemplate(answers);
         fs.writeFileSync(wersionConfigPath, wersionrcTsContent);
-        ui.log.write("created .wersionrc.ts file");
+        logger.info("created .wersionrc.ts file");
     }
 
     /**
@@ -76,7 +75,7 @@ export class InitAction implements Action {
 
         if (!(await versionTagExists(version))) {
             const createdTag = await createVersionTag(version);
-            ui.log.write("create initial version tag on last commit " + chalk.cyan(createdTag));
+            logger.info("create initial version tag on last commit " + chalk.cyan(createdTag));
         }
     }
 

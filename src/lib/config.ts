@@ -3,6 +3,7 @@ import { defaultWersionConfig, WersionConfigModel } from "../models/wersion-conf
 import { CliOptionsModel, defaultCliOptions } from "../models/cli-options.model";
 import _ from "lodash";
 import { loadModule } from "@weichwarenprojekt/ts-importer";
+import { logger } from "./util";
 
 /**
  * The config store contains the wersion config and the cli config
@@ -24,10 +25,10 @@ class Config {
             const config = path.isAbsolute(configPath) ? configPath : path.resolve(process.cwd(), configPath);
             const configImport = loadModule<{ configuration: WersionConfigModel }>(config);
             if (!configImport.configuration)
-                console.warn('The specified configuration does not export a "configuration"');
+                logger.warn('The specified configuration does not export a "configuration"');
             this.set(configImport.configuration);
         } catch (e) {
-            console.warn("Could not find a configuration file!");
+            logger.warn("Could not find a configuration file!");
         }
     }
 

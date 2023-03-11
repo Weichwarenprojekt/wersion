@@ -7,6 +7,7 @@ import { config } from "../lib/config";
 import packageJson from "../../package.json" assert { type: "json" };
 import { BuildNumberAction } from "./actions/build-number.action";
 import { InitAction } from "./actions/init.action";
+import { logger } from "../lib/util";
 
 const main = async () => {
     const program = new Command();
@@ -45,7 +46,7 @@ const main = async () => {
 
         await actionToBeExecuted.run();
     } catch (e) {
-        console.error(e);
+        logger.error(e);
     }
 };
 

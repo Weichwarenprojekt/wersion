@@ -2,6 +2,7 @@ import { Action } from "./action";
 import { git, repoHasLocalCommits } from "../../lib/git";
 import { getPackageVersion, getVersionFile, setPackageVersion } from "../../lib/version-file";
 import { ReleaseType } from "../../lib/version";
+import { logger } from "../../lib/util";
 
 /**
  * The action for incrementing the build number
@@ -17,12 +18,18 @@ export class BuildNumberAction implements Action {
      * Run the action
      */
     async run(): Promise<void> {
+        // Only execute if there are local commits
+        if (!(await repoHasLocalCommits())) {
+            logger.warn(
+                "No local commits detected. The --incrementBuildNumber action should only be executed if your repository has local commits to which the changes can be appended to. It is recommended to automatically execute the action in a post commit hook.",
+            );
+            return;
+        }
         const version = await getPackageVersion();
         version.increase(ReleaseType.build);
         await setPackageVersion(version);
-        if (await repoHasLocalCommits()) {
-            await git.add(getVersionFile());
-            await git.commit([], {'--amend': null, '--no-edit': null});
-        }
+        await git.add(getVersionFile());
+        await git.commit([], { "--amend": null, "--no-edit": null });
+        logger.info(`Version was incremented to ${version.toString()}. The update was appended to the last commit.`);
     }
 }

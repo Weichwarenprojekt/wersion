@@ -7,8 +7,7 @@ import { ResetMode } from "simple-git";
 import inquirer from "inquirer";
 import { config } from "../../lib/config";
 import { Action } from "./action";
-
-const ui = new inquirer.ui.BottomBar();
+import { logger } from "../../lib/util";
 
 /**
  * The default action of wersion. It will release a new version depending on the
@@ -48,7 +47,7 @@ export class DefaultAction implements Action {
 
             await version.increase(config.config.releaseAs ?? releaseType);
 
-            ui.log.write(`release new version ${chalk.cyan(version.toString())}`);
+            logger.info(`release new version ${chalk.cyan(version.toString())}`);
 
             await setPackageVersion(version);
 
@@ -56,11 +55,11 @@ export class DefaultAction implements Action {
 
             const createCommitResponse = await createVersionCommit(version);
 
-            ui.log.write(`created release commit ${chalk.cyan(createCommitResponse)}`);
+            logger.info(`created release commit ${chalk.cyan(createCommitResponse)}`);
 
             const tagName = await createVersionTag(version);
 
-            ui.log.write(`created git tag ${chalk.cyan(tagName)}`);
+            logger.info(`created git tag ${chalk.cyan(tagName)}`);
         } finally {
             if (!config.config.dryRun) {
                 await git.reset(ResetMode.HARD);
