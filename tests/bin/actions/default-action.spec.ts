@@ -1,10 +1,16 @@
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { fs, vol } from "memfs";
 import { config } from "../../../src/lib/config";
 import { DefaultAction } from "../../../src/bin/actions/default.action";
 import { git } from "../../../src/lib/git";
 import { ReleaseType } from "../../../src/lib/version";
 
-jest.mock("fs", () => ({ ...fs }));
+vi.mock("fs", async () => {
+    return {
+        ...fs,
+        default: { ...fs },
+    };
+});
 
 const filesJson = {
     "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0", versionFile: {} }),
@@ -32,19 +38,19 @@ enum ResetMode {
     KEEP = "keep",
 }
 
-jest.mock("simple-git", () => ({
+vi.mock("simple-git", () => ({
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    ResetMode: jest.fn().mockReturnValue(ResetMode),
-    simpleGit: jest.fn().mockImplementation(() => ({
-        addAnnotatedTag: jest.fn((tagName) =>
+    ResetMode: vi.fn().mockReturnValue(ResetMode),
+    simpleGit: vi.fn().mockImplementation(() => ({
+        addAnnotatedTag: vi.fn((tagName) =>
             Promise.resolve({
                 name: tagName,
             }),
         ),
-        add: jest.fn(),
-        commit: jest.fn(),
-        raw: jest.fn().mockResolvedValue("flkjhsfjlksdhjfhsdjfh"),
-        log: jest.fn().mockImplementation(() => ({
+        add: vi.fn(),
+        commit: vi.fn(),
+        raw: vi.fn().mockResolvedValue("flkjhsfjlksdhjfhsdjfh"),
+        log: vi.fn().mockImplementation(() => ({
             all: [
                 {
                     hash: "dsfjkhsdkjfhkjl",
@@ -57,22 +63,22 @@ jest.mock("simple-git", () => ({
                 },
             ],
         })),
-        status: jest.fn().mockResolvedValue({ isClean: () => true }),
-        reset: jest.fn(),
-        stash: jest.fn().mockResolvedValue("dfdf"),
+        status: vi.fn().mockResolvedValue({ isClean: () => true }),
+        reset: vi.fn(),
+        stash: vi.fn().mockResolvedValue("dfdf"),
     })),
 }));
 
-jest.mock("inquirer", () => ({
-    prompt: jest.fn().mockResolvedValue({ unstashed_changes: true }),
+vi.mock("inquirer", () => ({
+    prompt: vi.fn().mockResolvedValue({ unstashed_changes: true }),
     ui: {
-        BottomBar: jest.fn().mockImplementation(() => ({
-            log: { write: jest.fn().mockReturnValue("") },
+        BottomBar: vi.fn().mockImplementation(() => ({
+            log: { write: vi.fn().mockReturnValue("") },
         })),
     },
 }));
 
-const gitMocked = jest.mocked(git);
+const gitMocked = vi.mocked(git);
 
 describe("default action integration test", () => {
     beforeEach(() => {
@@ -82,7 +88,7 @@ describe("default action integration test", () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         vol.reset();
     });
 
@@ -144,7 +150,7 @@ describe("default action integration test", () => {
 
     describe("stashing", () => {
         it("should stash uncommitted changes", async () => {
-            gitMocked.status = jest.fn().mockResolvedValue({ isClean: () => false });
+            gitMocked.status = vi.fn().mockResolvedValue({ isClean: () => false });
             const action = new DefaultAction();
             await action.run();
 
@@ -155,7 +161,7 @@ describe("default action integration test", () => {
         });
 
         it("should run with dry run and do not affect anything with uncommitted changes", async () => {
-            gitMocked.status = jest.fn().mockResolvedValue({ isClean: () => false });
+            gitMocked.status = vi.fn().mockResolvedValue({ isClean: () => false });
             config.set({ dryRun: true });
             const fsSnapshotBefore = vol.toJSON();
 

@@ -1,3 +1,4 @@
+import { vi, describe, it, expect } from "vitest";
 import { ReleaseType, Version } from "../../src/lib/version";
 import semver from "semver";
 
@@ -62,7 +63,7 @@ describe("version test", () => {
     });
 
     it("falls back to default version if increasing fails", () => {
-        const semverInc = jest.spyOn(semver, "inc").mockImplementation(() => null);
+        const semverInc = vi.spyOn(semver, "inc").mockImplementation(() => null);
         const version = new Version("1.0.0");
         version.increase(ReleaseType.major);
         expect(version.toString()).toEqual("0.0.0");

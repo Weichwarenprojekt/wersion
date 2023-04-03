@@ -15,7 +15,7 @@ type ConfigStoreModel = WersionConfigModel & CliOptionsModel;
  */
 class Config {
     /** The actual configuration */
-    private configStore: ConfigStoreModel = _.merge(defaultWersionConfig, defaultCliOptions);
+    private configStore: ConfigStoreModel = _.merge({}, defaultWersionConfig, defaultCliOptions);
 
     /**
      * Load the configuration file from the given path

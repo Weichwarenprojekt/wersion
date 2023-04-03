@@ -1,13 +1,19 @@
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { fs, vol } from "memfs";
 import { config } from "../../src/lib/config";
 import { CliOptionsModel } from "../../src/models/cli-options.model";
 import _ from "lodash";
 import { defaultWersionConfig } from "../../src/models/wersion-config.model";
 
-jest.mock("fs", () => ({ ...fs }));
+vi.mock("fs", async () => {
+    return {
+        ...fs,
+        default: { ...fs },
+    };
+});
 
 describe("config test", function () {
-    beforeEach(() => {
+    beforeEach(async () => {
         const files = {
             ".wersionrc.ts": `export const configuration = {
                 versionFile: "version.json",
@@ -15,17 +21,18 @@ describe("config test", function () {
             }`,
         };
         vol.fromJSON(files);
-        config.loadConfigFile("./.wersionrc.ts");
+        await config.loadConfigFile("./.wersionrc.ts");
     });
 
     afterEach(() => {
         vol.reset();
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("should return config parsed from config file", () => {
+        console.log(defaultWersionConfig);
         expect(config.config).toMatchObject(
-            _.merge(defaultWersionConfig, {
+            _.merge({}, defaultWersionConfig, {
                 versionFile: "version.json",
                 changelogFilePath: "CHANGELOG.md",
             }),
@@ -38,8 +45,9 @@ describe("config test", function () {
             dryRun: true,
         };
 
+        console.log(config.config);
         config.set(cliOptions);
 
-        expect(config.config).toMatchObject(_.merge(defaultWersionConfig, cliOptions));
+        expect(config.config).toMatchObject(_.merge({}, defaultWersionConfig, cliOptions));
     });
 });

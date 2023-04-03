@@ -1,6 +1,8 @@
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { fs, vol } from "memfs";
 import { Version } from "../../src/lib/version";
-jest.mock("fs", () => ({ ...fs }));
+
+vi.mock("fs", () => ({ ...fs }));
 
 import { getPackageVersion, setPackageVersion } from "../../src/lib/version-file";
 import { config } from "../../src/lib/config";
@@ -29,7 +31,7 @@ describe("version-file test", function () {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         vol.reset();
     });
 

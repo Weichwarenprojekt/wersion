@@ -1,16 +1,17 @@
+import { vi, describe, it, expect, afterEach } from "vitest";
 import { fs, vol } from "memfs";
 import { generateChangelog } from "../../src/lib/changelog";
 import { Version } from "../../src/lib/version";
 import * as git from "../../src/lib/git";
 import { config } from "../../src/lib/config";
 
-jest.mock("fs", () => ({ ...fs }));
-jest.mock("../../src/lib/git");
-jest.mock("simple-git", () => ({
-    simpleGit: jest.fn(),
+vi.mock("fs", () => ({ ...fs }));
+vi.mock("../../src/lib/git");
+vi.mock("simple-git", () => ({
+    simpleGit: vi.fn(),
 }));
 
-const gitMocked = jest.mocked(git);
+const gitMocked = vi.mocked(git);
 
 const files = {
     "CHANGELOG.md": "",
@@ -32,7 +33,7 @@ const files = {
 describe("changelog test", () => {
     afterEach(() => {
         vol.reset();
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("generateChangelog", () => {

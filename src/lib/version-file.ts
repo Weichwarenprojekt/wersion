@@ -3,7 +3,7 @@
  * can be extracted from and where the new version need to be set
  */
 
-import fse from "fs-extra";
+import fs from "fs";
 import { Version } from "./version";
 import { config } from "./config";
 
@@ -27,7 +27,7 @@ function getVersionRegex() {
  * Check whether the version file exists
  */
 function checkVersionFileExists() {
-    if (!fse.statSync(getVersionFile(), { throwIfNoEntry: false })?.isFile()) {
+    if (!fs.existsSync(getVersionFile())) {
         throw new Error("No version file exists in the current directory");
     }
 }
@@ -38,7 +38,7 @@ function checkVersionFileExists() {
 export async function getPackageVersion(): Promise<Version> {
     await checkVersionFileExists();
 
-    const versionFileContent = await fse.readFile(getVersionFile(), "utf-8");
+    const versionFileContent = fs.readFileSync(getVersionFile(), "utf-8");
 
     // TODO: Use line number to select version in file (edge case: version at end
     //  of package.json file and dependency with name version is installed)
@@ -56,7 +56,7 @@ export async function getPackageVersion(): Promise<Version> {
 export async function setPackageVersion(version: Version) {
     await checkVersionFileExists();
 
-    let versionFileContent = await fse.readFile(getVersionFile(), "utf-8");
+    let versionFileContent = fs.readFileSync(getVersionFile(), "utf-8");
 
     const versionRegexResponse = getVersionRegex().exec(versionFileContent);
     if (!versionRegexResponse || !versionRegexResponse[0] || !versionRegexResponse[1]) {
@@ -66,5 +66,5 @@ export async function setPackageVersion(version: Version) {
 
     versionFileContent = versionFileContent.replace(getVersionRegex(), newVersionText);
 
-    if (!config.config.dryRun) await fse.writeFile(getVersionFile(), versionFileContent);
+    if (!config.config.dryRun) fs.writeFileSync(getVersionFile(), versionFileContent);
 }

@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { conventionalCommitRegex } from "../../src/lib/util";
 
 describe("util test", function () {

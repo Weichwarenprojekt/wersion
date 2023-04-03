@@ -1,5 +1,7 @@
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { fs, vol } from "memfs";
-jest.mock("fs", () => ({ ...fs }));
+
+vi.mock("fs", () => ({ ...fs }));
 import { git } from "../../../src/lib/git";
 import { InitAction } from "../../../src/bin/actions/init.action";
 import inquirer from "inquirer";
@@ -14,33 +16,33 @@ const filesWithConfig = {
     ".wersionrc.ts": "existing",
 };
 
-jest.mock("simple-git", () => ({
-    simpleGit: jest.fn().mockImplementation(() => ({
-        addAnnotatedTag: jest.fn((tagName) =>
+vi.mock("simple-git", () => ({
+    simpleGit: vi.fn().mockImplementation(() => ({
+        addAnnotatedTag: vi.fn((tagName) =>
             Promise.resolve({
                 name: tagName,
             }),
         ),
-        raw: jest.fn().mockResolvedValue(""),
+        raw: vi.fn().mockResolvedValue(""),
     })),
 }));
 
-jest.mock("inquirer", () => ({
-    prompt: jest.fn().mockResolvedValue({
+vi.mock("inquirer", () => ({
+    prompt: vi.fn().mockResolvedValue({
         project_name: "wersion",
         version_file_path: "./package.json",
         version_file_matcher: '"version": ?"([0-9.]+)"',
         changelog_path: "./CHANGELOG.md",
     }),
     ui: {
-        BottomBar: jest.fn().mockImplementation(() => ({
-            log: { write: jest.fn().mockReturnValue("") },
+        BottomBar: vi.fn().mockImplementation(() => ({
+            log: { write: vi.fn().mockReturnValue("") },
         })),
     },
 }));
 
-const gitMocked = jest.mocked(git);
-const inquirerMocked = jest.mocked(inquirer);
+const gitMocked = vi.mocked(git);
+const inquirerMocked = vi.mocked(inquirer);
 
 describe("init action integration test", () => {
     beforeEach(() => {
@@ -48,7 +50,7 @@ describe("init action integration test", () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         vol.reset();
     });
 

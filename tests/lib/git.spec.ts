@@ -1,3 +1,4 @@
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { ReleaseType, Version } from "../../src/lib/version";
 import {
     createVersionCommit,
@@ -13,17 +14,17 @@ import { config } from "../../src/lib/config";
 import _ from "lodash";
 import { defaultCliOptions } from "../../src/models/cli-options.model";
 
-jest.mock("simple-git", () => ({
-    simpleGit: jest.fn().mockImplementation(() => ({
-        addAnnotatedTag: jest.fn((tagName) =>
+vi.mock("simple-git", () => ({
+    simpleGit: vi.fn().mockImplementation(() => ({
+        addAnnotatedTag: vi.fn((tagName) =>
             Promise.resolve({
                 name: tagName,
             }),
         ),
-        add: jest.fn(),
-        commit: jest.fn(),
-        raw: jest.fn().mockResolvedValue("flkjhsfjlksdhjfhsdjfh"),
-        log: jest.fn().mockImplementation(() => ({
+        add: vi.fn(),
+        commit: vi.fn(),
+        raw: vi.fn().mockResolvedValue("flkjhsfjlksdhjfhsdjfh"),
+        log: vi.fn().mockImplementation(() => ({
             all: [
                 {
                     hash: "dsfjkhsdkjfhkjl",
@@ -38,10 +39,10 @@ jest.mock("simple-git", () => ({
         })),
     })),
 }));
-jest.mock("fs-extra");
+vi.mock("fs-extra");
 
-const fseMocked = jest.mocked(fse);
-const gitMocked = jest.mocked(git);
+const fseMocked = vi.mocked(fse);
+const gitMocked = vi.mocked(git);
 
 describe("git test", function () {
     beforeEach(() => {
@@ -49,7 +50,7 @@ describe("git test", function () {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("createVersionTag", function () {
@@ -138,7 +139,7 @@ describe("git test", function () {
         });
 
         it("should throw as no commit was done since last version tag", async () => {
-            gitMocked.log = jest.fn().mockImplementation(() => ({
+            gitMocked.log = vi.fn().mockImplementation(() => ({
                 all: [],
             }));
 
@@ -146,7 +147,7 @@ describe("git test", function () {
         });
 
         it("should throw if no conventional commit is found since last version tag", async () => {
-            gitMocked.log = jest.fn().mockImplementation(() => ({
+            gitMocked.log = vi.fn().mockImplementation(() => ({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -163,7 +164,7 @@ describe("git test", function () {
         });
 
         it("should return release type major", async () => {
-            gitMocked.log = jest.fn().mockImplementation(() => ({
+            gitMocked.log = vi.fn().mockImplementation(() => ({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -180,7 +181,7 @@ describe("git test", function () {
         });
 
         it("should return release type patch", async () => {
-            gitMocked.log = jest.fn().mockImplementation(() => ({
+            gitMocked.log = vi.fn().mockImplementation(() => ({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -197,7 +198,7 @@ describe("git test", function () {
         });
 
         it("should return release type patch (commit without scope)", async () => {
-            gitMocked.log = jest.fn().mockImplementation(() => ({
+            gitMocked.log = vi.fn().mockImplementation(() => ({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -214,7 +215,7 @@ describe("git test", function () {
         });
 
         it("should return release type minor", async () => {
-            gitMocked.log = jest.fn().mockImplementation(() => ({
+            gitMocked.log = vi.fn().mockImplementation(() => ({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -231,7 +232,7 @@ describe("git test", function () {
         });
 
         it("should return release type minor (commit without scope)", async () => {
-            gitMocked.log = jest.fn().mockImplementation(() => ({
+            gitMocked.log = vi.fn().mockImplementation(() => ({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
