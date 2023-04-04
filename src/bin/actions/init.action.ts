@@ -1,5 +1,5 @@
 import { Action } from "./action";
-import { defaultWersionConfig } from "../../models/wersion-config.model";
+import { semverMatcher } from "../../models/wersion-config.model";
 import fs from "fs";
 import { createVersionTag, versionTagExists } from "../../lib/git";
 import { config } from "../../lib/config";
@@ -46,19 +46,15 @@ export class InitAction implements Action {
 
         const answers = await inquirer.prompt([
             {
-                name: "project_name",
+                name: "preset",
+                type: "list",
+                message: "Choose the preset for the configuration by your projects programming language",
+                choices: ["Node.js", "Flutter"],
+            },
+            {
+                name: "projectName",
                 message: "Name of your project, used to prefix created git tags",
                 default: defaultProjectName,
-            },
-            {
-                name: "version_file_path",
-                message: "Path to the file where your version is stored, e.g. a package.json",
-                default: defaultWersionConfig.versionFile.path,
-            },
-            {
-                name: "changelog_path",
-                message: "Relative path of the changelog file",
-                default: defaultWersionConfig.changelogFilePath,
             },
         ]);
 
@@ -83,17 +79,30 @@ export class InitAction implements Action {
      * Compiles the file with the given answers from inquirer
      * @param vars The variables that were queried from inquirer
      */
-    compileWersionRCTsTemplate(vars: {
-        changelog_path: string;
-        version_file_path: string;
-        project_name: string;
-    }): string {
+    compileWersionRCTsTemplate(vars: { preset: string; projectName: string }): string {
+        let versionFile;
+        let matcher;
+
+        switch (vars.preset) {
+            case "Node.js":
+                versionFile = "./package.json";
+                matcher = `"version": ?"${semverMatcher}"`;
+                break;
+            case "Flutter":
+                versionFile = "./pubspec.yaml";
+                matcher = `version: ?${semverMatcher}`;
+                break;
+            default:
+                versionFile = "./package.json";
+                matcher = `"version": ?"${semverMatcher}"`;
+        }
+
         return `import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";
 
   export const configuration: Partial<WersionConfigModel> = {
     versionFile: {
-        path: "${vars.version_file_path}",
-        matcher: \`"version": ?"\$\{semverMatcher\}"\`,
+        path: "${versionFile}",
+        matcher: ${matcher},
     },
     commitTypes: {
         major: [],
@@ -101,8 +110,8 @@ export class InitAction implements Action {
         patch: ["fix"]
     },
     breakingChangeTrigger: "breaking change",
-    changelogFilePath: "${vars.changelog_path}",
-    projectName: "${vars.project_name}",
+    changelogFilePath: "./CHANGELOG.md",
+    projectName: "${vars.projectName}",
   };`;
     }
 }

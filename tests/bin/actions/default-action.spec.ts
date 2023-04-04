@@ -5,12 +5,7 @@ import { DefaultAction } from "../../../src/bin/actions/default.action";
 import { git } from "../../../src/lib/git";
 import { ReleaseType } from "../../../src/lib/version";
 
-vi.mock("fs", async () => {
-    return {
-        ...fs,
-        default: { ...fs },
-    };
-});
+vi.mock("node:fs", () => ({ default: fs }));
 
 const filesJson = {
     "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0", versionFile: {} }),
@@ -70,11 +65,13 @@ vi.mock("simple-git", () => ({
 }));
 
 vi.mock("inquirer", () => ({
-    prompt: vi.fn().mockResolvedValue({ unstashed_changes: true }),
-    ui: {
-        BottomBar: vi.fn().mockImplementation(() => ({
-            log: { write: vi.fn().mockReturnValue("") },
-        })),
+    default: {
+        prompt: vi.fn().mockResolvedValue({ unstashed_changes: true }),
+        ui: {
+            BottomBar: vi.fn().mockImplementation(() => ({
+                log: { write: vi.fn().mockReturnValue("") },
+            })),
+        },
     },
 }));
 
@@ -150,7 +147,7 @@ describe("default action integration test", () => {
 
     describe("stashing", () => {
         it("should stash uncommitted changes", async () => {
-            gitMocked.status = vi.fn().mockResolvedValue({ isClean: () => false });
+            gitMocked.status = vi.fn().mockResolvedValue({ isClean: () => false }) as typeof gitMocked.status;
             const action = new DefaultAction();
             await action.run();
 
@@ -161,7 +158,7 @@ describe("default action integration test", () => {
         });
 
         it("should run with dry run and do not affect anything with uncommitted changes", async () => {
-            gitMocked.status = vi.fn().mockResolvedValue({ isClean: () => false });
+            gitMocked.status = vi.fn().mockResolvedValue({ isClean: () => false }) as typeof gitMocked.status;
             config.set({ dryRun: true });
             const fsSnapshotBefore = vol.toJSON();
 

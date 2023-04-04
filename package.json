@@ -1,6 +1,6 @@
 {
   "name": "@weichwarenprojekt/wersion",
-  "version": "31.1.1",
+  "version": "0.3.0",
   "description": "A cli tool and lib to automatically versioning your projects.",
   "keywords": [
     "version",
@@ -70,7 +70,7 @@
     "commander": "^10.0.0",
     "figures": "^5.0.0",
     "fs-extra": "^11.1.0",
-    "inquirer": "^9.1.4",
+    "inquirer": "^9.1.5",
     "lodash": "^4.17.21",
     "semver": "^7.3.8",
     "simple-git": "^3.17.0",

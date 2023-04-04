@@ -5,12 +5,7 @@ import { CliOptionsModel } from "../../src/models/cli-options.model";
 import _ from "lodash";
 import { defaultWersionConfig } from "../../src/models/wersion-config.model";
 
-vi.mock("fs", async () => {
-    return {
-        ...fs,
-        default: { ...fs },
-    };
-});
+vi.mock("node:fs", () => ({ ...fs, default: fs }));
 
 describe("config test", function () {
     beforeEach(async () => {
@@ -30,7 +25,6 @@ describe("config test", function () {
     });
 
     it("should return config parsed from config file", () => {
-        console.log(defaultWersionConfig);
         expect(config.config).toMatchObject(
             _.merge({}, defaultWersionConfig, {
                 versionFile: "version.json",
@@ -45,9 +39,12 @@ describe("config test", function () {
             dryRun: true,
         };
 
-        console.log(config.config);
         config.set(cliOptions);
-
-        expect(config.config).toMatchObject(_.merge({}, defaultWersionConfig, cliOptions));
+        expect(config.config).toMatchObject(
+            _.merge({}, defaultWersionConfig, cliOptions, {
+                versionFile: "version.json",
+                changelogFilePath: "CHANGELOG.md",
+            }),
+        );
     });
 });

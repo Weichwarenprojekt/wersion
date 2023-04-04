@@ -2,7 +2,7 @@ import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { fs, vol } from "memfs";
 import { Version } from "../../src/lib/version";
 
-vi.mock("fs", () => ({ ...fs }));
+vi.mock("node:fs", () => ({ default: fs }));
 
 import { getPackageVersion, setPackageVersion } from "../../src/lib/version-file";
 import { config } from "../../src/lib/config";

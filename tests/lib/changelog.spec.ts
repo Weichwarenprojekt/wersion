@@ -5,7 +5,7 @@ import { Version } from "../../src/lib/version";
 import * as git from "../../src/lib/git";
 import { config } from "../../src/lib/config";
 
-vi.mock("fs", () => ({ ...fs }));
+vi.mock("node:fs", () => ({ default: fs }));
 vi.mock("../../src/lib/git");
 vi.mock("simple-git", () => ({
     simpleGit: vi.fn(),

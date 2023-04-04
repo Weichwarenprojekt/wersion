@@ -132,7 +132,8 @@ describe("git test", function () {
 
     describe("getReleaseTypeForHistory", function () {
         beforeEach(() => {
-            fseMocked.readJsonSync.mockReturnValue({
+            // @ts-ignore
+            fseMocked.default.readJsonSync.mockReturnValue({
                 versionFile: "version.json",
                 changelogFilePath: "CHANGELOG.txt",
             } as unknown as WersionConfigModel);
@@ -141,7 +142,7 @@ describe("git test", function () {
         it("should throw as no commit was done since last version tag", async () => {
             gitMocked.log = vi.fn().mockImplementation(() => ({
                 all: [],
-            }));
+            })) as typeof gitMocked.log;
 
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).rejects.toThrowError();
         });
@@ -159,7 +160,7 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            }));
+            })) as typeof gitMocked.log;
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).rejects.toThrowError();
         });
 
@@ -176,7 +177,7 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            }));
+            })) as typeof gitMocked.log;
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.major);
         });
 
@@ -193,7 +194,7 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            }));
+            })) as typeof gitMocked.log;
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.patch);
         });
 
@@ -210,7 +211,7 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            }));
+            })) as typeof gitMocked.log;
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.patch);
         });
 
@@ -227,7 +228,7 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            }));
+            })) as typeof gitMocked.log;
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.minor);
         });
 
@@ -244,7 +245,7 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            }));
+            })) as typeof gitMocked.log;
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.minor);
         });
     });
