@@ -6,6 +6,7 @@ import {
     getCommitsSinceTag,
     getReleaseTypeForHistory,
     git,
+    repoHasLocalCommits,
     versionTagExists,
 } from "../../src/lib/git";
 import * as fse from "fs-extra";
@@ -126,7 +127,16 @@ describe("git test", function () {
         it("should throw on error", async () => {
             gitMocked.raw.mockRejectedValue("");
 
-            await expect(getCommitsSinceTag()).rejects.toThrowError();
+            await expect(getCommitsSinceTag()).rejects.toThrowError(
+                "testing: Could not get commits since last version!",
+            );
+        });
+
+        it("should throw on error but without project prefix", async () => {
+            gitMocked.raw.mockRejectedValue("");
+            config.set({ projectName: "" });
+
+            await expect(getCommitsSinceTag()).rejects.toThrowError("Could not get commits since last version!");
         });
     });
 
@@ -247,6 +257,18 @@ describe("git test", function () {
                 ],
             })) as typeof gitMocked.log;
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.minor);
+        });
+    });
+
+    describe("repoHasLocalCommits", function () {
+        it("should return true", async () => {
+            gitMocked.log = vi.fn().mockResolvedValue({ total: 1 });
+            await expect(repoHasLocalCommits()).resolves.toEqual(true);
+        });
+
+        it("should return false", async () => {
+            gitMocked.log = vi.fn().mockResolvedValue({ total: 0 });
+            await expect(repoHasLocalCommits()).resolves.toEqual(false);
         });
     });
 });

@@ -4,6 +4,7 @@ import { config } from "../../../src/lib/config";
 import { DefaultAction } from "../../../src/bin/actions/default.action";
 import { git } from "../../../src/lib/git";
 import { ReleaseType } from "../../../src/lib/version";
+import inquirer from "inquirer";
 
 vi.mock("node:fs", () => ({ default: fs }));
 
@@ -76,6 +77,7 @@ vi.mock("inquirer", () => ({
 }));
 
 const gitMocked = vi.mocked(git);
+const inquirerMocked = vi.mocked(inquirer);
 
 describe("default action integration test", () => {
     beforeEach(() => {
@@ -173,6 +175,25 @@ describe("default action integration test", () => {
                 expect(gitMocked[method].mock.calls.length).toEqual(0);
             }
 
+            const fsSnapshotAfter = vol.toJSON();
+            expect(fsSnapshotAfter).toMatchObject(fsSnapshotBefore);
+        });
+
+        it("should abort if there are unstashed changes and user does not approve", async () => {
+            gitMocked.status = vi.fn().mockResolvedValue({ isClean: () => false }) as typeof gitMocked.status;
+            // @ts-ignore
+            inquirerMocked.prompt = vi.fn().mockResolvedValue({ unstashed_changes: false });
+            const fsSnapshotBefore = vol.toJSON();
+
+            // @ts-ignore
+            const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
+                throw new Error("Test error to exit process");
+            });
+
+            const action = new DefaultAction();
+            await expect(action.run()).rejects.toThrowError("Test error to exit process");
+
+            expect(mockExit).toHaveBeenCalledWith(0);
             const fsSnapshotAfter = vol.toJSON();
             expect(fsSnapshotAfter).toMatchObject(fsSnapshotBefore);
         });

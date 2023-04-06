@@ -114,8 +114,7 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
  * @param logFields
  */
 function conventionalCommitToChangelogString(logFields: DefaultLogFields): string {
-    const matchedConventionalCommit = logFields.message.match(conventionalCommitRegex);
-    if (_.isNull(matchedConventionalCommit)) return "";
+    const matchedConventionalCommit = logFields.message.match(conventionalCommitRegex) as RegExpMatchArray;
 
     const [, , , scope, message] = matchedConventionalCommit;
     const mdScope = scope ? `__${scope}:__ ` : "";

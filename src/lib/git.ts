@@ -20,7 +20,7 @@ export function getTagPrefix() {
 }
 
 /**
- * Get the name of the current branch
+ * Check whether there are local commits which weren't pushed to the shared repo, yet.
  */
 export async function repoHasLocalCommits(): Promise<any> {
     return (await git.log(["origin..HEAD"])).total > 0;

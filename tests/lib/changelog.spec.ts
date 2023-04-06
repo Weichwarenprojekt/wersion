@@ -1,4 +1,4 @@
-import { vi, describe, it, expect, afterEach } from "vitest";
+import { vi, describe, it, expect, afterEach, beforeEach } from "vitest";
 import { fs, vol } from "memfs";
 import { generateChangelog } from "../../src/lib/changelog";
 import { Version } from "../../src/lib/version";
@@ -31,6 +31,12 @@ const files = {
 };
 
 describe("changelog test", () => {
+    beforeEach(() => {
+        vol.fromJSON(files);
+        config.loadConfigFile("./.wersionrc.ts");
+        config.set({ dryRun: false });
+    });
+
     afterEach(() => {
         vol.reset();
         vi.clearAllMocks();
@@ -38,15 +44,22 @@ describe("changelog test", () => {
 
     describe("generateChangelog", () => {
         it("should generate changelog", async () => {
-            vol.fromJSON(files);
-
             gitMocked.getCommitsSinceTag.mockResolvedValue([
                 {
                     hash: "dsfjkhsdkjfhkjl",
                     date: "1.1.1990",
-                    message: "feat(): my commit",
+                    message: "feat(scope): my commit",
                     refs: "sghlgflkd",
                     body: "breaking change",
+                    author_name: "John Doe",
+                    author_email: "dsjksdfj@sdkfjdsk.com",
+                },
+                {
+                    hash: "dfsfsdfsf",
+                    date: "1.1.1990",
+                    message: "feat(): my commit non breaking",
+                    refs: "sghlgflkdfd",
+                    body: "",
                     author_name: "John Doe",
                     author_email: "dsjksdfj@sdkfjdsk.com",
                 },
@@ -74,7 +87,8 @@ describe("changelog test", () => {
                     date +
                     ")\n" +
                     "## Features\n" +
-                    "- my commit (dsfjkhs)\n" +
+                    "- __scope:__ my commit (dsfjkhs)\n" +
+                    "- my commit non breaking (dfsfsdf)\n" +
                     "## Bug Fixes\n" +
                     "- remove bug (dsfjkhs)\n" +
                     "## BREAKING CHANGES\n" +
@@ -83,8 +97,6 @@ describe("changelog test", () => {
         });
 
         it("should not create any file with dry-run", async () => {
-            vol.fromJSON(files);
-
             config.set({ dryRun: true });
 
             gitMocked.getCommitsSinceTag.mockResolvedValue([
@@ -93,7 +105,7 @@ describe("changelog test", () => {
                     date: "1.1.1990",
                     message: "feat(): my commit",
                     refs: "sghlgflkd",
-                    body: "breaking change",
+                    body: "breaking change: major increase",
                     author_name: "John Doe",
                     author_email: "dsjksdfj@sdkfjdsk.com",
                 },
@@ -111,6 +123,41 @@ describe("changelog test", () => {
             await generateChangelog(new Version("1.0.0"), "0.3.2");
 
             expect(fs.readFileSync("./CHANGELOG.md").toString()).toEqual("");
+        });
+
+        it("should skip the non conventional commit", async () => {
+            gitMocked.getCommitsSinceTag.mockResolvedValue([
+                {
+                    hash: "dsfjkhsdkjfhkjl",
+                    date: "1.1.1990",
+                    message: "non conv: my commit",
+                    refs: "sghlgflkd",
+                    body: "",
+                    author_name: "John Doe",
+                    author_email: "dsjksdfj@sdkfjdsk.com",
+                },
+                {
+                    hash: "dsfjkhsdkjfhkjl",
+                    date: "1.1.1990",
+                    message: "fix(): remove bug",
+                    refs: "sghlgflkd",
+                    body: "gg",
+                    author_name: "John Doe",
+                    author_email: "dsjksdfj@sdkfjdsk.com",
+                },
+            ]);
+
+            await generateChangelog(new Version("1.0.0"), "0.3.2");
+
+            const today = new Date();
+            const date = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today
+                .getDate()
+                .toString()
+                .padStart(2, "0")}`;
+
+            expect(fs.readFileSync("./CHANGELOG.md").toString()).toEqual(
+                "# 1.0.0 (" + date + ")\n" + "## Bug Fixes\n" + "- remove bug (dsfjkhs)\n",
+            );
         });
     });
 });
