@@ -17,7 +17,7 @@ esbuild
     .build({
         ...options,
         entryPoints: ["./src/bin/cli.ts"],
-        format: "cjs",
+        format: "esm",
         outfile: "./dist/wersion.js",
     })
     .catch(deleteDist);

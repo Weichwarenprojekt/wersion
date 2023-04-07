@@ -39,6 +39,7 @@
     "prepack": "npx pinst --disable",
     "postpack": "npx pinst --enable",
     "test": "yarn build && vitest run",
+    "e2e": "yarn build && vitest -c ./vite-e2e.config.ts run",
     "coverage": "yarn build && vitest run --coverage",
     "prepublishOnly": "yarn build"
   },

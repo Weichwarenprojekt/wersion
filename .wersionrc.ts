@@ -1,4 +1,4 @@
-import { WersionConfigModel } from "./src/models/wersion-config.model";
+import { WersionConfigModel } from "./dist/src/models/wersion-config.model";
 
 export const configuration: Partial<WersionConfigModel> = {
     commitTypes: {
