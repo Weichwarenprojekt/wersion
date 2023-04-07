@@ -9,3 +9,5 @@ coverage
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+
+tests/e2e/checkout

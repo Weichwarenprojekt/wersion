@@ -5,6 +5,6 @@ export default defineConfig({
         deps: {
             inline: ["@weichwarenprojekt/ts-importer"],
         },
-        exclude: [...defaultExclude, "tests/e2e/*"],
+        exclude: [...defaultExclude, "tests/bin/*", "tests/lib/*"],
     },
 });
