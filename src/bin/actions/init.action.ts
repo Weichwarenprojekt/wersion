@@ -1,7 +1,7 @@
 import { Action } from "./action";
 import { semverMatcher } from "../../models/wersion-config.model";
 import fs from "fs";
-import { createVersionTag, versionTagExists } from "../../lib/git";
+import { createVersionTag, git, versionTagExists } from "../../lib/git";
 import { config } from "../../lib/config";
 import { getPackageVersion } from "../../lib/version-file";
 import inquirer from "inquirer";
@@ -60,6 +60,7 @@ export class InitAction implements Action {
 
         const wersionrcTsContent = this.compileWersionRCTsTemplate(answers);
         fs.writeFileSync(wersionConfigPath, wersionrcTsContent);
+        await git.add(".wersionrc.ts");
         logger.info("created .wersionrc.ts file");
     }
 
@@ -86,23 +87,25 @@ export class InitAction implements Action {
         switch (vars.preset) {
             case "Node.js":
                 versionFile = "./package.json";
-                matcher = `"version": ?"${semverMatcher}"`;
+                matcher = `"version": "${semverMatcher}"`;
                 break;
             case "Flutter":
                 versionFile = "./pubspec.yaml";
-                matcher = `version: ?${semverMatcher}`;
+                matcher = `version: ${semverMatcher}`;
                 break;
             default:
                 versionFile = "./package.json";
-                matcher = `"version": ?"${semverMatcher}"`;
+                matcher = `"version": "${semverMatcher}"`;
         }
+
+        matcher = matcher.replace(/[\\"']/g, "\\$&").replace(/\u0000/g, "\\0");
 
         return `import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";
 
   export const configuration: Partial<WersionConfigModel> = {
     versionFile: {
         path: "${versionFile}",
-        matcher: ${matcher},
+        matcher: "${matcher}",
     },
     commitTypes: {
         major: [],
