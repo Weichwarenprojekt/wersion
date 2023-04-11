@@ -7,7 +7,7 @@ import { getVersionFile } from "./version-file";
 import { config } from "./config";
 
 // Import with * as simpleGit to be able to mock it away
-export const git = simpleGit.simpleGit();
+export const git = simpleGit.simpleGit({ baseDir: process.cwd() });
 
 function getErrorPrefix() {
     const projectName = config.config.projectName;
