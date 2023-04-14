@@ -39,10 +39,12 @@ export async function getPackageVersion(): Promise<Version> {
     await checkVersionFileExists();
 
     const versionFileContent = fs.readFileSync(getVersionFile(), "utf-8");
-
+    console.log(getVersionRegex());
+    console.log(versionFileContent);
     // TODO: Use line number to select version in file (edge case: version at end
     //  of package.json file and dependency with name version is installed)
     const regexResponse = getVersionRegex().exec(versionFileContent);
+    console.log(regexResponse);
     if (!Array.isArray(regexResponse)) {
         throw new Error("Cannot find version in version file");
     }

@@ -24,6 +24,7 @@ vi.mock("simple-git", () => ({
             }),
         ),
         raw: vi.fn().mockResolvedValue(""),
+        add: vi.fn(),
     })),
 }));
 
@@ -87,14 +88,13 @@ describe("init action integration test", () => {
     it("should use the right configuration for default/unrecognized preset", async () => {
         const action = new InitAction();
         const template = action.compileWersionRCTsTemplate({ preset: "C#", projectName: "wersion-test" });
-        console.log(template);
         expect(template).toEqual(
             'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
                 "\n" +
                 "  export const configuration: Partial<WersionConfigModel> = {\n" +
                 "    versionFile: {\n" +
                 '        path: "./package.json",\n' +
-                '        matcher: "version": ?"((0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)",\n' +
+                '        matcher: "\\"version\\": ?\\"((0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)(?:-((?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\\\.(?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\\\+([0-9a-zA-Z-]+(?:\\\\.[0-9a-zA-Z-]+)*))?)\\"",\n' +
                 "    },\n" +
                 "    commitTypes: {\n" +
                 "        major: [],\n" +
@@ -111,14 +111,13 @@ describe("init action integration test", () => {
     it("should use the right configuration for Node.js preset", async () => {
         const action = new InitAction();
         const template = action.compileWersionRCTsTemplate({ preset: "Node.js", projectName: "wersion-test" });
-        console.log(template);
         expect(template).toEqual(
             'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
                 "\n" +
                 "  export const configuration: Partial<WersionConfigModel> = {\n" +
                 "    versionFile: {\n" +
                 '        path: "./package.json",\n' +
-                '        matcher: "version": ?"((0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)",\n' +
+                '        matcher: "\\"version\\": ?\\"((0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)(?:-((?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\\\.(?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\\\+([0-9a-zA-Z-]+(?:\\\\.[0-9a-zA-Z-]+)*))?)\\"",\n' +
                 "    },\n" +
                 "    commitTypes: {\n" +
                 "        major: [],\n" +
@@ -135,14 +134,13 @@ describe("init action integration test", () => {
     it("should use the right configuration for Flutter preset", async () => {
         const action = new InitAction();
         const template = action.compileWersionRCTsTemplate({ preset: "Flutter", projectName: "wersion-test" });
-        console.log(template);
         expect(template).toEqual(
             'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
                 "\n" +
                 "  export const configuration: Partial<WersionConfigModel> = {\n" +
                 "    versionFile: {\n" +
                 '        path: "./pubspec.yaml",\n' +
-                "        matcher: version: ?((0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?),\n" +
+                '        matcher: "version: ?((0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)(?:-((?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\\\.(?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\\\+([0-9a-zA-Z-]+(?:\\\\.[0-9a-zA-Z-]+)*))?)",\n' +
                 "    },\n" +
                 "    commitTypes: {\n" +
                 "        major: [],\n" +

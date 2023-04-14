@@ -87,15 +87,15 @@ export class InitAction implements Action {
         switch (vars.preset) {
             case "Node.js":
                 versionFile = "./package.json";
-                matcher = `"version": "${semverMatcher}"`;
+                matcher = `"version": ?"${semverMatcher}"`;
                 break;
             case "Flutter":
                 versionFile = "./pubspec.yaml";
-                matcher = `version: ${semverMatcher}`;
+                matcher = `version: ?${semverMatcher}`;
                 break;
             default:
                 versionFile = "./package.json";
-                matcher = `"version": "${semverMatcher}"`;
+                matcher = `"version": ?"${semverMatcher}"`;
         }
 
         matcher = matcher.replace(/[\\"']/g, "\\$&").replace(/\u0000/g, "\\0");
