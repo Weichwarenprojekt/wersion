@@ -5,7 +5,16 @@ import { ChildProcess, execSync } from "node:child_process";
 import * as simpleGit from "simple-git";
 import path from "node:path";
 
+const today = new Date();
+const date = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today
+    .getDate()
+    .toString()
+    .padStart(2, "0")}`;
+
 const git = simpleGit.simpleGit({ baseDir: path.join(process.cwd(), "tests/e2e/checkout") });
+
+git.addConfig("user.email", "example@example.com", false, "global");
+git.addConfig("user.name", "max", false, "global");
 
 async function getNewLocalCommits() {
     const history = await git.log(["origin..HEAD"]);
@@ -81,7 +90,7 @@ describe("wersion e2e", function () {
             const shortHashServer = (await getNewLocalCommits())[1].hash.substring(0, 7);
 
             expect(fse.readFileSync("tests/e2e/checkout/server/CHANGELOG.md").toString()).toEqual(
-                `# 2.1.0 (2023-04-16)\n## Features\n- my new server feature (${shortHashServer})\n`,
+                `# 2.1.0 (${date})\n## Features\n- my new server feature (${shortHashServer})\n`,
             );
 
             // Release client
@@ -98,7 +107,7 @@ describe("wersion e2e", function () {
             const shortHashClient = (await getNewLocalCommits())[3].hash.substring(0, 7);
 
             expect(fse.readFileSync("tests/e2e/checkout/client/CHANGELOG.md").toString()).toEqual(
-                `# 3.1.0 (2023-04-16)\n## Features\n- my new client feature (${shortHashClient})\n`,
+                `# 3.1.0 (${date})\n## Features\n- my new client feature (${shortHashClient})\n`,
             );
         });
     });
