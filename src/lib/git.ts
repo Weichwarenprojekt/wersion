@@ -76,7 +76,7 @@ export async function createVersionCommit(version: Version) {
 export async function getCommitsSinceTag(tag?: string): Promise<simpleGit.DefaultLogFields[]> {
     try {
         const from = tag ?? (await git.raw("rev-list", "--max-parents=0 HEAD"));
-        const gitLog = await git.log({ from, to: "HEAD" });
+        const gitLog = await git.log({ from, to: "HEAD", file: process.cwd() });
         if (!_.isEmpty(gitLog.all)) return _.clone(gitLog.all) as simpleGit.DefaultLogFields[];
         return [];
     } catch (e) {

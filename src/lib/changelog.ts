@@ -6,6 +6,7 @@ import _ from "lodash";
 import { conventionalCommitRegex } from "./util";
 import fs from "fs";
 import { config } from "./config";
+import path from "node:path";
 
 /**
  * Helper interface to pass changelog content info
@@ -18,7 +19,7 @@ interface ChangelogContent {
 }
 
 export function getChangelogPath() {
-    return config.config.changelogFilePath;
+    return path.resolve(config.config.changelogFilePath);
 }
 
 /**
@@ -63,7 +64,7 @@ function updateChangelogFile(markdownToAppend: string) {
     const writeBuffer = Buffer.concat([Buffer.from(markdownToAppend), currentContentBuffer]);
 
     // Write new content
-    fs.writeSync(fileHandle, writeBuffer);
+    fs.writeFileSync(fileHandle, writeBuffer);
 }
 
 function generateChangelogMarkdown(changelogContent: ChangelogContent) {
