@@ -65,6 +65,8 @@ function updateChangelogFile(markdownToAppend: string) {
 
     // Write new content
     fs.writeFileSync(fileHandle, writeBuffer);
+
+    fs.closeSync(fileHandle);
 }
 
 function generateChangelogMarkdown(changelogContent: ChangelogContent) {
