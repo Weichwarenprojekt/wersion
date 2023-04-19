@@ -1,3 +1,20 @@
+# 0.4.0 (2023-04-19)
+## Features
+- switch entirely to esm (3dc8e68)
+- adjust init script and fix vitest tests (a89d294)
+- __cli:__ commit updated version file at the end of incrementBuildNumber action (6cc215c)
+- add init action (9b63458)
+- __cli:__ add the incrementBuildNumber action (779136b)
+## Bug Fixes
+- close file handle when writing changelog (948173d)
+- apply git log only to cwd (877d9e8)
+- move husky to normal dependencies (cd742a8)
+- fix version regex (e26bab9)
+- use cwd as default git directory (620fce9)
+- init script version matcher broken (f5331de)
+- improve semantic version regex (b0d4ab5)
+- optimize changelog generation (303dbe9)
+- add npx to pinst to fix npm publish (eed1afb)
 # 0.3.0 (2023-03-04)
 ## Features
 - add projectName prefix option (8ec661e)
