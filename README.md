@@ -95,3 +95,8 @@ export const configuration: Partial<WersionConfigModel> = {
 | breakingChangeTrigger |         | String that triggers an breaking change ergo an increase of the major version if written in a commits body |
 | changelogFilePath     |         | Configuration of the automatically generated changelog file (e.g. ./CHANGELOG.md)                          |
 | projectName           |         | Optional project name which is prepended to each git tag                                                   |
+
+# Contribution
+Feel free creating an issue or PR :)
+## e2e
+We are using an extra repository to create the project structure in which we are running our e2e tests: http://github.com/Weichwarenprojekt/wersion-e2e
