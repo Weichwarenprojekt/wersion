@@ -19,7 +19,7 @@ jobs:
             # Install dependencies and bundle the software
             - name: Initialize
               run: |
-                  yarn
-                  yarn build
+                  npm i
+                  npm run build
 
             - uses: ArtiomTr/jest-coverage-report-action@v2

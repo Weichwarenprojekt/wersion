@@ -19,6 +19,6 @@ jobs:
             # Run the server tests
             - name: Run Tests
               run: |
-                  yarn
-                  yarn test
-                  yarn e2e
+                  npm i
+                  npm run test
+                  npm run e2e

@@ -38,10 +38,10 @@
     "postinstall": "husky install",
     "prepack": "npx pinst --disable",
     "postpack": "npx pinst --enable",
-    "test": "yarn build && vitest run",
-    "e2e": "yarn build && vitest -c ./vite-e2e.config.ts run",
-    "coverage": "yarn build && vitest run --coverage",
-    "prepublishOnly": "yarn build"
+    "test": "npm run build && vitest run",
+    "e2e": "npm run build && vitest -c ./vite-e2e.config.ts run",
+    "coverage": "npm run build && vitest run --coverage",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.0",
@@ -64,7 +64,6 @@
     "unionfs": "^4.4.0",
     "vitest": "^0.29.8"
   },
-  "packageManager": "yarn@3.3.0",
   "dependencies": {
     "@weichwarenprojekt/ts-importer": "^0.1.7",
     "chalk": "^5.2.0",

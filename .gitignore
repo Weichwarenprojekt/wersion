@@ -1,6 +1,5 @@
 node_modules
 dist
-.yarn/cache
 coverage
 
 #User-specific webstorm settings
