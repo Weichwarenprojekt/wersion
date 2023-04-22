@@ -9,7 +9,7 @@ import inquirer from "inquirer";
 vi.mock("node:fs", () => ({ default: fs }));
 
 const filesJson = {
-    "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0", versionFile: {} }),
+    "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0" }),
     ".wersionrc.ts": `export const configuration = {
         versionFile: {
             path: "./package.json",

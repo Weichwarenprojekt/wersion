@@ -7,11 +7,10 @@ import { BuildNumberAction } from "../../../src/bin/actions/build-number.action"
 vi.mock("node:fs", () => ({ default: fs }));
 
 const filesJson = {
-    "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0", versionFile: {} }),
+    "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0" }),
     ".wersionrc.ts": `export const configuration = {
         versionFile: {
             path: "./package.json",
-            matcher: '"version": ?"([0-9.]+)"',
         },
         commitTypes: {
             major: [],
@@ -50,12 +49,22 @@ describe("default action integration test", () => {
         vol.reset();
     });
 
-    it("should run increment build number action with default parameters", async () => {
+    it("should add a build number if version is clean", async () => {
         const action = new BuildNumberAction();
         await action.run();
 
         expect(JSON.parse(fs.readFileSync("./package.json", { encoding: "utf-8" }).toString()).version).toEqual(
             "0.1.0+1",
+        );
+    });
+
+    it("should increment build number", async () => {
+        fs.writeFileSync("./package.json", JSON.stringify({ name: "wersion-unit-test", version: "0.1.0+42" }));
+        const action = new BuildNumberAction();
+        await action.run();
+
+        expect(JSON.parse(fs.readFileSync("./package.json", { encoding: "utf-8" }).toString()).version).toEqual(
+            "0.1.0+43",
         );
     });
 

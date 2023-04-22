@@ -8,7 +8,7 @@ import { getPackageVersion, setPackageVersion } from "../../src/lib/version-file
 import { config } from "../../src/lib/config";
 
 const filesJson = {
-    "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0", versionFile: {} }),
+    "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0" }),
     ".wersionrc.ts": `export const configuration = {
         versionFile: {
             path: "./package.json",
@@ -111,7 +111,7 @@ describe("version-file test", function () {
         it("should throw whether the regex doesnt match any version", async () => {
             await fs.writeFileSync(
                 "./package.json",
-                JSON.stringify({ name: "wersion-unit-test", version: "einspunkt3", versionFile: {} }),
+                JSON.stringify({ name: "wersion-unit-test", version: "einspunkt3" }),
             );
 
             await expect(setPackageVersion(new Version("0.1.12"))).rejects.toThrowError(
