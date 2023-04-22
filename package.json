@@ -39,7 +39,6 @@
     "prepack": "npx pinst --disable",
     "postpack": "npx pinst --enable",
     "test": "npm run build && vitest run",
-    "e2e": "npm run build && vitest -c ./vite-e2e.config.ts run",
     "coverage": "npm run build && vitest run --coverage",
     "prepublishOnly": "npm run build"
   },
