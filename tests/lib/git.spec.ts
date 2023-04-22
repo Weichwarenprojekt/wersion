@@ -1,6 +1,7 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { ReleaseType, Version } from "../../src/lib/version";
 import {
+    commitHasTag,
     createVersionCommit,
     createVersionTag,
     getCommitsSinceTag,
@@ -269,6 +270,18 @@ describe("git test", function () {
         it("should return false", async () => {
             gitMocked.log = vi.fn().mockResolvedValue({ total: 0 });
             await expect(repoHasLocalCommits()).resolves.toEqual(false);
+        });
+    });
+
+    describe("commitHasTag", function () {
+        it("should return true", async () => {
+            gitMocked.tag = vi.fn().mockResolvedValue("mytag");
+            await expect(commitHasTag()).resolves.toEqual(true);
+        });
+
+        it("should return false", async () => {
+            gitMocked.tag = vi.fn().mockResolvedValue("");
+            await expect(commitHasTag()).resolves.toEqual(false);
         });
     });
 });

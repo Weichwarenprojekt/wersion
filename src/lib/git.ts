@@ -120,3 +120,7 @@ export async function getReleaseTypeForHistory(oldVersion: Version): Promise<Rel
 
     throw new Error(getErrorPrefix() + "no changes since last version detected");
 }
+
+export async function commitHasTag() {
+    return (await git.tag({ "--contains": "HEAD" })) !== "";
+}

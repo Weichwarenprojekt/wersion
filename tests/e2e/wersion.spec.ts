@@ -11,6 +11,8 @@ const date = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStar
     .toString()
     .padStart(2, "0")}`;
 
+fse.ensureDirSync("tests/e2e/checkout");
+
 const git = simpleGit.simpleGit({ baseDir: path.join(process.cwd(), "tests/e2e/checkout") });
 
 async function getNewLocalCommits() {
@@ -81,6 +83,19 @@ describe("wersion e2e", function () {
             }
 
             expect(fse.readJsonSync("tests/e2e/checkout/package.json").version).toEqual("1.0.0+1");
+        });
+
+        it("should not increment build number if last commit was tagged", async () => {
+            try {
+                const res = execSync("node ../../../dist/wersion.js --incrementBuildNumber", {
+                    cwd: "tests/e2e/checkout",
+                });
+                console.log(res.toString());
+            } catch (e) {
+                console.log((e as ChildProcess).stdout?.toString());
+            }
+
+            expect(fse.readJsonSync("tests/e2e/checkout/package.json").version).toEqual("1.0.0");
         });
     });
 
