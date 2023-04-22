@@ -1,3 +1,6 @@
+# 1.0.0 (2023-04-22)
+## Features
+- don't allow increment buildnumber on tagged commits (c04363c)
 # 0.4.0 (2023-04-19)
 ## Features
 - switch entirely to esm (3dc8e68)
