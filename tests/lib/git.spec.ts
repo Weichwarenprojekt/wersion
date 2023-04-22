@@ -1,7 +1,7 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { ReleaseType, Version } from "../../src/lib/version";
 import {
-    commitHasTag,
+    lastCommitHasTag,
     createVersionCommit,
     createVersionTag,
     getCommitsSinceTag,
@@ -15,6 +15,7 @@ import { defaultWersionConfig, WersionConfigModel } from "../../src/models/wersi
 import { config } from "../../src/lib/config";
 import _ from "lodash";
 import { defaultCliOptions } from "../../src/models/cli-options.model";
+import { LogResult } from "simple-git";
 
 vi.mock("simple-git", () => ({
     simpleGit: vi.fn().mockImplementation(() => ({
@@ -25,6 +26,7 @@ vi.mock("simple-git", () => ({
         ),
         add: vi.fn(),
         commit: vi.fn(),
+        tag: vi.fn(),
         raw: vi.fn().mockResolvedValue("flkjhsfjlksdhjfhsdjfh"),
         log: vi.fn().mockImplementation(() => ({
             all: [
@@ -151,15 +153,15 @@ describe("git test", function () {
         });
 
         it("should throw as no commit was done since last version tag", async () => {
-            gitMocked.log = vi.fn().mockImplementation(() => ({
+            gitMocked.log.mockResolvedValue({
                 all: [],
-            })) as typeof gitMocked.log;
+            } as unknown as LogResult);
 
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).rejects.toThrowError();
         });
 
         it("should throw if no conventional commit is found since last version tag", async () => {
-            gitMocked.log = vi.fn().mockImplementation(() => ({
+            gitMocked.log.mockResolvedValue({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -171,12 +173,12 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            })) as typeof gitMocked.log;
+            } as unknown as LogResult);
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).rejects.toThrowError();
         });
 
         it("should return release type major", async () => {
-            gitMocked.log = vi.fn().mockImplementation(() => ({
+            gitMocked.log.mockResolvedValue({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -188,12 +190,12 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            })) as typeof gitMocked.log;
+            } as unknown as LogResult);
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.major);
         });
 
         it("should return release type patch", async () => {
-            gitMocked.log = vi.fn().mockImplementation(() => ({
+            gitMocked.log.mockResolvedValue({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -205,12 +207,12 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            })) as typeof gitMocked.log;
+            } as unknown as LogResult);
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.patch);
         });
 
         it("should return release type patch (commit without scope)", async () => {
-            gitMocked.log = vi.fn().mockImplementation(() => ({
+            gitMocked.log.mockResolvedValue({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -222,12 +224,12 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            })) as typeof gitMocked.log;
+            } as unknown as LogResult);
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.patch);
         });
 
         it("should return release type minor", async () => {
-            gitMocked.log = vi.fn().mockImplementation(() => ({
+            gitMocked.log.mockResolvedValue({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -239,12 +241,12 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            })) as typeof gitMocked.log;
+            } as unknown as LogResult);
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.minor);
         });
 
         it("should return release type minor (commit without scope)", async () => {
-            gitMocked.log = vi.fn().mockImplementation(() => ({
+            gitMocked.log.mockResolvedValue({
                 all: [
                     {
                         hash: "dsfjkhsdkjfhkjl",
@@ -256,32 +258,32 @@ describe("git test", function () {
                         author_email: "dsjksdfj@sdkfjdsk.com",
                     },
                 ],
-            })) as typeof gitMocked.log;
+            } as unknown as LogResult);
             await expect(getReleaseTypeForHistory(new Version("5.6.7"))).resolves.toEqual(ReleaseType.minor);
         });
     });
 
     describe("repoHasLocalCommits", function () {
         it("should return true", async () => {
-            gitMocked.log = vi.fn().mockResolvedValue({ total: 1 });
+            gitMocked.log.mockResolvedValue({ total: 1 } as LogResult);
             await expect(repoHasLocalCommits()).resolves.toEqual(true);
         });
 
         it("should return false", async () => {
-            gitMocked.log = vi.fn().mockResolvedValue({ total: 0 });
+            gitMocked.log.mockResolvedValue({ total: 0 } as LogResult);
             await expect(repoHasLocalCommits()).resolves.toEqual(false);
         });
     });
 
     describe("commitHasTag", function () {
         it("should return true", async () => {
-            gitMocked.tag = vi.fn().mockResolvedValue("mytag");
-            await expect(commitHasTag()).resolves.toEqual(true);
+            gitMocked.tag.mockResolvedValue("mytag");
+            await expect(lastCommitHasTag()).resolves.toEqual(true);
         });
 
         it("should return false", async () => {
-            gitMocked.tag = vi.fn().mockResolvedValue("");
-            await expect(commitHasTag()).resolves.toEqual(false);
+            gitMocked.tag.mockResolvedValue("");
+            await expect(lastCommitHasTag()).resolves.toEqual(false);
         });
     });
 });

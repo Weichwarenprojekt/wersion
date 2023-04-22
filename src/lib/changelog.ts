@@ -18,6 +18,9 @@ interface ChangelogContent {
     breakingChanges: DefaultLogFields[];
 }
 
+/**
+ * Returns the path to the auto-generated changelog file
+ */
 export function getChangelogPath() {
     return path.resolve(config.config.changelogFilePath);
 }
@@ -31,8 +34,6 @@ async function createChangelogFileIfNotExists() {
 
 /**
  * Create changelog and add it to file
- * @param version
- * @param oldVersionTag
  */
 export async function generateChangelog(version: Version, oldVersionTag: string) {
     await createChangelogFileIfNotExists();
@@ -53,7 +54,6 @@ export async function generateChangelog(version: Version, oldVersionTag: string)
 
 /**
  * Append new changelog to the beginning of the changelog file
- * @param markdownToAppend
  */
 function updateChangelogFile(markdownToAppend: string) {
     // DryRun
@@ -69,6 +69,10 @@ function updateChangelogFile(markdownToAppend: string) {
     fs.closeSync(fileHandle);
 }
 
+/**
+ * Generates the changelog file
+ * @param changelogContent The content containing the changes and the fixes
+ */
 function generateChangelogMarkdown(changelogContent: ChangelogContent) {
     const today = new Date();
     const date = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today
@@ -114,7 +118,6 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
 
 /**
  * Converts a conventional commit in the simple-git format to a changelog line
- * @param logFields
  */
 function conventionalCommitToChangelogString(logFields: DefaultLogFields): string {
     const matchedConventionalCommit = logFields.message.match(conventionalCommitRegex) as RegExpMatchArray;
@@ -132,7 +135,6 @@ function conventionalCommitToChangelogString(logFields: DefaultLogFields): strin
 
 /**
  * Extracts the breaking change info from a commit body
- * @param logFields
  */
 function conventionalCommitBreakingChangeToChangelogString(logFields: DefaultLogFields): string {
     const breakingChangesPosition = logFields.body.toLowerCase().search("breaking change");

@@ -38,7 +38,7 @@ export class DefaultAction implements Action {
                     "Your project has uncommitted/unstashed changes. Wersion will temporarily stash your changes. Continue?",
             });
 
-            if (!res.unstashed_changes) process.exit(0);
+            if (!res.unstashed_changes) return;
             stashRes = await git.stash();
         }
 

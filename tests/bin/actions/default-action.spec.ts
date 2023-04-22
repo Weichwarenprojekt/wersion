@@ -5,6 +5,7 @@ import { DefaultAction } from "../../../src/bin/actions/default.action";
 import { git } from "../../../src/lib/git";
 import { ReleaseType } from "../../../src/lib/version";
 import inquirer from "inquirer";
+import { StatusResult } from "simple-git";
 
 vi.mock("node:fs", () => ({ default: fs }));
 
@@ -149,7 +150,7 @@ describe("default action integration test", () => {
 
     describe("stashing", () => {
         it("should stash uncommitted changes", async () => {
-            gitMocked.status = vi.fn().mockResolvedValue({ isClean: () => false }) as typeof gitMocked.status;
+            gitMocked.status.mockResolvedValue({ isClean: () => false } as StatusResult);
             const action = new DefaultAction();
             await action.run();
 
@@ -160,7 +161,7 @@ describe("default action integration test", () => {
         });
 
         it("should run with dry run and do not affect anything with uncommitted changes", async () => {
-            gitMocked.status = vi.fn().mockResolvedValue({ isClean: () => false }) as typeof gitMocked.status;
+            gitMocked.status.mockResolvedValue({ isClean: () => false } as StatusResult);
             config.set({ dryRun: true });
             const fsSnapshotBefore = vol.toJSON();
 
@@ -180,20 +181,14 @@ describe("default action integration test", () => {
         });
 
         it("should abort if there are unstashed changes and user does not approve", async () => {
-            gitMocked.status = vi.fn().mockResolvedValue({ isClean: () => false }) as typeof gitMocked.status;
+            gitMocked.status.mockResolvedValue({ isClean: () => false } as StatusResult);
             // @ts-ignore
-            inquirerMocked.prompt = vi.fn().mockResolvedValue({ unstashed_changes: false });
+            inquirerMocked.prompt.mockResolvedValue({ unstashed_changes: false });
             const fsSnapshotBefore = vol.toJSON();
 
-            // @ts-ignore
-            const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
-                throw new Error("Test error to exit process");
-            });
-
             const action = new DefaultAction();
-            await expect(action.run()).rejects.toThrowError("Test error to exit process");
+            await action.run();
 
-            expect(mockExit).toHaveBeenCalledWith(0);
             const fsSnapshotAfter = vol.toJSON();
             expect(fsSnapshotAfter).toMatchObject(fsSnapshotBefore);
         });

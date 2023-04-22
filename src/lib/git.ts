@@ -9,27 +9,31 @@ import { config } from "./config";
 // Import with * as simpleGit to be able to mock it away
 export const git = simpleGit.simpleGit({ baseDir: process.cwd() });
 
+/**
+ * Returns an error prefix if a project name is set
+ */
 function getErrorPrefix() {
     const projectName = config.config.projectName;
     return projectName ? projectName + ": " : "";
 }
 
+/**
+ * Returns a tag prefix if a project name is set
+ */
 export function getTagPrefix() {
     const tagPrefix = config.config.projectName;
-    return tagPrefix === "" ? "" : tagPrefix + "-";
+    return tagPrefix ? tagPrefix + "-" : "";
 }
 
 /**
  * Check whether there are local commits which weren't pushed to the shared repo, yet.
  */
-export async function repoHasLocalCommits(): Promise<any> {
+export async function repoHasLocalCommits(): Promise<boolean> {
     return (await git.log(["origin..HEAD"])).total > 0;
 }
 
 /**
  * Creates a version tag on the current HEAD
- *
- * @param version
  */
 export async function createVersionTag(version: Version): Promise<string> {
     // DryRun
@@ -40,7 +44,6 @@ export async function createVersionTag(version: Version): Promise<string> {
 
 /**
  * Checks whether a tag with the given version exists
- * @param version
  */
 export async function versionTagExists(version: Version) {
     const tagName = getTagPrefix() + version.toString();
@@ -50,8 +53,6 @@ export async function versionTagExists(version: Version) {
 
 /**
  * Creates a new commit for releasing the new version
- *
- * @param version
  */
 export async function createVersionCommit(version: Version) {
     // Add the changelog file as it would be not added when newly created
@@ -70,8 +71,6 @@ export async function createVersionCommit(version: Version) {
 
 /**
  * Gets all commit since the last released version
- *
- * @param tag
  */
 export async function getCommitsSinceTag(tag?: string): Promise<simpleGit.DefaultLogFields[]> {
     try {
@@ -87,7 +86,6 @@ export async function getCommitsSinceTag(tag?: string): Promise<simpleGit.Defaul
 /**
  * Checks all commits since last version tag and validates the message to
  * determine the new versions release type
- * @param oldVersion
  */
 export async function getReleaseTypeForHistory(oldVersion: Version): Promise<ReleaseType> {
     const commits = await getCommitsSinceTag(getTagPrefix() + oldVersion.toString());
@@ -121,6 +119,9 @@ export async function getReleaseTypeForHistory(oldVersion: Version): Promise<Rel
     throw new Error(getErrorPrefix() + "no changes since last version detected");
 }
 
-export async function commitHasTag() {
+/**
+ * Returns true if the last commit has a tag
+ */
+export async function lastCommitHasTag() {
     return (await git.tag({ "--contains": "HEAD" })) !== "";
 }

@@ -46,8 +46,9 @@ const main = async () => {
 
         await actionToBeExecuted.run();
     } catch (e) {
-        logger.error(e);
+        if (e instanceof Error) logger.error(e.message);
+        else logger.error("Unknown Error!");
     }
 };
 
-main().then(() => process.exit());
+main().then(() => {});

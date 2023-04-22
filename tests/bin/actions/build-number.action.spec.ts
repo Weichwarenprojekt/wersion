@@ -3,6 +3,7 @@ import { fs, vol } from "memfs";
 import { config } from "../../../src/lib/config";
 import { git } from "../../../src/lib/git";
 import { BuildNumberAction } from "../../../src/bin/actions/build-number.action";
+import { LogResult } from "simple-git";
 
 vi.mock("node:fs", () => ({ default: fs }));
 
@@ -69,7 +70,7 @@ describe("default action integration test", () => {
     });
 
     it("should not increment build number as the last commit was tagged", async () => {
-        gitMocked.tag = vi.fn().mockResolvedValue("test");
+        gitMocked.tag.mockResolvedValueOnce("test");
 
         const action = new BuildNumberAction();
         await action.run();
@@ -80,7 +81,7 @@ describe("default action integration test", () => {
     });
 
     it("should not increment build number as there are no local commits", async () => {
-        gitMocked.log = vi.fn().mockResolvedValue({ total: 0 });
+        gitMocked.log.mockResolvedValueOnce({ total: 0 } as LogResult<unknown>);
 
         const action = new BuildNumberAction();
         await action.run();

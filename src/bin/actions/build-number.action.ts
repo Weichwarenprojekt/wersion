@@ -1,5 +1,5 @@
 import { Action } from "./action";
-import { commitHasTag, git, repoHasLocalCommits } from "../../lib/git";
+import { lastCommitHasTag, git, repoHasLocalCommits } from "../../lib/git";
 import { getPackageVersion, getVersionFile, setPackageVersion } from "../../lib/version-file";
 import { ReleaseType } from "../../lib/version";
 import { logger } from "../../lib/util";
@@ -18,9 +18,9 @@ export class BuildNumberAction implements Action {
      * Run the action
      */
     async run(): Promise<void> {
-        if (await commitHasTag()) {
+        if (await lastCommitHasTag()) {
             logger.error(
-                "You cannot increase the build number of an already tagged commit. This would change its hash and the tag won't match the right commit anymore",
+                "You cannot increase the build number of an already tagged commit. This would change its hash and the tag won't match the right commit anymore.",
             );
             return;
         }
