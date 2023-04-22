@@ -13,9 +13,6 @@ const date = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStar
 
 const git = simpleGit.simpleGit({ baseDir: path.join(process.cwd(), "tests/e2e/checkout") });
 
-git.addConfig("user.email", "example@example.com", false, "global");
-git.addConfig("user.name", "max", false, "global");
-
 async function getNewLocalCommits() {
     const history = await git.log(["origin..HEAD"]);
     return history.all;
@@ -29,6 +26,14 @@ describe("wersion e2e", function () {
 
     beforeAll(async () => {
         await fse.emptyDir("./tests/e2e/checkout");
+
+        if (
+            !(await git.getConfig("user.name", "global")).value ||
+            !(await git.getConfig("user.email", "global")).value
+        ) {
+            git.addConfig("user.email", "example@example.com", false, "global");
+            git.addConfig("user.name", "max", false, "global");
+        }
     });
 
     afterAll(async () => {
