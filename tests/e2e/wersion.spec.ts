@@ -65,6 +65,23 @@ describe("wersion e2e", function () {
             expect((await getNewLocalCommits())[0].message).toEqual("chore: release wersion-e2e-1.1.0");
             await expect(git.tag()).resolves.toContain("wersion-e2e-1.1.0");
         });
+
+        it("should increment build number", async () => {
+            fs.writeFileSync("tests/e2e/checkout/test.txt", "placeholder");
+            await git.add(".");
+            await git.commit("feat: my new feature");
+
+            try {
+                const res = execSync("node ../../../dist/wersion.js --incrementBuildNumber", {
+                    cwd: "tests/e2e/checkout",
+                });
+                console.log(res.toString());
+            } catch (e) {
+                console.log((e as ChildProcess).stdout?.toString());
+            }
+
+            expect(fse.readJsonSync("tests/e2e/checkout/package.json").version).toEqual("1.0.0+1");
+        });
     });
 
     describe("testcase/monorepo", () => {
