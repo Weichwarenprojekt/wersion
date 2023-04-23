@@ -11,7 +11,7 @@ To determine how the version must be increased wersion uses the commit type from
 **Installation**
 
 ```
-npm i -g @weichwarenprojekt/wersion
+npm i @weichwarenprojekt/wersion --save-dev
 ```
 
 **Initialization**
