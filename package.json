@@ -52,7 +52,7 @@
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "@vitest/coverage-c8": "^0.29.8",
-    "@weichwarenprojekt/configuration": "^0.1.4",
+    "@weichwarenprojekt/configuration": "^0.2.0",
     "esbuild": "^0.17.10",
     "eslint": "latest",
     "memfs": "^3.4.13",
