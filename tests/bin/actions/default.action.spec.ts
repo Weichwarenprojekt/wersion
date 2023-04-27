@@ -182,7 +182,6 @@ describe("default action integration test", () => {
 
         it("should abort if there are unstashed changes and user does not approve", async () => {
             gitMocked.status.mockResolvedValue({ isClean: () => false } as StatusResult);
-            // @ts-ignore
             inquirerMocked.prompt.mockResolvedValue({ unstashed_changes: false });
             const fsSnapshotBefore = vol.toJSON();
 

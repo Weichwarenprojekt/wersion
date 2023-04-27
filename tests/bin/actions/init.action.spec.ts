@@ -93,8 +93,8 @@ describe("init action integration test", () => {
                 "\n" +
                 "  export const configuration: Partial<WersionConfigModel> = {\n" +
                 "    versionFile: {\n" +
-                '        path: "./package.json",\n' +
-                '        matcher: "\\"version\\": ?\\"((0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)(?:-((?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\\\.(?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\\\+([0-9a-zA-Z-]+(?:\\\\.[0-9a-zA-Z-]+)*))?)\\"",\n' +
+                '        path: `./package.json`,\n' +
+                '        matcher: `"version": ?"${semverMatcher}"`,\n' +
                 "    },\n" +
                 "    commitTypes: {\n" +
                 "        major: [],\n" +
@@ -116,8 +116,8 @@ describe("init action integration test", () => {
                 "\n" +
                 "  export const configuration: Partial<WersionConfigModel> = {\n" +
                 "    versionFile: {\n" +
-                '        path: "./package.json",\n' +
-                '        matcher: "\\"version\\": ?\\"((0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)(?:-((?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\\\.(?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\\\+([0-9a-zA-Z-]+(?:\\\\.[0-9a-zA-Z-]+)*))?)\\"",\n' +
+                '        path: `./package.json`,\n' +
+                '        matcher: `"version": ?"${semverMatcher}"`,\n' +
                 "    },\n" +
                 "    commitTypes: {\n" +
                 "        major: [],\n" +
@@ -139,8 +139,8 @@ describe("init action integration test", () => {
                 "\n" +
                 "  export const configuration: Partial<WersionConfigModel> = {\n" +
                 "    versionFile: {\n" +
-                '        path: "./pubspec.yaml",\n' +
-                '        matcher: "version: ?((0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)\\\\.(0|[1-9]\\\\d*)(?:-((?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\\\.(?:0|[1-9]\\\\d*|\\\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\\\+([0-9a-zA-Z-]+(?:\\\\.[0-9a-zA-Z-]+)*))?)",\n' +
+                '        path: `./pubspec.yaml`,\n' +
+                '        matcher: `version: ?${semverMatcher}`,\n' +
                 "    },\n" +
                 "    commitTypes: {\n" +
                 "        major: [],\n" +

@@ -1,5 +1,4 @@
 import { Action } from "./action";
-import { semverMatcher } from "../../models/wersion-config.model";
 import fs from "fs";
 import { createVersionTag, git, versionTagExists } from "../../lib/git";
 import { config } from "../../lib/config";
@@ -10,6 +9,22 @@ import chalk from "chalk";
 import { logger } from "../../lib/util";
 
 const wersionConfigPath = path.join(process.cwd(), ".wersionrc.ts");
+
+/**
+ * Default matcher for semver in version file
+ */
+enum VersionMatcher {
+    flutter = `version: ?\${semverMatcher}`,
+    nodejs = `"version": ?"\${semverMatcher}"`
+}
+
+/**
+ * Default paths to version files
+ */
+enum VersionFile {
+    flutter = "./pubspec.yaml",
+    nodejs = "./package.json"
+}
 
 /**
  * The action to configure the project for wersion
@@ -60,6 +75,7 @@ export class InitAction implements Action {
 
         const wersionrcTsContent = this.compileWersionRCTsTemplate(answers);
         fs.writeFileSync(wersionConfigPath, wersionrcTsContent);
+
         await git.add(".wersionrc.ts");
         logger.info("created .wersionrc.ts file");
     }
@@ -81,31 +97,12 @@ export class InitAction implements Action {
      * @param vars The variables that were queried from inquirer
      */
     compileWersionRCTsTemplate(vars: { preset: string; projectName: string }): string {
-        let versionFile;
-        let matcher;
-
-        switch (vars.preset) {
-            case "Node.js":
-                versionFile = "./package.json";
-                matcher = `"version": ?"${semverMatcher}"`;
-                break;
-            case "Flutter":
-                versionFile = "./pubspec.yaml";
-                matcher = `version: ?${semverMatcher}`;
-                break;
-            default:
-                versionFile = "./package.json";
-                matcher = `"version": ?"${semverMatcher}"`;
-        }
-
-        matcher = matcher.replace(/[\\"']/g, "\\$&").replace(/\u0000/g, "\\0");
-
         return `import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";
 
   export const configuration: Partial<WersionConfigModel> = {
     versionFile: {
-        path: "${versionFile}",
-        matcher: "${matcher}",
+        path: \`${vars.preset === "Flutter" ? VersionFile.flutter : VersionFile.nodejs}\`,
+        matcher: \`${vars.preset === "Flutter" ? VersionMatcher.flutter : VersionMatcher.nodejs}\`,
     },
     commitTypes: {
         major: [],
