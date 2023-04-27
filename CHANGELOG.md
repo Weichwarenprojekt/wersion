@@ -1,3 +1,6 @@
+# 1.1.0 (2023-04-27)
+## Features
+- use variable for verison matcher in wersionrc.ts (51cea3c)
 # 1.0.1 (2023-04-23)
 ## Bug Fixes
 - documentation of possible options wrong (65fdafe)
