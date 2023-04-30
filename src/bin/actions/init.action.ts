@@ -99,19 +99,19 @@ export class InitAction implements Action {
     compileWersionRCTsTemplate(vars: { preset: string; projectName: string }): string {
         return `import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";
 
-  export const configuration: Partial<WersionConfigModel> = {
-    versionFile: {
-        path: \`${vars.preset === "Flutter" ? VersionFile.flutter : VersionFile.nodejs}\`,
-        matcher: \`${vars.preset === "Flutter" ? VersionMatcher.flutter : VersionMatcher.nodejs}\`,
-    },
-    commitTypes: {
-        major: [],
-        minor: ["feat"],
-        patch: ["fix"]
-    },
-    breakingChangeTrigger: "breaking change",
-    changelogFilePath: "./CHANGELOG.md",
-    projectName: "${vars.projectName}",
-  };`;
+export const configuration: Partial<WersionConfigModel> = {
+  versionFile: {
+      path: \`${vars.preset === "Flutter" ? VersionFile.flutter : VersionFile.nodejs}\`,
+      matcher: \`${vars.preset === "Flutter" ? VersionMatcher.flutter : VersionMatcher.nodejs}\`,
+  },
+  commitTypes: {
+      major: [],
+      minor: ["feat"],
+      patch: ["fix"]
+  },
+  breakingChangeTrigger: "breaking change",
+  changelogFilePath: "./CHANGELOG.md",
+  projectName: "${vars.projectName}",
+};`;
     }
 }

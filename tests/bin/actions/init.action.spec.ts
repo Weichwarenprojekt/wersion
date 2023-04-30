@@ -91,20 +91,20 @@ describe("init action integration test", () => {
         expect(template).toEqual(
             'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
                 "\n" +
-                "  export const configuration: Partial<WersionConfigModel> = {\n" +
-                "    versionFile: {\n" +
-                '        path: `./package.json`,\n' +
-                '        matcher: `"version": ?"${semverMatcher}"`,\n' +
-                "    },\n" +
-                "    commitTypes: {\n" +
-                "        major: [],\n" +
-                '        minor: ["feat"],\n' +
-                '        patch: ["fix"]\n' +
-                "    },\n" +
-                '    breakingChangeTrigger: "breaking change",\n' +
-                '    changelogFilePath: "./CHANGELOG.md",\n' +
-                '    projectName: "wersion-test",\n' +
-                "  };",
+                "export const configuration: Partial<WersionConfigModel> = {\n" +
+                "  versionFile: {\n" +
+                '      path: `./package.json`,\n' +
+                '      matcher: `"version": ?"${semverMatcher}"`,\n' +
+                "  },\n" +
+                "  commitTypes: {\n" +
+                "      major: [],\n" +
+                '      minor: ["feat"],\n' +
+                '      patch: ["fix"]\n' +
+                "  },\n" +
+                '  breakingChangeTrigger: "breaking change",\n' +
+                '  changelogFilePath: "./CHANGELOG.md",\n' +
+                '  projectName: "wersion-test",\n' +
+                "};",
         );
     });
 
@@ -114,20 +114,20 @@ describe("init action integration test", () => {
         expect(template).toEqual(
             'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
                 "\n" +
-                "  export const configuration: Partial<WersionConfigModel> = {\n" +
-                "    versionFile: {\n" +
-                '        path: `./package.json`,\n' +
-                '        matcher: `"version": ?"${semverMatcher}"`,\n' +
-                "    },\n" +
-                "    commitTypes: {\n" +
-                "        major: [],\n" +
-                '        minor: ["feat"],\n' +
-                '        patch: ["fix"]\n' +
-                "    },\n" +
-                '    breakingChangeTrigger: "breaking change",\n' +
-                '    changelogFilePath: "./CHANGELOG.md",\n' +
-                '    projectName: "wersion-test",\n' +
-                "  };",
+                "export const configuration: Partial<WersionConfigModel> = {\n" +
+                "  versionFile: {\n" +
+                '      path: `./package.json`,\n' +
+                '      matcher: `"version": ?"${semverMatcher}"`,\n' +
+                "  },\n" +
+                "  commitTypes: {\n" +
+                "      major: [],\n" +
+                '      minor: ["feat"],\n' +
+                '      patch: ["fix"]\n' +
+                "  },\n" +
+                '  breakingChangeTrigger: "breaking change",\n' +
+                '  changelogFilePath: "./CHANGELOG.md",\n' +
+                '  projectName: "wersion-test",\n' +
+                "};",
         );
     });
 
@@ -137,20 +137,20 @@ describe("init action integration test", () => {
         expect(template).toEqual(
             'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
                 "\n" +
-                "  export const configuration: Partial<WersionConfigModel> = {\n" +
-                "    versionFile: {\n" +
-                '        path: `./pubspec.yaml`,\n' +
-                '        matcher: `version: ?${semverMatcher}`,\n' +
-                "    },\n" +
-                "    commitTypes: {\n" +
-                "        major: [],\n" +
-                '        minor: ["feat"],\n' +
-                '        patch: ["fix"]\n' +
-                "    },\n" +
-                '    breakingChangeTrigger: "breaking change",\n' +
-                '    changelogFilePath: "./CHANGELOG.md",\n' +
-                '    projectName: "wersion-test",\n' +
-                "  };",
+                "export const configuration: Partial<WersionConfigModel> = {\n" +
+                "  versionFile: {\n" +
+                '      path: `./pubspec.yaml`,\n' +
+                '      matcher: `version: ?${semverMatcher}`,\n' +
+                "  },\n" +
+                "  commitTypes: {\n" +
+                "      major: [],\n" +
+                '      minor: ["feat"],\n' +
+                '      patch: ["fix"]\n' +
+                "  },\n" +
+                '  breakingChangeTrigger: "breaking change",\n' +
+                '  changelogFilePath: "./CHANGELOG.md",\n' +
+                '  projectName: "wersion-test",\n' +
+                "};",
         );
     });
 });
