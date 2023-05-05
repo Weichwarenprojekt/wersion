@@ -64,7 +64,7 @@ export async function createVersionCommit(version: Version) {
     const commitMessage = `chore: release ${getTagPrefix() + version.toString()}`;
 
     // DryRun
-    if (!config.config.dryRun) await git.commit(commitMessage);
+    if (!config.config.dryRun) await git.commit(commitMessage, { "--no-verify": null });
 
     return commitMessage;
 }
