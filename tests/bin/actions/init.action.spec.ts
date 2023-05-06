@@ -93,7 +93,30 @@ describe("init action integration test", () => {
                 "\n" +
                 "export const configuration: Partial<WersionConfigModel> = {\n" +
                 "  versionFile: {\n" +
-                "      path: `./package.json`,\n" +
+                "      path: `<enter file>`,\n" +
+                '      matcher: `"version": ?"${semverMatcher}"`\n' +
+                "  },\n" +
+                "  commitTypes: {\n" +
+                "      major: [],\n" +
+                '      minor: ["feat"],\n' +
+                '      patch: ["fix"]\n' +
+                "  },\n" +
+                '  breakingChangeTrigger: "breaking change",\n' +
+                '  changelogFilePath: "./CHANGELOG.md",\n' +
+                '  projectName: "wersion-test"\n' +
+                "};",
+        );
+    });
+
+    it("should use the right configuration for custom preset", async () => {
+        const action = new InitAction();
+        const template = action.compileWersionRCTsTemplate({ preset: "Custom", projectName: "wersion-test" });
+        expect(template).toEqual(
+            'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
+                "\n" +
+                "export const configuration: Partial<WersionConfigModel> = {\n" +
+                "  versionFile: {\n" +
+                "      path: `<enter file>`,\n" +
                 '      matcher: `"version": ?"${semverMatcher}"`\n' +
                 "  },\n" +
                 "  commitTypes: {\n" +
