@@ -43,7 +43,7 @@ export const defaultWersionConfig: WersionConfigModel = {
     commitTypes: {
         major: [],
         minor: ["feat"],
-        patch: ["fix"],
+        patch: ["fix", "docs"],
     },
     breakingChangeTrigger: "breaking change",
     changelogFilePath: "./CHANGELOG.md",

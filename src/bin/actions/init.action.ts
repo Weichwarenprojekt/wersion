@@ -15,7 +15,7 @@ const wersionConfigPath = path.join(process.cwd(), ".wersionrc.ts");
  */
 enum VersionMatcher {
     flutter = `version: ?\${semverMatcher}`,
-    nodejs = `"version": ?"\${semverMatcher}"`
+    nodejs = `"version": ?"\${semverMatcher}"`,
 }
 
 /**
@@ -23,7 +23,7 @@ enum VersionMatcher {
  */
 enum VersionFile {
     flutter = "./pubspec.yaml",
-    nodejs = "./package.json"
+    nodejs = "./package.json",
 }
 
 /**
@@ -102,7 +102,7 @@ export class InitAction implements Action {
 export const configuration: Partial<WersionConfigModel> = {
   versionFile: {
       path: \`${vars.preset === "Flutter" ? VersionFile.flutter : VersionFile.nodejs}\`,
-      matcher: \`${vars.preset === "Flutter" ? VersionMatcher.flutter : VersionMatcher.nodejs}\`,
+      matcher: \`${vars.preset === "Flutter" ? VersionMatcher.flutter : VersionMatcher.nodejs}\`
   },
   commitTypes: {
       major: [],
@@ -111,7 +111,7 @@ export const configuration: Partial<WersionConfigModel> = {
   },
   breakingChangeTrigger: "breaking change",
   changelogFilePath: "./CHANGELOG.md",
-  projectName: "${vars.projectName}",
+  projectName: "${vars.projectName}"
 };`;
     }
 }
