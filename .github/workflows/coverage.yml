@@ -22,4 +22,7 @@ jobs:
                   npm i
                   npm run build
 
-            - uses: ArtiomTr/jest-coverage-report-action@v2
+            - name: Test
+              run: npx vitest --coverage
+            - name: Report Coverage
+              uses: davelosert/vitest-coverage-report-action@v1
