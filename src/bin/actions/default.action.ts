@@ -43,9 +43,9 @@ export class DefaultAction implements Action {
         }
 
         try {
-            const releaseType: ReleaseType = await getReleaseTypeForHistory(version);
+            const releaseType: ReleaseType = config.config.releaseAs ?? (await getReleaseTypeForHistory(version));
 
-            await version.increase(config.config.releaseAs ?? releaseType);
+            await version.increase(releaseType);
 
             logger.info(`release new version ${chalk.cyan(version.toString())}`);
 

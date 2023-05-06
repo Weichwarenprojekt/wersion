@@ -87,6 +87,19 @@ describe("wersion e2e", function () {
 
             expect(fse.readJsonSync("tests/e2e/checkout/package.json").version).toEqual("1.0.0+1");
         });
+
+        it("should releaseAs major even without changes", async () => {
+            try {
+                const res = execSync("node ../../../dist/wersion.js --releaseAs major", {
+                    cwd: "tests/e2e/checkout",
+                });
+                console.log(res.toString());
+            } catch (e) {
+                console.log((e as ChildProcess).stdout?.toString());
+            }
+
+            expect(fse.readJsonSync("tests/e2e/checkout/package.json").version).toEqual("2.0.0");
+        });
     });
 
     describe("testcase/monorepo", () => {
