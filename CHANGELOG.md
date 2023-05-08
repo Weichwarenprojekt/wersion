@@ -1,3 +1,13 @@
+# 1.2.0 (2023-05-06)
+## Features
+- add custom preset to init action (fb0d73f)
+- allow releaseAs version without checking for changes (91b2827)
+- create patch release on docs commit by default (a4182eb)
+## Bug Fixes
+- __build-number:__ usage as pre commit instead of post commit hook (bf1b275)
+- npm install on publish to get the right version in package-lock.json (a17c119)
+- __build-number:__ usage as pre commit instead of post commit hook (a700609)
+- remove whitespace from generated config (9ccecf9)
 # 1.1.0 (2023-04-27)
 ## Features
 - use variable for verison matcher in wersionrc.ts (51cea3c)

@@ -1,6 +1,6 @@
 {
   "name": "@weichwarenprojekt/wersion",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A cli tool and lib to automatically version your projects.",
   "keywords": [
     "version",
@@ -40,7 +40,7 @@
     "postpack": "npx pinst --enable",
     "test": "npm run build && vitest run",
     "coverage": "npm run build && vitest run --coverage",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm install && npm run build"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.1",

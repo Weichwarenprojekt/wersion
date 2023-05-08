@@ -19,18 +19,24 @@ npm i @weichwarenprojekt/wersion --save-dev
 
 **Initialization**
 
+The initialization command creates the .wersionrc.ts configration file. The created config depends on the selected preset (npm or flutter).
+Further the command will create a git tag on the last commit with the current version of your project to enable versioning.
+
 ```
-wersion --init
+npx wersion --init
 ```
 
 **Execution**
 
+Basic usage to create a new version:
 ```
-wersion
+npx wersion
 ```
 
+Creating a new version includes creating the tag, increasing the version in the configured version file and creating the changelog.
+
 ```
-wersion --releaseAs=[patch|minor|major]
+npx wersion --releaseAs=[patch|minor|major]
 ```
 
 See ([Options](#options)) for further information
@@ -77,7 +83,7 @@ hooks to automatically increment your build number each time you create a new co
 
 # Configuration
 
-Configure your project with a .wersionrc.json file on top level. \
+Configure your project with a .wersionrc.ts file on top level. \
 Default configuration:
 
 ```ts
@@ -91,7 +97,7 @@ export const configuration: Partial<WersionConfigModel> = {
   commitTypes: {
     major: [],
     minor: ["feat"],
-    patch: ["fix"],
+    patch: ["fix", "docs"],
   },
   breakingChangeTrigger: "breaking change",
   changelogFilePath: "./CHANGELOG.md",

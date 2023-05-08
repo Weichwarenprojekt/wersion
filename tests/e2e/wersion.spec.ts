@@ -15,6 +15,9 @@ fse.ensureDirSync("tests/e2e/checkout");
 
 const git = simpleGit.simpleGit({ baseDir: path.join(process.cwd(), "tests/e2e/checkout") });
 
+/**
+ * Helper function to get local commits created by the testcases
+ */
 async function getNewLocalCommits() {
     const history = await git.log(["origin..HEAD"]);
     return history.all;
@@ -85,9 +88,9 @@ describe("wersion e2e", function () {
             expect(fse.readJsonSync("tests/e2e/checkout/package.json").version).toEqual("1.0.0+1");
         });
 
-        it("should not increment build number if last commit was tagged", async () => {
+        it("should releaseAs major even without changes", async () => {
             try {
-                const res = execSync("node ../../../dist/wersion.js --incrementBuildNumber", {
+                const res = execSync("node ../../../dist/wersion.js --releaseAs major", {
                     cwd: "tests/e2e/checkout",
                 });
                 console.log(res.toString());
@@ -95,7 +98,7 @@ describe("wersion e2e", function () {
                 console.log((e as ChildProcess).stdout?.toString());
             }
 
-            expect(fse.readJsonSync("tests/e2e/checkout/package.json").version).toEqual("1.0.0");
+            expect(fse.readJsonSync("tests/e2e/checkout/package.json").version).toEqual("2.0.0");
         });
     });
 
