@@ -1,3 +1,6 @@
+# 1.2.1 (2023-07-05)
+## Bug Fixes
+- changelog generation didn't work with build numbers (c5d54c0)
 # 1.2.0 (2023-05-06)
 ## Features
 - add custom preset to init action (fb0d73f)
