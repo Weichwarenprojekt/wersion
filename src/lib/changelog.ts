@@ -3,7 +3,7 @@ import { Version } from "./version";
 import * as fse from "fs-extra";
 import { DefaultLogFields } from "simple-git";
 import _ from "lodash";
-import { conventionalCommitRegex } from "./util";
+import { conventionalCommitRegex, logger } from "./util";
 import fs from "fs";
 import { config } from "./config";
 import path from "node:path";
@@ -36,6 +36,7 @@ async function createChangelogFileIfNotExists() {
  * Create changelog and add it to file
  */
 export async function generateChangelog(version: Version, oldVersionTag: string) {
+    logger.info(`Generating changelog from ${oldVersionTag}`);
     await createChangelogFileIfNotExists();
 
     const commits = await getCommitsSinceTag(oldVersionTag);
