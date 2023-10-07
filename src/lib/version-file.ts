@@ -36,7 +36,7 @@ function checkVersionFileExists() {
  * Extract the current package version from the version file
  */
 export async function getPackageVersion(): Promise<Version> {
-    await checkVersionFileExists();
+    checkVersionFileExists();
 
     const versionFileContent = fs.readFileSync(getVersionFile(), "utf-8");
     // TODO: Use line number to select version in file (edge case: version at end
@@ -53,7 +53,7 @@ export async function getPackageVersion(): Promise<Version> {
  * Overrides the old version in the version file with the new one
  */
 export async function setPackageVersion(version: Version) {
-    await checkVersionFileExists();
+    checkVersionFileExists();
 
     let versionFileContent = fs.readFileSync(getVersionFile(), "utf-8");
 

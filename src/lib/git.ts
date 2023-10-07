@@ -36,19 +36,18 @@ export async function repoHasLocalCommits(): Promise<boolean> {
  * Creates a version tag on the current HEAD
  */
 export async function createVersionTag(version: Version): Promise<string> {
-    // DryRun
-    if (config.config.dryRun) return getTagPrefix() + version.toString();
-
-    return (await git.addAnnotatedTag(getTagPrefix() + version.toString(), "")).name;
+    const tag = getTagPrefix() + version.withoutBuildNumber();
+    if (config.config.dryRun) return tag;
+    return (await git.addAnnotatedTag(tag, "")).name;
 }
 
 /**
  * Checks whether a tag with the given version exists
  */
 export async function versionTagExists(version: Version) {
-    const tagName = getTagPrefix() + version.toString();
-    const showrefRes = await git.raw(`show-ref`, `--tags`, `${tagName}`);
-    return showrefRes !== "";
+    const tagName = getTagPrefix() + version.withoutBuildNumber();
+    const showRefRes = await git.raw(`show-ref`, `--tags`, `${tagName}`);
+    return showRefRes !== "";
 }
 
 /**
@@ -79,7 +78,7 @@ export async function getCommitsSinceTag(tag?: string): Promise<simpleGit.Defaul
         if (!_.isEmpty(gitLog.all)) return _.clone(gitLog.all) as simpleGit.DefaultLogFields[];
         return [];
     } catch (e) {
-        throw new Error(getErrorPrefix() + "Could not get commits since last version!");
+        throw new Error(`${getErrorPrefix()}Could not get commits since last version!\n\n${e}`);
     }
 }
 
@@ -88,7 +87,7 @@ export async function getCommitsSinceTag(tag?: string): Promise<simpleGit.Defaul
  * determine the new versions release type
  */
 export async function getReleaseTypeForHistory(oldVersion: Version): Promise<ReleaseType> {
-    const commits = await getCommitsSinceTag(getTagPrefix() + oldVersion.toString());
+    const commits = await getCommitsSinceTag(getTagPrefix() + oldVersion.withoutBuildNumber());
     if (commits.length === 0) throw new Error(getErrorPrefix() + "no changes since last version detected");
 
     const releaseTypeConfig: Record<string, string[]> = config.config.commitTypes;

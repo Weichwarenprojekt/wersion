@@ -145,6 +145,7 @@ describe("git test", function () {
 
     describe("getReleaseTypeForHistory", function () {
         beforeEach(() => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             fseMocked.default.readJsonSync.mockReturnValue({
                 versionFile: "version.json",

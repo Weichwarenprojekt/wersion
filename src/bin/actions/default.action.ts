@@ -8,7 +8,6 @@ import inquirer from "inquirer";
 import { config } from "../../lib/config";
 import { Action } from "./action";
 import { logger } from "../../lib/util";
-import semver from "semver";
 
 /**
  * The default action of wersion. It will release a new version depending on the
@@ -26,8 +25,7 @@ export class DefaultAction implements Action {
      */
     async run() {
         const version = await getPackageVersion();
-        // semver.valid to remove build number etc.
-        const oldVersionTag = getTagPrefix() + semver.valid(version.toString());
+        const oldVersionTag = getTagPrefix() + version.withoutBuildNumber();
 
         let stashRes = "";
 
@@ -46,7 +44,7 @@ export class DefaultAction implements Action {
         try {
             const releaseType: ReleaseType = config.config.releaseAs ?? (await getReleaseTypeForHistory(version));
 
-            await version.increase(releaseType);
+            version.increase(releaseType);
 
             logger.info(`release new version ${chalk.cyan(version.toString())}`);
 
