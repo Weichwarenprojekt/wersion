@@ -1,81 +1,81 @@
 {
-  "name": "@weichwarenprojekt/wersion",
-  "version": "1.2.1",
-  "description": "A cli tool and lib to automatically version your projects.",
-  "keywords": [
-    "version",
-    "semver",
-    "semantic",
-    "release",
-    "tagging",
-    "cli",
-    "CI",
-    "CD"
-  ],
-  "bin": "dist/wersion.js",
-  "main": "./dist/wersion-lib.cjs",
-  "module": "./dist/wersion-lib.mjs",
-  "types": "./dist/models/wersion-config.model.d.ts",
-  "exports": {
-    ".": {
-      "require": "./dist/wersion-lib.cjs",
-      "import": "./dist/wersion-lib.mjs",
-      "types": "./dist/models/wersion-config.model.d.ts"
+    "name": "@weichwarenprojekt/wersion",
+    "version": "1.2.1",
+    "description": "A cli tool and lib to automatically version your projects.",
+    "keywords": [
+        "version",
+        "semver",
+        "semantic",
+        "release",
+        "tagging",
+        "cli",
+        "CI",
+        "CD"
+    ],
+    "bin": "dist/wersion.js",
+    "main": "./dist/wersion-lib.cjs",
+    "module": "./dist/wersion-lib.mjs",
+    "types": "./dist/src/models/wersion-config.model.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/wersion-lib.cjs",
+            "import": "./dist/wersion-lib.mjs",
+            "types": "./dist/src/models/wersion-config.model.d.ts"
+        }
+    },
+    "repository": "https://github.com/Weichwarenprojekt/wersion.git",
+    "author": "Weichwarenprojekt <info@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
+    "contributors": [
+        "Stefan Rink <stefan.rink@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
+        "Tim Niederer <tim.niederer@weichwarenprojekt.de> (https://weichwarenprojekt.de/)"
+    ],
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "build": "node --experimental-json-modules esbuild.js && tsc --emitDeclarationOnly",
+        "cli": "ts-node src/bin/cli.ts",
+        "bundledCli": "node dist/wersion.js",
+        "postinstall": "husky install",
+        "prepack": "npx pinst --disable",
+        "postpack": "npx pinst --enable",
+        "test": "npm run build && vitest run",
+        "coverage": "npm run build && vitest run --coverage",
+        "prepublishOnly": "npm install && npm run build"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^17.6.1",
+        "@commitlint/config-conventional": "^17.6.1",
+        "@types/fs-extra": "^9.0.13",
+        "@types/inquirer": "^9.0.3",
+        "@types/lodash": "^4.14.194",
+        "@types/node": "^18.16.0",
+        "@typescript-eslint/eslint-plugin": "^5.59.0",
+        "@typescript-eslint/parser": "^5.59.0",
+        "@vitest/coverage-c8": "^0.29.8",
+        "@weichwarenprojekt/configuration": "^0.2.0",
+        "esbuild": "^0.17.18",
+        "eslint": "^8.39.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "memfs": "^3.5.1",
+        "prettier": "^2.8.8",
+        "terser-webpack-plugin": "^5.3.7",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.9.5",
+        "unionfs": "^4.4.0",
+        "vitest": "^0.29.8"
+    },
+    "dependencies": {
+        "@weichwarenprojekt/ts-importer": "^0.1.7",
+        "chalk": "^5.2.0",
+        "commander": "^10.0.1",
+        "figures": "^5.0.0",
+        "fs-extra": "^11.1.1",
+        "husky": "^8.0.3",
+        "inquirer": "^9.1.5",
+        "lodash": "^4.17.21",
+        "semver": "^7.5.0",
+        "simple-git": "^3.17.0",
+        "winston": "^3.8.2"
     }
-  },
-  "repository": "https://github.com/Weichwarenprojekt/wersion.git",
-  "author": "Weichwarenprojekt <info@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
-  "contributors": [
-    "Stefan Rink <stefan.rink@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
-    "Tim Niederer <tim.niederer@weichwarenprojekt.de> (https://weichwarenprojekt.de/)"
-  ],
-  "license": "MIT",
-  "type": "module",
-  "scripts": {
-    "build": "node --experimental-json-modules esbuild.js && tsc --emitDeclarationOnly",
-    "cli": "ts-node src/bin/cli.ts",
-    "bundledCli": "node dist/wersion.js",
-    "postinstall": "husky install",
-    "prepack": "npx pinst --disable",
-    "postpack": "npx pinst --enable",
-    "test": "npm run build && vitest run",
-    "coverage": "npm run build && vitest run --coverage",
-    "prepublishOnly": "npm install && npm run build"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^17.6.1",
-    "@commitlint/config-conventional": "^17.6.1",
-    "@types/fs-extra": "^9.0.13",
-    "@types/inquirer": "^9.0.3",
-    "@types/lodash": "^4.14.194",
-    "@types/node": "^18.16.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.0",
-    "@typescript-eslint/parser": "^5.59.0",
-    "@vitest/coverage-c8": "^0.29.8",
-    "@weichwarenprojekt/configuration": "^0.2.0",
-    "esbuild": "^0.17.18",
-    "eslint": "^8.39.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "memfs": "^3.5.1",
-    "prettier": "^2.8.8",
-    "terser-webpack-plugin": "^5.3.7",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.9.5",
-    "unionfs": "^4.4.0",
-    "vitest": "^0.29.8"
-  },
-  "dependencies": {
-    "@weichwarenprojekt/ts-importer": "^0.1.7",
-    "chalk": "^5.2.0",
-    "commander": "^10.0.1",
-    "figures": "^5.0.0",
-    "fs-extra": "^11.1.1",
-    "husky": "^8.0.3",
-    "inquirer": "^9.1.5",
-    "lodash": "^4.17.21",
-    "semver": "^7.5.0",
-    "simple-git": "^3.17.0",
-    "winston": "^3.8.2"
-  }
 }
