@@ -1,3 +1,7 @@
+# 1.2.2 (2024-01-30)
+## Bug Fixes
+- add type definitions (ff983ec)
+- ignore build number for the version tags (ebfe185)
 # 1.2.1 (2023-07-05)
 ## Bug Fixes
 - changelog generation didn't work with build numbers (c5d54c0)
