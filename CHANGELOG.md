@@ -1,3 +1,6 @@
+# 1.2.3 (2024-01-30)
+## Bug Fixes
+- also allow .mts configs (00b0711)
 # 1.2.2 (2024-01-30)
 ## Bug Fixes
 - add type definitions (ff983ec)
