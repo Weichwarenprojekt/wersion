@@ -9,6 +9,9 @@ import { BuildNumberAction } from "./actions/build-number.action";
 import { InitAction } from "./actions/init.action";
 import { logger } from "../lib/util";
 
+/**
+ * The start point of the cli
+ */
 const main = async () => {
     const program = new Command();
     const actions = [new DefaultAction(), new BuildNumberAction(), new InitAction()];
@@ -51,4 +54,5 @@ const main = async () => {
     }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 main().then(() => {});

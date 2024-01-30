@@ -4,6 +4,7 @@ import { CliOptionsModel, defaultCliOptions } from "../models/cli-options.model"
 import _ from "lodash";
 import { loadModule } from "@weichwarenprojekt/ts-importer";
 import { logger } from "./util";
+import fs from "fs";
 
 /**
  * The config store contains the wersion config and the cli config
@@ -22,13 +23,22 @@ class Config {
      */
     public loadConfigFile(configPath: string) {
         try {
-            const config = path.isAbsolute(configPath) ? configPath : path.resolve(process.cwd(), configPath);
+            let config = path.isAbsolute(configPath) ? configPath : path.resolve(process.cwd(), configPath);
+            if (!fs.existsSync(config)) {
+                config = config.replace(".ts", ".mts");
+                if (!fs.existsSync(config)) {
+                    logger.warn("Could not find a configuration file!");
+                    return;
+                }
+            }
             const configImport = loadModule<{ configuration: WersionConfigModel }>(config);
             if (!configImport.configuration)
                 logger.warn('The specified configuration does not export a "configuration"');
             this.set(configImport.configuration);
         } catch (e) {
-            logger.warn("Could not find a configuration file!");
+            logger.error(
+                "Could not parse the configuration file! Ensure, that the configuration does not import ESM modules.",
+            );
         }
     }
 

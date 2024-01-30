@@ -60,4 +60,43 @@ describe("config test", function () {
         config.loadConfigFile(cliOptions.config);
         expect(warn).toBeCalledWith('The specified configuration does not export a "configuration"');
     });
+
+    it("should also search for .mts files", () => {
+        const files = {
+            ".esmconfig.mts": `export const configuration = {
+                versionFile: "mversion.json",
+                changelogFilePath: "mCHANGELOG.md",
+            }`,
+        };
+        vol.fromJSON(files);
+        const cliOptions: CliOptionsModel = {
+            config: "./.esmconfig.ts",
+            dryRun: true,
+        };
+        config.set(cliOptions);
+        config.loadConfigFile(cliOptions.config);
+        expect(config.config).toMatchObject(
+            _.merge({}, defaultWersionConfig, cliOptions, {
+                versionFile: "mversion.json",
+                changelogFilePath: "mCHANGELOG.md",
+            }),
+        );
+    });
+
+    it("throws an error if config ", () => {
+        const files = {
+            ".corrupt.ts": `this is a syntax error`,
+        };
+        vol.fromJSON(files);
+        const cliOptions: CliOptionsModel = {
+            config: "./.corrupt.ts",
+            dryRun: true,
+        };
+        config.set(cliOptions);
+        const error = vi.spyOn(logger, "error");
+        config.loadConfigFile(cliOptions.config);
+        expect(error).toBeCalledWith(
+            "Could not parse the configuration file! Ensure, that the configuration does not import ESM modules.",
+        );
+    });
 });

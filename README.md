@@ -117,6 +117,15 @@ export const configuration: Partial<WersionConfigModel> = {
 | changelogFilePath     |         | Configuration of the automatically generated changelog file (e.g. ./CHANGELOG.md)                          |
 | projectName           |         | Optional project name which is prepended to each git tag                                                   |
 
+# Troubleshooting
+
+## The current file is a CommonJS module whose imports will produce require calls
+This happens because you probably have configured version for a CommonJS package/project (no "type": "module" in the
+package.json). Rename the configuration to .wersionrc.mts. Like that it will be treated as an ESM module.
+
+```ATTENTION``` The configuration will still be imported as a CommonJS module, so you will not be able to actually import
+ESM modules! This is just for the error to disappear.
+
 # Contribution
 
 Feel free creating an issue or PR :)
