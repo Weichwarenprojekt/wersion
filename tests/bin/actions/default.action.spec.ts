@@ -14,7 +14,6 @@ const filesJson = {
     ".wersionrc.ts": `export const configuration = {
         versionFile: {
             path: "./package.json",
-            matcher: '"version": ?"([0-9.]+)"',
         },
         commitTypes: {
             major: [],
@@ -93,6 +92,18 @@ describe("default action integration test", () => {
     });
 
     it("should run default action with default parameters", async () => {
+        const action = new DefaultAction();
+        await action.run();
+
+        expect(gitMocked.commit.mock.calls[0][0]).toEqual("chore: release 1.0.0");
+        expect(gitMocked.addAnnotatedTag.mock.calls[0][0]).toEqual("1.0.0");
+    });
+
+    it("should ignore build number running the default action", async () => {
+        vol.fromJSON({
+            ...filesJson,
+            "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0+23" }),
+        });
         const action = new DefaultAction();
         await action.run();
 

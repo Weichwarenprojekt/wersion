@@ -65,4 +65,11 @@ export class Version {
     public toString(): string {
         return this.semanticVersion;
     }
+
+    /**
+     * Returns the current version without the build number
+     */
+    public withoutBuildNumber(): string {
+        return semver.valid(this.semanticVersion) ?? defaultVersion;
+    }
 }

@@ -61,6 +61,20 @@ describe("init action integration test", () => {
         expect(Object.keys(vol.toJSON()).filter((el) => el.includes(".wersionrc.ts")).length).toEqual(1);
     });
 
+    it("should ignore build number for initial tag", async () => {
+        vol.fromJSON({
+            "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0+1" }),
+            "CHANGELOG.md": "",
+        });
+        const action = new InitAction();
+        await action.run();
+
+        expect(inquirerMocked.prompt.mock.calls.length).toEqual(1);
+        expect(gitMocked.addAnnotatedTag.mock.calls.length).toEqual(1);
+        expect(gitMocked.addAnnotatedTag).toHaveBeenCalledWith("wersion-0.1.0", "");
+        expect(Object.keys(vol.toJSON()).filter((el) => el.includes(".wersionrc.ts")).length).toEqual(1);
+    });
+
     it("should not create a new config if existing", async () => {
         vol.fromJSON(filesWithConfig);
 
