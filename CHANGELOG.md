@@ -1,3 +1,6 @@
+# 1.2.4 (2024-07-08)
+## Bug Fixes
+- changelog generation threw when encountering a non-conventional commit (4bfde61)
 # 1.2.3 (2024-01-30)
 ## Bug Fixes
 - also allow .mts configs (00b0711)
