@@ -71,6 +71,26 @@ describe("wersion e2e", function () {
             await expect(git.tag()).resolves.toContain("wersion-e2e-1.1.0");
         });
 
+        it("should run default action show warning for non conventional commit", async () => {
+            fs.writeFileSync("tests/e2e/checkout/test.txt", "placeholder");
+            await git.add(".");
+            await git.commit("feat(scope) my new feature");
+
+            fs.writeFileSync("tests/e2e/checkout/test.txt", "placeholder2");
+            await git.add(".");
+            await git.commit("fix(scope): correct content");
+
+            try {
+                const res = execSync("node ../../../dist/wersion.js", { cwd: "tests/e2e/checkout" });
+                console.log(res.toString());
+            } catch (e) {
+                console.log((e as ChildProcess).stdout?.toString());
+            }
+
+            expect((await getNewLocalCommits())[0].message).toEqual("chore: release wersion-e2e-1.0.1");
+            await expect(git.tag()).resolves.toContain("wersion-e2e-1.0.1");
+        });
+
         it("should increment build number", async () => {
             fs.writeFileSync("tests/e2e/checkout/test.txt", "placeholder");
             await git.add(".");

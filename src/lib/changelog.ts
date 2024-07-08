@@ -90,18 +90,32 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
     if (!_.isEmpty(changelogContent.features)) {
         markdownToAppend += `## Features\n`;
 
-        changelogContent.features.forEach(
-            (feat) => (markdownToAppend += "- " + conventionalCommitToChangelogString(feat) + "\n"),
-        );
+        for (const feat of changelogContent.features) {
+            const commitString = conventionalCommitToChangelogString(feat);
+            if (_.isNil(commitString)) {
+                logger.warn(
+                    `The commit ${feat.message} (${feat.hash}) is not in the conventional commit format and therefore skipped in the changelog generation.`,
+                );
+            } else {
+                markdownToAppend += "- " + commitString + "\n";
+            }
+        }
     }
 
     // Add bug fix list to changelog
     if (!_.isEmpty(changelogContent.bugfixes)) {
         markdownToAppend += `## Bug Fixes\n`;
 
-        changelogContent.bugfixes.forEach(
-            (fix) => (markdownToAppend += "- " + conventionalCommitToChangelogString(fix) + "\n"),
-        );
+        for (const fix of changelogContent.bugfixes) {
+            const commitString = conventionalCommitToChangelogString(fix);
+            if (_.isNil(commitString)) {
+                logger.warn(
+                    `The commit '${fix.message}' (${fix.hash}) is not in the conventional commit format and therefore skipped in the changelog generation.`,
+                );
+            } else {
+                markdownToAppend += "- " + commitString + "\n";
+            }
+        }
     }
 
     // Add breaking changes list to changelog
@@ -120,10 +134,15 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
 /**
  * Converts a conventional commit in the simple-git format to a changelog line
  */
-function conventionalCommitToChangelogString(logFields: DefaultLogFields): string {
+function conventionalCommitToChangelogString(logFields: DefaultLogFields): string | null {
     const matchedConventionalCommit = logFields.message.match(conventionalCommitRegex) as RegExpMatchArray;
 
+    if (_.isNil(matchedConventionalCommit)) {
+        return null;
+    }
+
     const [, , , scope, message] = matchedConventionalCommit;
+
     const mdScope = scope ? `__${scope}:__ ` : "";
 
     // TODO: Link commit with configured repo url
