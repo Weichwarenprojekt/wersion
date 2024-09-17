@@ -1,0 +1,5 @@
+{
+    "indent": 4,
+    "backupPath": "./node_modules/package.json.backup",
+    "remove": ["scripts.postinstall"]
+}
