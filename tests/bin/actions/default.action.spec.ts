@@ -76,7 +76,7 @@ describe("default action integration test", () => {
     beforeEach(() => {
         vol.fromJSON(filesJson);
         config.loadConfigFile("./.wersionrc.ts");
-        config.set({ dryRun: false, releaseAs: null });
+        config.set({ dryRun: false, releaseAs: null, yes: false });
     });
 
     afterEach(() => {
@@ -194,6 +194,19 @@ describe("default action integration test", () => {
 
             const fsSnapshotAfter = vol.toJSON();
             expect(fsSnapshotAfter).toMatchObject(fsSnapshotBefore);
+        });
+
+        it('should automatically stash changes if user passes "yes" option', async () => {
+            gitMocked.status.mockResolvedValue({ isClean: () => false } as StatusResult);
+            config.set({ yes: true });
+
+            const action = new DefaultAction();
+            await action.run();
+
+            expect(gitMocked.commit.mock.calls[0][0]).toEqual("chore: release 1.0.0");
+            expect(gitMocked.addAnnotatedTag.mock.calls[0][0]).toEqual("1.0.0");
+            expect(gitMocked.stash.mock.calls.length).toEqual(2);
+            expect(gitMocked.reset.mock.calls.length).toEqual(1);
         });
     });
 });

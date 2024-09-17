@@ -30,12 +30,16 @@ export class DefaultAction implements Action {
         let stashRes = "";
 
         if (!(await git.status()).isClean() && !config.config.dryRun) {
-            const res = await confirm({
-                message:
-                    "Your project has uncommitted/unstashed changes. Wersion will temporarily stash your changes. Continue?",
-            });
+            if (!config.config.yes) {
+                const res = await confirm({
+                    message:
+                        "Your project has uncommitted/unstashed changes. Wersion will temporarily stash your changes. Continue?",
+                });
 
-            if (!res) return;
+                if (!res) return;
+            } else {
+                logger.info("Stashing changes...");
+            }
             stashRes = await git.stash();
         }
 

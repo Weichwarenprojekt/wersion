@@ -19,6 +19,7 @@ const main = async () => {
     program.name(packageJson.name).version(packageJson.version).description(packageJson.description);
 
     program.option("--config <configPath>", "The path the config file.", defaultCliOptions.config);
+    program.option("-y, --yes", "If true, every confirmation is automatically accepted.", false);
     program.option(
         "--dry-run",
         "If true, wersion will not make any git changes. Like that you can test the outcome of wersion.",
