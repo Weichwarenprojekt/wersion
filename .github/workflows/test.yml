@@ -19,5 +19,7 @@ jobs:
             # Run the server tests
             - name: Run Tests
               run: |
+                  git config --global user.name "Tester"
+                  git config --global user.email "tester@weichwarenprojekt.de"
                   npm i
                   npm run test

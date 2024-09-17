@@ -19,6 +19,8 @@ jobs:
             # Install dependencies and bundle the software
             - name: Initialize
               run: |
+                  git config --global user.name "Tester"
+                  git config --global user.email "tester@weichwarenprojekt.de"
                   npm i
                   npm run build
 
