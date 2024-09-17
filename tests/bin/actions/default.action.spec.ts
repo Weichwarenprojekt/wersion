@@ -4,7 +4,7 @@ import { config } from "../../../src/lib/config";
 import { DefaultAction } from "../../../src/bin/actions/default.action";
 import { git } from "../../../src/lib/git";
 import { ReleaseType } from "../../../src/lib/version";
-import inquirer from "inquirer";
+import * as inquirer from "@inquirer/prompts";
 import { StatusResult } from "simple-git";
 
 vi.mock("node:fs", () => ({ default: fs }));
@@ -65,15 +65,8 @@ vi.mock("simple-git", () => ({
     })),
 }));
 
-vi.mock("inquirer", () => ({
-    default: {
-        prompt: vi.fn().mockResolvedValue({ unstashed_changes: true }),
-        ui: {
-            BottomBar: vi.fn().mockImplementation(() => ({
-                log: { write: vi.fn().mockReturnValue("") },
-            })),
-        },
-    },
+vi.mock("@inquirer/prompts", () => ({
+    confirm: vi.fn().mockResolvedValue(true),
 }));
 
 const gitMocked = vi.mocked(git);
@@ -193,7 +186,7 @@ describe("default action integration test", () => {
 
         it("should abort if there are unstashed changes and user does not approve", async () => {
             gitMocked.status.mockResolvedValue({ isClean: () => false } as StatusResult);
-            inquirerMocked.prompt.mockResolvedValue({ unstashed_changes: false });
+            inquirerMocked.confirm.mockResolvedValue(false);
             const fsSnapshotBefore = vol.toJSON();
 
             const action = new DefaultAction();

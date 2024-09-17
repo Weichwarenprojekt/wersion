@@ -1,6 +1,6 @@
 import esbuild from "esbuild";
 import fs from "fs";
-import packageJson from "./package.json" assert { type: "json" };
+import packageJson from "./package.json" with { type: "json" };
 
 // Delete the dist folder
 const deleteDist = () => fs.rmSync("dist", { force: true, recursive: true });

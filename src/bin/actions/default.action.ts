@@ -4,10 +4,10 @@ import { createVersionCommit, createVersionTag, getReleaseTypeForHistory, getTag
 import { getPackageVersion, setPackageVersion } from "../../lib/version-file";
 import { generateChangelog } from "../../lib/changelog";
 import { ResetMode } from "simple-git";
-import inquirer from "inquirer";
 import { config } from "../../lib/config";
 import { Action } from "./action";
 import { logger } from "../../lib/util";
+import { confirm } from "@inquirer/prompts";
 
 /**
  * The default action of wersion. It will release a new version depending on the
@@ -30,14 +30,12 @@ export class DefaultAction implements Action {
         let stashRes = "";
 
         if (!(await git.status()).isClean() && !config.config.dryRun) {
-            const res = await inquirer.prompt({
-                name: "unstashed_changes",
-                type: "confirm",
+            const res = await confirm({
                 message:
                     "Your project has uncommitted/unstashed changes. Wersion will temporarily stash your changes. Continue?",
             });
 
-            if (!res.unstashed_changes) return;
+            if (!res) return;
             stashRes = await git.stash();
         }
 
