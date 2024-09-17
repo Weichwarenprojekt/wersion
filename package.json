@@ -36,8 +36,8 @@
         "cli": "ts-node src/bin/cli.ts",
         "bundledCli": "node dist/wersion.js",
         "postinstall": "husky install",
-        "prepack": "npx pinst --disable",
-        "postpack": "npx pinst --enable",
+        "prepack": "clean-package",
+        "postpack": "clean-package restore",
         "test": "npm run build && vitest run",
         "coverage": "npm run build && vitest run --coverage",
         "prepublishOnly": "npm install && npm run build"
@@ -53,6 +53,7 @@
         "@typescript-eslint/parser": "^5.59.0",
         "@vitest/coverage-c8": "^0.29.8",
         "@weichwarenprojekt/configuration": "^0.2.0",
+        "clean-package": "^2.2.0",
         "esbuild": "^0.17.18",
         "eslint": "^8.39.0",
         "eslint-config-prettier": "^8.8.0",
