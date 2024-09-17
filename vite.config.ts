@@ -2,8 +2,10 @@ import { defaultExclude, defineConfig, coverageConfigDefaults } from "vitest/con
 
 export default defineConfig({
     test: {
-        deps: {
-            inline: ["@weichwarenprojekt/ts-importer"],
+        server: {
+            deps: {
+                inline: ["@weichwarenprojekt/ts-importer"],
+            },
         },
         exclude: [...defaultExclude],
         coverage: {
