@@ -1,10 +1,10 @@
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fs, vol } from "memfs";
 import { git } from "../../../src/lib/git";
+import { InitAction, Presets } from "../../../src/bin/actions/init.action";
+import * as inquirer from "@inquirer/prompts";
 
 vi.mock("node:fs", () => ({ default: fs }));
-import { InitAction } from "../../../src/bin/actions/init.action";
-import inquirer from "inquirer";
 
 const filesJson = {
     "package.json": JSON.stringify({ name: "wersion-unit-test", version: "0.1.0" }),
@@ -28,16 +28,10 @@ vi.mock("simple-git", () => ({
     })),
 }));
 
-vi.mock("inquirer", async () => {
-    return {
-        default: {
-            prompt: vi.fn().mockResolvedValue({
-                projectName: "wersion",
-                preset: "Node.js",
-            }),
-        },
-    };
-});
+vi.mock("@inquirer/prompts", () => ({
+    input: vi.fn().mockResolvedValue("wersion"),
+    select: vi.fn().mockResolvedValue("nodejs"),
+}));
 
 const gitMocked = vi.mocked(git);
 const inquirerMocked = vi.mocked(inquirer);
@@ -56,7 +50,8 @@ describe("init action integration test", () => {
         const action = new InitAction();
         await action.run();
 
-        expect(inquirerMocked.prompt.mock.calls.length).toEqual(1);
+        expect(inquirerMocked.input.mock.calls.length).toEqual(1);
+        expect(inquirerMocked.select.mock.calls.length).toEqual(1);
         expect(gitMocked.addAnnotatedTag.mock.calls.length).toEqual(1);
         expect(Object.keys(vol.toJSON()).filter((el) => el.includes(".wersionrc.ts")).length).toEqual(1);
     });
@@ -69,7 +64,8 @@ describe("init action integration test", () => {
         const action = new InitAction();
         await action.run();
 
-        expect(inquirerMocked.prompt.mock.calls.length).toEqual(1);
+        expect(inquirerMocked.input.mock.calls.length).toEqual(1);
+        expect(inquirerMocked.select.mock.calls.length).toEqual(1);
         expect(gitMocked.addAnnotatedTag.mock.calls.length).toEqual(1);
         expect(gitMocked.addAnnotatedTag).toHaveBeenCalledWith("wersion-0.1.0", "");
         expect(Object.keys(vol.toJSON()).filter((el) => el.includes(".wersionrc.ts")).length).toEqual(1);
@@ -83,7 +79,8 @@ describe("init action integration test", () => {
         const action = new InitAction();
         await action.run();
 
-        expect(inquirerMocked.prompt.mock.calls.length).toEqual(0);
+        expect(inquirerMocked.input.mock.calls.length).toEqual(0);
+        expect(inquirerMocked.select.mock.calls.length).toEqual(0);
         expect(gitMocked.addAnnotatedTag.mock.calls.length).toEqual(1);
         expect(vol.toJSON()).toMatchObject(fsSnapshotBefore);
     });
@@ -94,14 +91,15 @@ describe("init action integration test", () => {
         const action = new InitAction();
         await action.run();
 
-        expect(inquirerMocked.prompt.mock.calls.length).toEqual(1);
+        expect(inquirerMocked.input.mock.calls.length).toEqual(1);
+        expect(inquirerMocked.select.mock.calls.length).toEqual(1);
         expect(gitMocked.addAnnotatedTag.mock.calls.length).toEqual(0);
         expect(Object.keys(vol.toJSON()).filter((el) => el.includes(".wersionrc.ts")).length).toEqual(1);
     });
 
     it("should use the right configuration for default/unrecognized preset", async () => {
         const action = new InitAction();
-        const template = action.compileWersionRCTsTemplate({ preset: "C#", projectName: "wersion-test" });
+        const template = action.compileWersionRCTsTemplate("C#" as Presets, "wersion-test");
         expect(template).toEqual(
             'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
                 "\n" +
@@ -124,7 +122,7 @@ describe("init action integration test", () => {
 
     it("should use the right configuration for custom preset", async () => {
         const action = new InitAction();
-        const template = action.compileWersionRCTsTemplate({ preset: "Custom", projectName: "wersion-test" });
+        const template = action.compileWersionRCTsTemplate(Presets.custom, "wersion-test");
         expect(template).toEqual(
             'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
                 "\n" +
@@ -147,7 +145,7 @@ describe("init action integration test", () => {
 
     it("should use the right configuration for Node.js preset", async () => {
         const action = new InitAction();
-        const template = action.compileWersionRCTsTemplate({ preset: "Node.js", projectName: "wersion-test" });
+        const template = action.compileWersionRCTsTemplate(Presets.nodejs, "wersion-test");
         expect(template).toEqual(
             'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
                 "\n" +
@@ -170,7 +168,7 @@ describe("init action integration test", () => {
 
     it("should use the right configuration for Flutter preset", async () => {
         const action = new InitAction();
-        const template = action.compileWersionRCTsTemplate({ preset: "Flutter", projectName: "wersion-test" });
+        const template = action.compileWersionRCTsTemplate(Presets.flutter, "wersion-test");
         expect(template).toEqual(
             'import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";\n' +
                 "\n" +

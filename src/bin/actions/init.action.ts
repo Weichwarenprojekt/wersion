@@ -3,10 +3,10 @@ import fs from "fs";
 import { createVersionTag, git, versionTagExists } from "../../lib/git";
 import { config } from "../../lib/config";
 import { getPackageVersion } from "../../lib/version-file";
-import inquirer from "inquirer";
 import path from "node:path";
 import chalk from "chalk";
 import { logger } from "../../lib/util";
+import { input, select } from "@inquirer/prompts";
 
 const wersionConfigPath = path.join(process.cwd(), ".wersionrc.ts");
 
@@ -24,6 +24,15 @@ enum VersionMatcher {
 enum VersionFile {
     flutter = "./pubspec.yaml",
     nodejs = "./package.json",
+}
+
+/**
+ * The framework presets
+ */
+export enum Presets {
+    flutter = "flutter",
+    nodejs = "nodejs",
+    custom = "custom",
 }
 
 /**
@@ -58,27 +67,34 @@ export class InitAction implements Action {
      */
     async createConfigDialog() {
         const defaultProjectName = path.basename(process.cwd());
+        const preset = await select({
+            message: "Choose the preset for the configuration by your projects programming language",
+            choices: [
+                {
+                    name: "Node.js",
+                    value: Presets.nodejs,
+                },
+                {
+                    name: "Flutter",
+                    value: Presets.flutter,
+                },
+                {
+                    name: "Custom",
+                    value: Presets.custom,
+                },
+            ],
+        });
+        const projectName = await input({
+            message: "Name of your project, used to prefix created git tags",
+            default: defaultProjectName,
+        });
 
-        const answers = await inquirer.prompt([
-            {
-                name: "preset",
-                type: "list",
-                message: "Choose the preset for the configuration by your projects programming language",
-                choices: ["Node.js", "Flutter", "Custom"],
-            },
-            {
-                name: "projectName",
-                message: "Name of your project, used to prefix created git tags",
-                default: defaultProjectName,
-            },
-        ]);
-
-        const wersionrcTsContent = this.compileWersionRCTsTemplate(answers);
+        const wersionrcTsContent = this.compileWersionRCTsTemplate(preset, projectName);
         fs.writeFileSync(wersionConfigPath, wersionrcTsContent);
 
         await git.add(".wersionrc.ts");
         logger.info("created .wersionrc.ts file");
-        if (answers.preset === "Custom")
+        if (preset === Presets.custom)
             logger.info(
                 "you have to manually adjust the configured version file in the config. Make sure the version matcher regex is correct, the default is for a json file.",
             );
@@ -98,17 +114,18 @@ export class InitAction implements Action {
 
     /**
      * Compiles the file with the given answers from inquirer
-     * @param vars The variables that were queried from inquirer
+     * @param preset The framework preset given by the user
+     * @param projectName The name of the configured project
      */
-    compileWersionRCTsTemplate(vars: { preset: string; projectName: string }): string {
+    compileWersionRCTsTemplate(preset: Presets, projectName: string): string {
         let path, matcher: string;
 
-        switch (vars.preset) {
-            case "Flutter":
+        switch (preset) {
+            case "flutter":
                 path = VersionFile.flutter;
                 matcher = VersionMatcher.flutter;
                 break;
-            case "Node.js":
+            case "nodejs":
                 path = VersionFile.nodejs;
                 matcher = VersionMatcher.nodejs;
                 break;
@@ -132,7 +149,7 @@ export const configuration: Partial<WersionConfigModel> = {
   },
   breakingChangeTrigger: "breaking change",
   changelogFilePath: "./CHANGELOG.md",
-  projectName: "${vars.projectName}"
+  projectName: "${projectName}"
 };`;
     }
 }

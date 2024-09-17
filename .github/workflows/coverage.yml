@@ -11,7 +11,7 @@ jobs:
             - name: Install NodeJS
               uses: actions/setup-node@v1
               with:
-                  node-version: "18.13.0"
+                  node-version: "22.8.0"
 
             # Run the coverage reporter
             - uses: actions/checkout@v3
