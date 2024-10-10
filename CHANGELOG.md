@@ -1,3 +1,6 @@
+# 1.3.1 (2024-10-10)
+## Bug Fixes
+- remove engineStrict field from package.json (2bddc31)
 # 1.3.0 (2024-10-10)
 ## Features
 - add --yes option to skip confirmations (5cc3f64)
