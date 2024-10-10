@@ -1,3 +1,8 @@
+# 1.3.0 (2024-10-10)
+## Features
+- add --yes option to skip confirmations (5cc3f64)
+## Bug Fixes
+- use clean-package instead of pinst (9ee91de)
 # 1.2.4 (2024-07-08)
 ## Bug Fixes
 - changelog generation threw when encountering a non-conventional commit (4bfde61)
