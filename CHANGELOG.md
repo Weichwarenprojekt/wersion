@@ -1,3 +1,6 @@
+# 1.3.2 (2024-10-10)
+## Bug Fixes
+- remove engines entry before publishing (2c4e4da)
 # 1.3.1 (2024-10-10)
 ## Bug Fixes
 - remove engineStrict field from package.json (2bddc31)
