@@ -78,10 +78,5 @@
         "semver": "^7.6.3",
         "simple-git": "^3.26.0",
         "winston": "^3.14.2"
-    },
-    "packageManager": "npm@10.8.2",
-    "engines": {
-        "node": "22.8.0",
-        "npm": "10.8.2"
     }
 }
