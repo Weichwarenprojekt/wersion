@@ -1,3 +1,6 @@
+# 1.3.3 (2024-10-11)
+## Bug Fixes
+- remove packageManager entry before publishing (a505704)
 # 1.3.2 (2024-10-10)
 ## Bug Fixes
 - remove engines entry before publishing (2c4e4da)
