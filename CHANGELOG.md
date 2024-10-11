@@ -1,3 +1,6 @@
+# 1.3.5 (2024-10-11)
+## Bug Fixes
+- remove engines field completely (56b367d)
 # 1.3.4 (2024-10-11)
 ## Bug Fixes
 - remove lock file (941e55d)
