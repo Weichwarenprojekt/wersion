@@ -55,6 +55,18 @@ describe("wersion e2e", function () {
             await git.raw("switch", "testcase/basic");
         });
 
+        it("should exit with code 1 if nothing happend", async () => {
+            let hasThrownExpectedError = false;
+            try {
+                execSync("node ../../../dist/wersion.js", { cwd: "tests/e2e/checkout" });
+            } catch (e) {
+                // @ts-expect-error execSync returns status in the case of an error
+                hasThrownExpectedError = e?.status === 1;
+            }
+
+            expect(hasThrownExpectedError).toEqual(true);
+        });
+
         it("should run default action and increase minor version", async () => {
             fs.writeFileSync("tests/e2e/checkout/test.txt", "placeholder");
             await git.add(".");

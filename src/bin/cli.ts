@@ -52,6 +52,7 @@ const main = async () => {
     } catch (e) {
         if (e instanceof Error) logger.error(e.message);
         else logger.error("Unknown Error!");
+        process.exit(1);
     }
 };
 
