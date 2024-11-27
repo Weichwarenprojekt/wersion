@@ -39,6 +39,7 @@ describe("config test", function () {
         const cliOptions: CliOptionsModel = {
             config: "./wersionrc.ts",
             dryRun: true,
+            yes: false,
         };
 
         config.set(cliOptions);
@@ -54,6 +55,7 @@ describe("config test", function () {
         const cliOptions: CliOptionsModel = {
             config: "./.wersionrc.empty.ts",
             dryRun: true,
+            yes: false,
         };
         config.set(cliOptions);
         const warn = vi.spyOn(logger, "warn");
@@ -72,6 +74,7 @@ describe("config test", function () {
         const cliOptions: CliOptionsModel = {
             config: "./.esmconfig.ts",
             dryRun: true,
+            yes: false,
         };
         config.set(cliOptions);
         config.loadConfigFile(cliOptions.config);
@@ -83,7 +86,7 @@ describe("config test", function () {
         );
     });
 
-    it("throws an error if config ", () => {
+    it("throws an error if config is corrupt", () => {
         const files = {
             ".corrupt.ts": `this is a syntax error`,
         };
@@ -91,12 +94,19 @@ describe("config test", function () {
         const cliOptions: CliOptionsModel = {
             config: "./.corrupt.ts",
             dryRun: true,
+            yes: false,
         };
         config.set(cliOptions);
         const error = vi.spyOn(logger, "error");
-        config.loadConfigFile(cliOptions.config);
+        let throwsError = false;
+        try {
+            config.loadConfigFile(cliOptions.config);
+        } catch {
+            throwsError = true;
+        }
         expect(error).toBeCalledWith(
             "Could not parse the configuration file! Ensure, that the configuration does not import ESM modules.",
         );
+        expect(throwsError).toEqual(true);
     });
 });

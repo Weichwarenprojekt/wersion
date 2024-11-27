@@ -8,6 +8,7 @@ import chalk from "chalk";
 import { logger } from "../../lib/util";
 import { input, select } from "@inquirer/prompts";
 
+/** The default path to the wersion rc */
 const wersionConfigPath = path.join(process.cwd(), ".wersionrc.ts");
 
 /**
@@ -49,23 +50,35 @@ export class InitAction implements Action {
      * Run the action
      */
     async run() {
+        // Create a wersion rc
+        let preset = "";
         if (!fs.existsSync(wersionConfigPath)) {
-            await this.createConfigDialog();
+            preset = await this.createConfigDialog();
         } else {
             logger.info("Found a .wersionrc.ts. Skipping configuration step!");
         }
 
-        config.loadConfigFile(wersionConfigPath);
-
-        await this.createInitialVersionTag();
-
-        logger.info(chalk.green("Finished, Have Fun!"));
+        // Confirm creation and create initial tag or warn user if using a custom template
+        if (preset === Presets.custom) {
+            logger.info(
+                "You have to manually adjust the configured version file in the config. Make sure the version matcher regex is correct, the default is for a json file.",
+            );
+            logger.warn(
+                chalk.yellow(
+                    `Configure your version file and run "${chalk.bold("wersion --init")}" again to ensure that the initial tag is set!`,
+                ),
+            );
+        } else {
+            config.loadConfigFile(wersionConfigPath);
+            await this.createInitialVersionTag();
+            logger.info(chalk.green("Finished, Have Fun!"));
+        }
     }
 
     /**
      * Use inquirer to create the .wersionrc.ts config file
      */
-    async createConfigDialog() {
+    async createConfigDialog(): Promise<string> {
         const defaultProjectName = path.basename(process.cwd());
         const preset = await select({
             message: "Choose the preset for the configuration by your projects programming language",
@@ -94,10 +107,7 @@ export class InitAction implements Action {
 
         await git.add(".wersionrc.ts");
         logger.info("created .wersionrc.ts file");
-        if (preset === Presets.custom)
-            logger.info(
-                "you have to manually adjust the configured version file in the config. Make sure the version matcher regex is correct, the default is for a json file.",
-            );
+        return preset;
     }
 
     /**

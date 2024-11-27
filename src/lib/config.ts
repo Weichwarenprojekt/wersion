@@ -37,8 +37,9 @@ class Config {
             this.set(configImport.configuration);
         } catch (e) {
             logger.error(
-                "Could not parse the configuration file! Ensure, that the configuration does not import ESM modules.",
+                `Could not parse the configuration file! Ensure, that the configuration does not import ESM modules.`,
             );
+            throw e;
         }
     }
 

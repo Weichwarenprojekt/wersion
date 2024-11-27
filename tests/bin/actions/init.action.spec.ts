@@ -13,7 +13,7 @@ const filesJson = {
 
 const filesWithConfig = {
     ...filesJson,
-    ".wersionrc.ts": "existing",
+    ".wersionrc.ts": "export const configuration = {};",
 };
 
 vi.mock("simple-git", () => ({
