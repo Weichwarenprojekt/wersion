@@ -1,3 +1,7 @@
+# 1.4.0 (2024-11-27)
+## Features
+- add info log for init command (3ee077a)
+- exit cli with code 1 on error (3af7c94)
 # 1.3.5 (2024-10-11)
 ## Bug Fixes
 - remove engines field completely (56b367d)
