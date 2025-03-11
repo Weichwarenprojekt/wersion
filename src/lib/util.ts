@@ -5,11 +5,6 @@ import chalk from "chalk";
 const { combine, printf } = format;
 
 /**
- * Regex to fetch commit type scope and message from a conventional commit
- */
-export const conventionalCommitRegex = /([a-z]*)(\(([a-z\-]*)\))?:\s(.*)/;
-
-/**
  * The colors for the logger
  */
 const colors: { [key: string]: string } = {

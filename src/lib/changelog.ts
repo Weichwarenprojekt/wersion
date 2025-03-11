@@ -3,10 +3,11 @@ import { Version } from "./version";
 import * as fse from "fs-extra";
 import { DefaultLogFields } from "simple-git";
 import _ from "lodash";
-import { conventionalCommitRegex, logger } from "./util";
+import { logger } from "./util";
 import fs from "fs";
 import { config } from "./config";
 import path from "node:path";
+import * as commitParser from "conventional-commits-parser";
 
 /**
  * Helper interface to pass changelog content info
@@ -84,8 +85,6 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
     let markdownToAppend = "";
     markdownToAppend += `# ${changelogContent.version.toString()} (${date})\n`;
 
-    // TODO: Customizable Release Highlights or breaking changes docs
-
     // Add feature list to changelog
     if (!_.isEmpty(changelogContent.features)) {
         markdownToAppend += `## Features\n`;
@@ -135,22 +134,10 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
  * Converts a conventional commit in the simple-git format to a changelog line
  */
 function conventionalCommitToChangelogString(logFields: DefaultLogFields): string | null {
-    const matchedConventionalCommit = logFields.message.match(conventionalCommitRegex) as RegExpMatchArray;
-
-    if (_.isNil(matchedConventionalCommit)) {
-        return null;
-    }
-
-    const [, , , scope, message] = matchedConventionalCommit;
-
-    const mdScope = scope ? `__${scope}:__ ` : "";
-
-    // TODO: Link commit with configured repo url
+    const commit = commitParser.sync(logFields.message);
+    const mdScope = commit.scope ? `__${commit.scope}:__ ` : "";
     const commitHashRef = logFields.hash.substring(0, 7);
-
-    // TODO: Extract issue number from commit and add link to it if configured
-
-    return `${mdScope}${message} (${commitHashRef})`;
+    return `${mdScope}${commit.subject} (${commitHashRef})`;
 }
 
 /**

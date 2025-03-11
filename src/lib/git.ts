@@ -1,10 +1,10 @@
 import * as simpleGit from "simple-git";
 import { ReleaseType, Version } from "./version";
 import _ from "lodash";
-import { conventionalCommitRegex } from "./util";
 import { getChangelogPath } from "./changelog";
 import { getVersionFile } from "./version-file";
 import { config } from "./config";
+import * as commitParser from "conventional-commits-parser";
 
 // Import with * as simpleGit to be able to mock it away
 export const git = simpleGit.simpleGit({ baseDir: process.cwd() });
@@ -101,8 +101,8 @@ export async function getReleaseTypeForHistory(oldVersion: Version): Promise<Rel
         if (commit.body.toLowerCase().includes(breakingChangeTrigger)) {
             return ReleaseType.major;
         }
-        const result = commit.message.match(conventionalCommitRegex);
-        if (!_.isNull(result)) usedCommitTypes.push(result[1]); // First capturing group
+        const result = commitParser.sync(commit.message);
+        if (!_.isNull(result)) usedCommitTypes.push(result.type ?? "unknown");
     }
 
     // Exit with minor type if commit type matches

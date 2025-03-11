@@ -145,6 +145,15 @@ describe("changelog test", () => {
                     author_name: "John Doe",
                     author_email: "dsjksdfj@sdkfjdsk.com",
                 },
+                {
+                    hash: "dsfjkhsdkjfhkjl",
+                    date: "1.1.1990",
+                    message: "feat(*): add bug",
+                    refs: "sghlgflkd",
+                    body: "gg",
+                    author_name: "John Doe",
+                    author_email: "dsjksdfj@sdkfjdsk.com",
+                },
             ]);
 
             await generateChangelog(new Version("1.0.0"), "0.3.2");
@@ -156,7 +165,12 @@ describe("changelog test", () => {
                 .padStart(2, "0")}`;
 
             expect(fs.readFileSync("./CHANGELOG.md").toString()).toEqual(
-                "# 1.0.0 (" + date + ")\n" + "## Bug Fixes\n" + "- remove bug (dsfjkhs)\n",
+                `# 1.0.0 (${date})
+## Features
+- __*:__ add bug (dsfjkhs)
+## Bug Fixes
+- remove bug (dsfjkhs)
+`,
             );
         });
     });
