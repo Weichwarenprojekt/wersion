@@ -1,3 +1,6 @@
+# 1.5.0 (2025-03-11)
+## Features
+- use conventional-commits-parser (9b8f9c5)
 # 1.4.0 (2024-11-27)
 ## Features
 - add info log for init command (3ee077a)
