@@ -23,7 +23,6 @@ const filesJson = {
 };
 
 vi.mock("simple-git", () => ({
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     simpleGit: vi.fn().mockImplementation(() => ({
         add: vi.fn(),
         commit: vi.fn(),

@@ -12,10 +12,14 @@
         "CI",
         "CD"
     ],
-    "bin": "dist/wersion.js",
-    "main": "./dist/wersion-lib.cjs",
-    "module": "./dist/wersion-lib.mjs",
-    "types": "./dist/src/models/wersion-config.model.d.ts",
+    "repository": "https://github.com/Weichwarenprojekt/wersion.git",
+    "license": "MIT",
+    "author": "Weichwarenprojekt <info@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
+    "contributors": [
+        "Stefan Rink <stefan.rink@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
+        "Tim Niederer <tim.niederer@weichwarenprojekt.de> (https://weichwarenprojekt.de/)"
+    ],
+    "type": "module",
     "exports": {
         ".": {
             "types": "./dist/src/models/wersion-config.model.d.ts",
@@ -23,74 +27,78 @@
             "import": "./dist/wersion-lib.mjs"
         }
     },
-    "repository": "https://github.com/Weichwarenprojekt/wersion.git",
-    "author": "Weichwarenprojekt <info@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
-    "contributors": [
-        "Stefan Rink <stefan.rink@weichwarenprojekt.de> (https://weichwarenprojekt.de/)",
-        "Tim Niederer <tim.niederer@weichwarenprojekt.de> (https://weichwarenprojekt.de/)"
-    ],
-    "license": "MIT",
-    "type": "module",
+    "main": "./dist/wersion-lib.cjs",
+    "module": "./dist/wersion-lib.mjs",
+    "types": "./dist/src/models/wersion-config.model.d.ts",
+    "bin": "dist/wersion.js",
     "scripts": {
         "build": "node --experimental-json-modules esbuild.js && tsc --emitDeclarationOnly",
-        "cli": "tsx src/bin/cli.ts",
         "bundledCli": "node dist/wersion.js",
+        "cli": "tsx src/bin/cli.ts",
+        "coverage": "pnpm run build && vitest run --coverage",
         "postinstall": "husky",
+        "lint": "tsc --noEmit && eslint . --max-warnings 0",
         "prepack": "clean-package",
         "postpack": "clean-package restore",
-        "test": "npm run build && vitest run",
-        "coverage": "npm run build && vitest run --coverage",
-        "prepublishOnly": "npm install && npm run build"
+        "prepublishOnly": "pnpm install && pnpm run build",
+        "sortpackagejson": "sort-package-json",
+        "test": "pnpm run build && vitest run"
     },
-    "devDependencies": {
-        "@commitlint/cli": "^19.8.0",
-        "@commitlint/config-conventional": "^19.8.0",
-        "@types/conventional-commits-parser": "^5.0.0",
-        "@types/fs-extra": "^11.0.4",
-        "@types/lodash": "^4.17.7",
-        "@types/node": "^22.5.5",
-        "@types/semver": "^7.5.8",
-        "@typescript-eslint/eslint-plugin": "^8.6.0",
-        "@typescript-eslint/parser": "^8.6.0",
-        "@vitest/coverage-v8": "^2.1.1",
-        "@weichwarenprojekt/configuration": "^0.2.0",
-        "clean-package": "^2.2.0",
-        "esbuild": "^0.23.1",
-        "eslint": "^9.10.0",
-        "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-prettier": "^5.2.1",
-        "memfs": "^4.11.1",
-        "prettier": "^3.3.3",
-        "terser-webpack-plugin": "^5.3.10",
-        "tsx": "^4.19.1",
-        "typescript": "^5.6.2",
-        "unionfs": "^4.5.4",
-        "vitest": "^2.1.1"
+    "overrides": {
+        "@types/conventional-commits-parser": "$conventional-commits-parser"
     },
     "dependencies": {
-        "@inquirer/prompts": "^6.0.1",
+        "@inquirer/prompts": "^7.5.3",
         "@weichwarenprojekt/ts-importer": "^0.1.7",
-        "chalk": "^5.3.0",
-        "commander": "^12.1.0",
-        "conventional-commits-parser": "^5.0.0",
+        "chalk": "^5.4.1",
+        "commander": "^14.0.0",
+        "conventional-commits-parser": "^6.2.0",
         "figures": "^6.1.0",
-        "fs-extra": "^11.2.0",
-        "husky": "^9.1.6",
+        "fs-extra": "^11.3.0",
+        "husky": "^9.1.7",
         "lodash": "^4.17.21",
-        "semver": "^7.6.3",
-        "simple-git": "^3.26.0",
-        "winston": "^3.14.2"
+        "semver": "^7.7.2",
+        "simple-git": "^3.28.0",
+        "winston": "^3.17.0"
     },
-    "packageManager": "npm@10.8.2",
+    "devDependencies": {
+        "@commitlint/cli": "^19.8.1",
+        "@commitlint/config-conventional": "^19.8.1",
+        "@eslint/js": "^9.30.0",
+        "@types/fs-extra": "^11.0.4",
+        "@types/lodash": "^4.17.19",
+        "@types/node": "^24.0.7",
+        "@types/semver": "^7.7.0",
+        "@typescript-eslint/eslint-plugin": "^8.35.0",
+        "@typescript-eslint/parser": "^8.35.0",
+        "@vitest/coverage-v8": "^3.2.4",
+        "@weichwarenprojekt/configuration": "^0.2.0",
+        "clean-package": "^2.2.0",
+        "esbuild": "^0.25.5",
+        "eslint": "^9.30.0",
+        "eslint-config-prettier": "^10.1.5",
+        "eslint-plugin-jsdoc": "^51.3.1",
+        "eslint-plugin-prettier": "^5.5.1",
+        "memfs": "^4.17.2",
+        "prettier": "^3.6.2",
+        "sort-package-json": "^3.3.1",
+        "terser-webpack-plugin": "^5.3.14",
+        "tsx": "^4.20.3",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.35.0",
+        "unionfs": "^4.5.4",
+        "vitest": "^3.2.4"
+    },
+    "packageManager": "pnpm@9.15.4",
     "devEngines": {
         "runtime": {
             "name": "node",
-            "version": "22.8.0",
+            "version": "22.16.0",
             "onFail": "error"
         },
         "packageManager": {
-            "name": "npm",
-            "version": "10.8.2",
+            "name": "pnpm",
+            "version": "9.15.4",
             "onFail": "error"
         }
     }

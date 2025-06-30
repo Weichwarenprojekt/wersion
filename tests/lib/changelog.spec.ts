@@ -55,6 +55,15 @@ describe("changelog test", () => {
                     author_email: "dsjksdfj@sdkfjdsk.com",
                 },
                 {
+                    hash: "asdfsdfsd",
+                    date: "1.1.1990",
+                    message: "feat(scope,test): my commit - #9",
+                    refs: "sghlgflkd",
+                    body: "normal change",
+                    author_name: "Tim Niederer",
+                    author_email: "dsjksdfj@sdkfjdsk.com",
+                },
+                {
                     hash: "dfsfsdfsf",
                     date: "1.1.1990",
                     message: "feat(): my commit non breaking",
@@ -88,6 +97,7 @@ describe("changelog test", () => {
                     ")\n" +
                     "## Features\n" +
                     "- __scope:__ my commit (dsfjkhs)\n" +
+                    "- __scope,test:__ my commit - #9 (asdfsdf)\n" +
                     "- my commit non breaking (dfsfsdf)\n" +
                     "## Bug Fixes\n" +
                     "- remove bug (dsfjkhs)\n" +

@@ -56,5 +56,5 @@ const main = async () => {
     }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+/** Start the cli */
 main().then(() => {});

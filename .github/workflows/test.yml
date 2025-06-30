@@ -8,18 +8,21 @@ jobs:
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
             - name: Checkout Repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             # Install NodeJS
             - name: Install NodeJS
               uses: actions/setup-node@v4
               with:
-                  node-version: "22.8.0"
+                  node-version: "22.16.0"
+
+            # Install pnpm
+            - uses: pnpm/action-setup@v4
 
             # Run the server tests
             - name: Run Tests
               run: |
                   git config --global user.name "Tester"
                   git config --global user.email "tester@weichwarenprojekt.de"
-                  npm i
-                  npm run test
+                  pnpm i
+                  pnpm run test

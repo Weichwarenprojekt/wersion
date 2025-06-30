@@ -1,6 +1,7 @@
 import { createLogger, format, transports } from "winston";
 import figures from "figures";
 import chalk from "chalk";
+import { CommitParser } from "conventional-commits-parser";
 
 const { combine, printf } = format;
 
@@ -21,4 +22,11 @@ export const logger = createLogger({
         level: "info",
         format: combine(printf((info) => `${colors[info.level]} ${info.message}`)),
     }),
+});
+
+/**
+ * The commit parser
+ */
+export const commitParser = new CommitParser({
+    headerPattern: /^(\w*)(?:\((.*)\))?!?: (.*)$/,
 });

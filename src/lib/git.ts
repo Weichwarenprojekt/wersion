@@ -4,9 +4,11 @@ import _ from "lodash";
 import { getChangelogPath } from "./changelog";
 import { getVersionFile } from "./version-file";
 import { config } from "./config";
-import * as commitParser from "conventional-commits-parser";
+import { commitParser } from "./util";
 
-// Import with * as simpleGit to be able to mock it away
+/**
+ * Initialize the git helper
+ */
 export const git = simpleGit.simpleGit({ baseDir: process.cwd() });
 
 /**
@@ -101,7 +103,7 @@ export async function getReleaseTypeForHistory(oldVersion: Version): Promise<Rel
         if (commit.body.toLowerCase().includes(breakingChangeTrigger)) {
             return ReleaseType.major;
         }
-        const result = commitParser.sync(commit.message);
+        const result = commitParser.parse(commit.message);
         if (!_.isNull(result)) usedCommitTypes.push(result.type ?? "unknown");
     }
 
