@@ -29,6 +29,6 @@ jobs:
                   pnpm run build
 
             - name: Test
-              run: npx vitest --coverage
+              run: pnpm exec vitest --coverage
             - name: Report Coverage
               uses: davelosert/vitest-coverage-report-action@v1
