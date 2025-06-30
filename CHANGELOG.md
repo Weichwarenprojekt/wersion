@@ -1,3 +1,6 @@
+# 1.6.0 (2025-06-30)
+## Features
+- support multiple scopes - #9 (762eb4a)
 # 1.5.0 (2025-03-11)
 ## Features
 - use conventional-commits-parser (9b8f9c5)
