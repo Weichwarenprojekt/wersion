@@ -7,24 +7,28 @@ jobs:
     coverage:
         runs-on: ubuntu-latest
         steps:
+            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
             # Install NodeJS
             - name: Install NodeJS
               uses: actions/setup-node@v4
               with:
-                  node-version: "22.8.0"
+                  node-version: "22.16.0"
 
-            # Run the coverage reporter
-            - uses: actions/checkout@v3
+            # Install pnpm
+            - uses: pnpm/action-setup@v4
 
             # Install dependencies and bundle the software
             - name: Initialize
               run: |
                   git config --global user.name "Tester"
                   git config --global user.email "tester@weichwarenprojekt.de"
-                  npm i
-                  npm run build
+                  pnpm i
+                  pnpm run build
 
             - name: Test
-              run: npx vitest --coverage
+              run: pnpm exec vitest --coverage
             - name: Report Coverage
               uses: davelosert/vitest-coverage-report-action@v1

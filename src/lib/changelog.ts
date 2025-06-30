@@ -3,11 +3,10 @@ import { Version } from "./version";
 import * as fse from "fs-extra";
 import { DefaultLogFields } from "simple-git";
 import _ from "lodash";
-import { logger } from "./util";
+import { commitParser, logger } from "./util";
 import fs from "fs";
 import { config } from "./config";
 import path from "node:path";
-import * as commitParser from "conventional-commits-parser";
 
 /**
  * Helper interface to pass changelog content info
@@ -134,7 +133,7 @@ function generateChangelogMarkdown(changelogContent: ChangelogContent) {
  * Converts a conventional commit in the simple-git format to a changelog line
  */
 function conventionalCommitToChangelogString(logFields: DefaultLogFields): string | null {
-    const commit = commitParser.sync(logFields.message);
+    const commit = commitParser.parse(logFields.message);
     const mdScope = commit.scope ? `__${commit.scope}:__ ` : "";
     const commitHashRef = logFields.hash.substring(0, 7);
     return `${mdScope}${commit.subject} (${commitHashRef})`;

@@ -35,7 +35,6 @@ enum ResetMode {
 }
 
 vi.mock("simple-git", () => ({
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     ResetMode: vi.fn().mockReturnValue(ResetMode),
     simpleGit: vi.fn().mockImplementation(() => ({
         addAnnotatedTag: vi.fn((tagName) =>
