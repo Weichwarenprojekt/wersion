@@ -24,6 +24,10 @@ export interface WersionConfigModel {
         /** Commit types that are mentioned here will increase the patch version */
         patch: string[];
     };
+    /** An optional command that is executed before the commit is created */
+    beforeCommit?: string;
+    /** An optional list of files that can be added to the automatic commit */
+    filesToCommit?: string[];
     /** The keyword that signalizes a breaking change */
     breakingChangeTrigger: string;
     /** The path to the changelog file */
@@ -35,10 +39,10 @@ export interface WersionConfigModel {
 /**
  * The default wersion configuration
  */
-export const defaultWersionConfig: WersionConfigModel = {
+export const getDefaultWersionConfig = (): WersionConfigModel => ({
     versionFile: {
         path: "./package.json",
-        matcher: `"version": ?"${semverMatcher}"`,
+        matcher: `"version": *"{{semverMatcher}}"`,
     },
     commitTypes: {
         major: [],
@@ -48,4 +52,4 @@ export const defaultWersionConfig: WersionConfigModel = {
     breakingChangeTrigger: "breaking change",
     changelogFilePath: "./CHANGELOG.md",
     projectName: "",
-};
+});

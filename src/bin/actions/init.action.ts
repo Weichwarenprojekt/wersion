@@ -7,34 +7,89 @@ import path from "node:path";
 import chalk from "chalk";
 import { logger } from "../../lib/util";
 import { input, select } from "@inquirer/prompts";
+import _ from "lodash";
+import { WersionConfigModel } from "../../models/wersion-config.model";
 
 /** The default path to the wersion rc */
 const wersionConfigPath = path.join(process.cwd(), ".wersionrc.ts");
 
 /**
- * Default matcher for semver in version file
+ * The configuration for a preset
  */
-enum VersionMatcher {
-    flutter = `version: ?\${semverMatcher}`,
-    nodejs = `"version": ?"\${semverMatcher}"`,
-}
+export type PresetConfig = Partial<WersionConfigModel> & {
+    optionName: string;
+    subconfig?: Record<string, PresetConfig>;
+};
 
 /**
- * Default paths to version files
- */
-enum VersionFile {
-    flutter = "./pubspec.yaml",
-    nodejs = "./package.json",
-}
-
-/**
- * The framework presets
+ * The framework / language presets
  */
 export enum Presets {
     flutter = "flutter",
     nodejs = "nodejs",
+    rust = "rust",
+    python = "python",
     custom = "custom",
 }
+
+/**
+ * The sub-presets for the NodeJS preset
+ */
+export enum NodeJSPresets {
+    npm = "npm",
+    other = "other",
+}
+
+/**
+ * The configuration for each preset
+ */
+const presetConfigs: Record<string, PresetConfig> = {
+    [Presets.flutter]: {
+        optionName: "Dart / Flutter (pubspec.yaml)",
+        versionFile: {
+            path: "./pubspec.yaml",
+            matcher: `version: *{{semverMatcher}}`,
+        },
+    },
+    [Presets.nodejs]: {
+        optionName: "JavaScript / Node.js (package.json)",
+        versionFile: {
+            path: "./package.json",
+            matcher: `"version": *"{{semverMatcher}}"`,
+        },
+        subconfig: {
+            [NodeJSPresets.npm]: {
+                optionName: "NPM",
+                beforeCommit: "npm i",
+                filesToCommit: ["package-lock.json"],
+            },
+            [NodeJSPresets.other]: {
+                optionName: "Other (Yarn, PNPM, etc.)",
+            },
+        },
+    },
+    [Presets.rust]: {
+        optionName: "Rust (Cargo.toml)",
+        versionFile: {
+            path: "./Cargo.toml",
+            matcher: `version *= *"{{semverMatcher}}"`,
+        },
+    },
+    [Presets.python]: {
+        optionName: "Python (pyproject.toml)",
+        versionFile: {
+            path: "./pyproject.toml",
+            matcher: `version *= *"{{semverMatcher}}"`,
+        },
+    },
+    [Presets.custom]: {
+        optionName: "Custom",
+        versionFile: {
+            path: "<enter file>",
+            matcher: `"version": *"{{semverMatcher}}"`,
+        },
+    },
+};
 
 /**
  * The action to configure the project for wersion
@@ -59,7 +114,7 @@ export class InitAction implements Action {
         }
 
         // Confirm creation and create initial tag or warn user if using a custom template
-        if (preset === Presets.custom) {
+        if (preset === Presets.custom || !presetConfigs[preset]) {
             logger.info(
                 "You have to manually adjust the configured version file in the config. Make sure the version matcher regex is correct, the default is for a json file.",
             );
@@ -78,42 +133,58 @@ export class InitAction implements Action {
     /**
      * Use inquirer to create the .wersionrc.ts config file
      */
-    async createConfigDialog(): Promise<string> {
+    private async createConfigDialog(): Promise<string> {
         const defaultProjectName = path.basename(process.cwd());
+
+        // First select the language / framework preset
         const preset = await select({
             message: "Choose the preset for the configuration by your projects programming language",
-            choices: [
-                {
-                    name: "Node.js",
-                    value: Presets.nodejs,
-                },
-                {
-                    name: "Flutter",
-                    value: Presets.flutter,
-                },
-                {
-                    name: "Custom",
-                    value: Presets.custom,
-                },
-            ],
+            choices: _.map(presetConfigs, (value, key) => ({
+                name: value.optionName,
+                value: key,
+            })),
         });
+        const presetConfig = presetConfigs[preset] ?? {};
+        this.updateConfigWithPreset(presetConfig);
+
+        // If there are sub-presets, ask the user which one to use
+        const subConfigs = presetConfig.subconfig;
+        if (subConfigs) {
+            const subPreset = await select({
+                message: "Choose the package manager you are using",
+                choices: _.map(subConfigs, (value, key) => ({
+                    name: value.optionName,
+                    value: key,
+                })),
+            });
+            this.updateConfigWithPreset(subConfigs[subPreset]);
+        }
+
+        // Retrieve the project name from the user
         const projectName = await input({
             message: "Name of your project, used to prefix created git tags",
             default: defaultProjectName,
         });
 
-        const wersionrcTsContent = this.compileWersionRCTsTemplate(preset, projectName);
+        // Create the .wersionrc.ts file
+        const wersionrcTsContent = this.compileWersionRCTsTemplate(projectName);
         fs.writeFileSync(wersionConfigPath, wersionrcTsContent);
-
         await git.add(".wersionrc.ts");
         logger.info("created .wersionrc.ts file");
         return preset;
     }
 
     /**
+     * Updates the config with the given preset config
+     */
+    private updateConfigWithPreset = (presetConfig?: PresetConfig) => {
+        config.set(_.omit(presetConfig ?? {}, "optionName", "subconfig"));
+    };
+
+    /**
      * Creates an initial version tag if not already existing
      */
-    async createInitialVersionTag() {
+    private async createInitialVersionTag() {
         const version = await getPackageVersion();
 
         if (!(await versionTagExists(version))) {
@@ -124,42 +195,38 @@ export class InitAction implements Action {
 
     /**
      * Compiles the file with the given answers from inquirer
-     * @param preset The framework preset given by the user
      * @param projectName The name of the configured project
      */
-    compileWersionRCTsTemplate(preset: Presets, projectName: string): string {
-        let path, matcher: string;
+    private compileWersionRCTsTemplate(projectName: string): string {
+        // Define the head of the template
+        let template =
+            `import { WersionConfigModel } from "@weichwarenprojekt/wersion";\n\n` +
+            `export const configuration: Partial<WersionConfigModel> = {\n` +
+            `  versionFile: {\n` +
+            `      path: \`${config.config.versionFile.path}\`,\n` +
+            `      matcher: \`${config.config.versionFile.matcher}\`\n` +
+            `  },\n` +
+            `  commitTypes: {\n` +
+            `      major: [],\n` +
+            `      minor: ["feat"],\n` +
+            `      patch: ["fix"]\n` +
+            `  },\n`;
 
-        switch (preset) {
-            case "flutter":
-                path = VersionFile.flutter;
-                matcher = VersionMatcher.flutter;
-                break;
-            case "nodejs":
-                path = VersionFile.nodejs;
-                matcher = VersionMatcher.nodejs;
-                break;
-            default:
-                path = "<enter file>";
-                matcher = VersionMatcher.nodejs;
-                break;
+        // Check if beforeCommit or filesToCommit are needed
+        const beforeCommit = config.config.beforeCommit?.trim();
+        if (beforeCommit) template += `  beforeCommit: "${beforeCommit}",\n`;
+        const filesToCommit = config.config.filesToCommit;
+        if (filesToCommit && filesToCommit.length > 0) {
+            const filesString = filesToCommit.map((file) => `"${file}"`).join(", ");
+            template += `  filesToCommit: [${filesString}],\n`;
         }
 
-        return `import { WersionConfigModel, semverMatcher } from "@weichwarenprojekt/wersion";
-
-export const configuration: Partial<WersionConfigModel> = {
-  versionFile: {
-      path: \`${path}\`,
-      matcher: \`${matcher}\`
-  },
-  commitTypes: {
-      major: [],
-      minor: ["feat"],
-      patch: ["fix"]
-  },
-  breakingChangeTrigger: "breaking change",
-  changelogFilePath: "./CHANGELOG.md",
-  projectName: "${projectName}"
-};`;
+        // Add the rest of the template
+        template +=
+            `  breakingChangeTrigger: "breaking change",\n` +
+            `  changelogFilePath: "./CHANGELOG.md",\n` +
+            `  projectName: "${projectName}"\n` +
+            `};`;
+        return template;
     }
 }

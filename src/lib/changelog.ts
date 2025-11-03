@@ -36,7 +36,7 @@ async function createChangelogFileIfNotExists() {
  * Create changelog and add it to file
  */
 export async function generateChangelog(version: Version, oldVersionTag: string) {
-    logger.info(`Generating changelog from ${oldVersionTag}`);
+    logger.info(`generating changelog from ${oldVersionTag}`);
     await createChangelogFileIfNotExists();
 
     const commits = await getCommitsSinceTag(oldVersionTag);

@@ -6,6 +6,8 @@ import { git } from "../../../src/lib/git";
 import { ReleaseType } from "../../../src/lib/version";
 import * as inquirer from "@inquirer/prompts";
 import { StatusResult } from "simple-git";
+import { resetMockConfig } from "../../util";
+import { execSync } from "node:child_process";
 
 vi.mock("node:fs", () => ({ default: fs }));
 
@@ -24,6 +26,8 @@ const filesJson = {
         changelogFilePath: "./CHANGELOG.md",
     }`,
     "CHANGELOG.md": "",
+    "package-lock.json": "",
+    "pnpm-lock.yaml": "",
 };
 
 enum ResetMode {
@@ -67,9 +71,13 @@ vi.mock("simple-git", () => ({
 vi.mock("@inquirer/prompts", () => ({
     confirm: vi.fn().mockResolvedValue(true),
 }));
+vi.mock("node:child_process", () => ({
+    execSync: vi.fn(),
+}));
 
 const gitMocked = vi.mocked(git);
 const inquirerMocked = vi.mocked(inquirer);
+const execSyncMocked = vi.mocked(execSync);
 
 describe("default action integration test", () => {
     beforeEach(() => {
@@ -81,6 +89,7 @@ describe("default action integration test", () => {
     afterEach(() => {
         vi.clearAllMocks();
         vol.reset();
+        resetMockConfig();
     });
 
     it("should run default action with default parameters", async () => {
@@ -120,6 +129,29 @@ describe("default action integration test", () => {
 
         const fsSnapshotAfter = vol.toJSON();
         expect(fsSnapshotAfter).toMatchObject(fsSnapshotBefore);
+    });
+
+    it("should execute beforeCommit script when configured", async () => {
+        const command = "npm run before:commit";
+        config.set({ beforeCommit: command });
+        const action = new DefaultAction();
+        await action.run();
+
+        expect(execSyncMocked).toHaveBeenCalledWith(command, { stdio: "inherit" });
+    });
+
+    it("should add configured files to the commit", async () => {
+        config.set({ filesToCommit: ["package-lock.json", "pnpm-lock.yaml"] });
+        const action = new DefaultAction();
+        await action.run();
+
+        const addCalls = gitMocked.add.mock.calls.map(([arg]) => arg);
+        expect(addCalls).toEqual([
+            expect.stringContaining("CHANGELOG.md"),
+            "./package.json",
+            "package-lock.json",
+            "pnpm-lock.yaml",
+        ]);
     });
 
     describe("releaseAs", () => {
