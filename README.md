@@ -20,13 +20,20 @@ npm i @weichwarenprojekt/wersion --save-dev
 **Initialization**
 
 The initialization command creates the .wersionrc.ts configration file. The created config depends on the selected
-preset (npm or flutter).
+preset.
 Further the command will create a git tag on the last commit with the current version of your project to enable
 versioning.
 
 ```
 npx wersion --init
 ```
+
+We have presets available for:
+
+* **JavaScript / NodeJS** (package.json)
+* **Dart / Flutter** (pubspec.yaml)
+* **Rust** (Cargo.toml)
+* **Python** (pyproject.toml)
 
 **Execution**
 

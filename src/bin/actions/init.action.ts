@@ -44,13 +44,6 @@ export enum NodeJSPresets {
  * The configuration for each preset
  */
 const presetConfigs: Record<string, PresetConfig> = {
-    [Presets.flutter]: {
-        optionName: "Dart / Flutter (pubspec.yaml)",
-        versionFile: {
-            path: "./pubspec.yaml",
-            matcher: `version: *{{semverMatcher}}`,
-        },
-    },
     [Presets.nodejs]: {
         optionName: "JavaScript / Node.js (package.json)",
         versionFile: {
@@ -66,6 +59,13 @@ const presetConfigs: Record<string, PresetConfig> = {
             [NodeJSPresets.other]: {
                 optionName: "Other (Yarn, PNPM, etc.)",
             },
+        },
+    },
+    [Presets.flutter]: {
+        optionName: "Dart / Flutter (pubspec.yaml)",
+        versionFile: {
+            path: "./pubspec.yaml",
+            matcher: `version: *{{semverMatcher}}`,
         },
     },
     [Presets.rust]: {
