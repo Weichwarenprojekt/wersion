@@ -74,6 +74,8 @@ const presetConfigs: Record<string, PresetConfig> = {
             path: "./Cargo.toml",
             matcher: `version *= *"{{semverMatcher}}"`,
         },
+        beforeCommit: "cargo check",
+        filesToCommit: ["./Cargo.lock"],
     },
     [Presets.python]: {
         optionName: "Python (pyproject.toml)",
