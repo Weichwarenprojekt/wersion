@@ -1,3 +1,7 @@
+# 1.7.0 (2025-11-24)
+## Features
+- improve preset for rust (caf6eac)
+- add before commit hook (a0e057c)
 # 1.6.0 (2025-06-30)
 ## Features
 - support multiple scopes - #9 (762eb4a)
