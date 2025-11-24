@@ -132,6 +132,40 @@ describe("wersion e2e", function () {
 
             expect(fse.readJsonSync("tests/e2e/checkout/package.json").version).toEqual("2.0.0");
         });
+
+        it("should execute beforeCommit script and append configured files to the release commit", async () => {
+            const projectRoot = path.join(process.cwd(), "tests/e2e/checkout");
+            const configPath = path.join(projectRoot, ".wersionrc.ts");
+            const beforeCommitFile = path.join(projectRoot, "before-commit.txt");
+
+            const beforeCommitCommand = `node -e "require('fs').writeFileSync('before-commit.txt','created from beforeCommit')"`;
+            const escapedCommand = beforeCommitCommand.replace(/"/g, '\\"');
+
+            const configContent = fs.readFileSync(configPath, "utf-8");
+            const updatedConfig = configContent.replace(
+                /(\s*changelogFilePath: .*\n)/,
+                `  beforeCommit: "${escapedCommand}",\n  filesToCommit: ["before-commit.txt"],\n$1`,
+            );
+            fs.writeFileSync(configPath, updatedConfig);
+
+            if (fs.existsSync(beforeCommitFile)) fs.rmSync(beforeCommitFile);
+
+            fs.writeFileSync(path.join(projectRoot, "test.txt"), "placeholder");
+            await git.add(".");
+            await git.commit("feat: my beforeCommit feature");
+
+            execSync("node ../../../dist/wersion.js", { cwd: "tests/e2e/checkout", stdio: "inherit" });
+
+            expect(fs.existsSync(beforeCommitFile)).toEqual(true);
+
+            const committedFilesRaw = await git.raw(["show", "--pretty=format:", "--name-only", "HEAD"]);
+            const committedFiles = committedFilesRaw
+                .split("\n")
+                .map((line) => line.trim())
+                .filter((line) => line.length > 0);
+
+            expect(committedFiles).toContain("before-commit.txt");
+        });
     });
 
     describe("testcase/monorepo", () => {
@@ -149,12 +183,7 @@ describe("wersion e2e", function () {
             await git.commit("feat: my new server feature");
 
             // Release server
-            try {
-                const res = execSync("node ../../../../dist/wersion.js", { cwd: "tests/e2e/checkout/server" });
-                console.log(res.toString());
-            } catch (e) {
-                console.log((e as ChildProcess).stdout?.toString());
-            }
+            execSync("node ../../../../dist/wersion.js", { cwd: "tests/e2e/checkout/server", stdio: "inherit" });
 
             expect((await getNewLocalCommits())[0].message).toEqual("chore: release server-2.1.0");
             await expect(git.tag()).resolves.toContain("server-2.1.0");

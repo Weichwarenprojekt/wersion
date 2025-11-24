@@ -1,6 +1,6 @@
 import { Action } from "./action";
-import { git } from "../../lib/git";
-import { getPackageVersion, getVersionFile, setPackageVersion } from "../../lib/version-file";
+import { addFilesToCommit, executeBeforeCommitScript } from "../../lib/git";
+import { getPackageVersion, setPackageVersion } from "../../lib/version-file";
 import { ReleaseType } from "../../lib/version";
 import { logger } from "../../lib/util";
 
@@ -21,7 +21,8 @@ export class BuildNumberAction implements Action {
         const version = await getPackageVersion();
         version.increase(ReleaseType.build);
         await setPackageVersion(version);
-        await git.add(getVersionFile());
+        executeBeforeCommitScript();
+        await addFilesToCommit();
         logger.info(`Version was incremented to ${version.toString()}. The update was appended to the last commit.`);
     }
 }

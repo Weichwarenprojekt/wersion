@@ -4,7 +4,9 @@ import _ from "lodash";
 import { getChangelogPath } from "./changelog";
 import { getVersionFile } from "./version-file";
 import { config } from "./config";
-import { commitParser } from "./util";
+import { commitParser, logger } from "./util";
+import { execSync } from "node:child_process";
+import fs from "fs";
 
 /**
  * Initialize the git helper
@@ -53,14 +55,46 @@ export async function versionTagExists(version: Version) {
 }
 
 /**
+ * Executes the beforeCommit script
+ */
+export function executeBeforeCommitScript() {
+    const beforeCommit = config.config.beforeCommit?.trim();
+    if (beforeCommit && !config.config.dryRun) {
+        logger.info(`executing beforeCommit script: "${beforeCommit}"`);
+        execSync(beforeCommit, { stdio: "inherit" });
+    }
+}
+
+/**
+ * Adds the given path to git if it exists
+ */
+async function tryToAddToGit(path: string) {
+    if (fs.existsSync(path)) {
+        await git.add(path);
+    }
+}
+
+/**
+ * Adds the configured extra files to the commit
+ */
+export async function addFilesToCommit() {
+    // Add the standard files
+    if (config.config.dryRun) return;
+    await tryToAddToGit(getChangelogPath());
+    await tryToAddToGit(getVersionFile());
+
+    // Add the extra configured files
+    const files = config.config.filesToCommit;
+    if (!files) return;
+    for (const file of files) await tryToAddToGit(file);
+}
+
+/**
  * Creates a new commit for releasing the new version
  */
 export async function createVersionCommit(version: Version) {
-    // Add the changelog file as it would be not added when newly created
-    if (!config.config.dryRun) {
-        await git.add(getChangelogPath());
-        await git.add(getVersionFile());
-    }
+    executeBeforeCommitScript();
+    await addFilesToCommit();
 
     const commitMessage = `chore: release ${getTagPrefix() + version.toString()}`;
 

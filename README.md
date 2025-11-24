@@ -19,21 +19,32 @@ npm i @weichwarenprojekt/wersion --save-dev
 
 **Initialization**
 
-The initialization command creates the .wersionrc.ts configration file. The created config depends on the selected preset (npm or flutter).
-Further the command will create a git tag on the last commit with the current version of your project to enable versioning.
+The initialization command creates the .wersionrc.ts configration file. The created config depends on the selected
+preset.
+Further the command will create a git tag on the last commit with the current version of your project to enable
+versioning.
 
 ```
 npx wersion --init
 ```
 
+We have presets available for:
+
+* **JavaScript / NodeJS** (package.json)
+* **Dart / Flutter** (pubspec.yaml)
+* **Rust** (Cargo.toml)
+* **Python** (pyproject.toml)
+
 **Execution**
 
 Basic usage to create a new version:
+
 ```
 npx wersion
 ```
 
-Creating a new version includes creating the tag, increasing the version in the configured version file and creating the changelog.
+Creating a new version includes creating the tag, increasing the version in the configured version file and creating the
+changelog.
 
 ```
 npx wersion --releaseAs=[patch|minor|major]
@@ -87,20 +98,23 @@ Configure your project with a .wersionrc.ts file on top level. \
 Default configuration:
 
 ```ts
-import { WersionConfigModel } from "@weichwarenprojekt/wersion";
+import {WersionConfigModel} from "@weichwarenprojekt/wersion";
 
 export const configuration: Partial<WersionConfigModel> = {
-  versionFile: {
-    path: "./package.json",
-    matcher: '"version": ?"([0-9.]+)"',
-  },
-  commitTypes: {
-    major: [],
-    minor: ["feat"],
-    patch: ["fix", "docs"],
-  },
-  breakingChangeTrigger: "breaking change",
-  changelogFilePath: "./CHANGELOG.md",
+    versionFile: {
+        path: "./package.json",
+        matcher: `"version": *"{{semverMatcher}}"`,
+    },
+    commitTypes: {
+        major: [],
+        minor: ["feat"],
+        patch: ["fix", "docs"],
+    },
+    beforeCommit: "npm i",
+    filesToCommit: ["./package-lock.json"],
+    breakingChangeTrigger: "breaking change",
+    changelogFilePath: "./CHANGELOG.md",
+    projectName: "",
 };
 ```
 
@@ -113,18 +127,23 @@ export const configuration: Partial<WersionConfigModel> = {
 |                       | major   | Array of commit types which trigger a increase of the major version e.g. ["feat"]                          |
 |                       | minor   | same for minor version                                                                                     |
 |                       | patch   | same for patch version                                                                                     |
+| beforeCommit          |         | Optional shell command that runs before the release commit is created                                      |
+| filesToCommit         |         | Optional array of files that will be staged together with changelog and version file                       |
 | breakingChangeTrigger |         | String that triggers an breaking change ergo an increase of the major version if written in a commits body |
 | changelogFilePath     |         | Configuration of the automatically generated changelog file (e.g. ./CHANGELOG.md)                          |
 | projectName           |         | Optional project name which is prepended to each git tag                                                   |
 
+With our comprehensive configuration options you can configure wersion for any language / framework / project.
+
 # Troubleshooting
 
 ## The current file is a CommonJS module whose imports will produce require calls
+
 This happens because you probably have configured version for a CommonJS package/project (no "type": "module" in the
 package.json). Rename the configuration to .wersionrc.mts. Like that it will be treated as an ESM module.
 
-```ATTENTION``` The configuration will still be imported as a CommonJS module, so you will not be able to actually import
-ESM modules! This is just for the error to disappear.
+```ATTENTION``` The configuration will still be imported as a CommonJS module, so you will not be able to actually
+import ESM modules! This is just for the error to disappear.
 
 # Contribution
 

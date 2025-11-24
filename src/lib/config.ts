@@ -1,5 +1,5 @@
 import path from "node:path";
-import { defaultWersionConfig, WersionConfigModel } from "../models/wersion-config.model";
+import { getDefaultWersionConfig, WersionConfigModel } from "../models/wersion-config.model";
 import { CliOptionsModel, defaultCliOptions } from "../models/cli-options.model";
 import _ from "lodash";
 import { loadModule } from "@weichwarenprojekt/ts-importer";
@@ -16,7 +16,12 @@ type ConfigStoreModel = WersionConfigModel & CliOptionsModel;
  */
 class Config {
     /** The actual configuration */
-    private configStore: ConfigStoreModel = _.merge({}, defaultWersionConfig, defaultCliOptions);
+    private configStore!: ConfigStoreModel;
+
+    /** Constructor */
+    constructor() {
+        this.reset();
+    }
 
     /**
      * Load the configuration file from the given path
@@ -57,6 +62,13 @@ class Config {
         this.configStore = _.mergeWith(this.configStore, config, (objValue, srcValue) => {
             if (objValue === undefined) return srcValue;
         });
+    }
+
+    /**
+     * Reset the config to the default values (used for testing)
+     */
+    private reset() {
+        this.configStore = _.merge(getDefaultWersionConfig(), defaultCliOptions);
     }
 }
 

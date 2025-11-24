@@ -9,13 +9,16 @@ import {
     git,
     repoHasLocalCommits,
     versionTagExists,
+    addFilesToCommit,
+    executeBeforeCommitScript,
 } from "../../src/lib/git";
 import * as fse from "fs-extra";
-import { defaultWersionConfig, WersionConfigModel } from "../../src/models/wersion-config.model";
+import { WersionConfigModel } from "../../src/models/wersion-config.model";
 import { config } from "../../src/lib/config";
-import _ from "lodash";
-import { defaultCliOptions } from "../../src/models/cli-options.model";
 import { LogResult } from "simple-git";
+import { resetMockConfig } from "../util";
+import { execSync } from "node:child_process";
+import fs from "node:fs";
 
 vi.mock("simple-git", () => ({
     simpleGit: vi.fn().mockImplementation(() => ({
@@ -44,17 +47,22 @@ vi.mock("simple-git", () => ({
     })),
 }));
 vi.mock("fs-extra");
+vi.mock("node:child_process", () => ({
+    execSync: vi.fn(),
+}));
 
 const fseMocked = vi.mocked(fse);
 const gitMocked = vi.mocked(git);
+const execSyncMocked = vi.mocked(execSync);
 
 describe("git test", function () {
     beforeEach(() => {
-        config.set(_.merge(defaultWersionConfig, defaultCliOptions, { projectName: "testing" }));
+        config.set({ projectName: "testing" });
     });
 
     afterEach(() => {
         vi.clearAllMocks();
+        resetMockConfig();
     });
 
     describe("createVersionTag", function () {
@@ -105,6 +113,60 @@ describe("git test", function () {
 
             expect(gitMocked.add.mock.calls.length).toEqual(0);
             expect(gitMocked.commit.mock.calls.length).toEqual(0);
+        });
+    });
+
+    describe("executeBeforeCommitScript", () => {
+        it("should execute configured script before committing", () => {
+            config.set({ beforeCommit: "npm run build" });
+
+            executeBeforeCommitScript();
+
+            expect(execSyncMocked).toHaveBeenCalledWith("npm run build", { stdio: "inherit" });
+        });
+
+        it("should skip execution when command is empty", () => {
+            config.set({ beforeCommit: "   " });
+
+            executeBeforeCommitScript();
+
+            expect(execSyncMocked).not.toHaveBeenCalled();
+        });
+
+        it("should skip execution when in dry run mode", () => {
+            config.set({ beforeCommit: "npm run build", dryRun: true });
+
+            executeBeforeCommitScript();
+
+            expect(execSyncMocked).not.toHaveBeenCalled();
+        });
+    });
+
+    describe("addFilesToCommit", () => {
+        it("should add default and configured files", async () => {
+            const existsSyncSpy = vi.spyOn(fs, "existsSync").mockReturnValue(true);
+            config.set({ filesToCommit: ["package-lock.json", "pnpm-lock.yaml"] });
+
+            await addFilesToCommit();
+
+            const addCalls = gitMocked.add.mock.calls.map(([arg]) => arg);
+            expect(addCalls).toEqual([
+                expect.stringContaining("CHANGELOG.md"),
+                "./package.json",
+                "package-lock.json",
+                "pnpm-lock.yaml",
+            ]);
+            existsSyncSpy.mockRestore();
+        });
+
+        it("should skip when running in dry run mode", async () => {
+            const existsSyncSpy = vi.spyOn(fs, "existsSync").mockReturnValue(true);
+            config.set({ dryRun: true, filesToCommit: ["package-lock.json"] });
+
+            await addFilesToCommit();
+
+            expect(gitMocked.add).not.toHaveBeenCalled();
+            existsSyncSpy.mockRestore();
         });
     });
 
